@@ -23,8 +23,13 @@ export class AppMainComponent {
     },
     {
       label: 'Criar sala',
-      icon: 'pi pi-fw pi-plus',
+      icon: 'pi pi-plus',
       routerLink: '/create-room',
+    },
+    {
+      label: 'Logout',
+      icon: 'pi pi-sign-out',
+      routerLink: '/login',
     }
   ]
 }

@@ -17,9 +17,3 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
-app-app-main p-menubarsub {
-  display: flex;
-  justify-content: end;
-  width: 100%;
-}
