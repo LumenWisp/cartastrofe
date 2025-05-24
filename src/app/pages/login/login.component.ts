@@ -3,7 +3,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -14,7 +14,16 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginComponent {
   loginForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl('')
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required])
   });
+
+  onSubmit() {
+    if (this.loginForm.valid) {
+      console.log('Login feito com sucesso');
+      // Redirecionar para a página principal
+    } else {
+      console.log('Formulário inválido');
+    }
+  }
 }

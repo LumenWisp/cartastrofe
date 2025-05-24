@@ -2,7 +2,7 @@
   <h1>Bem-vindo</h1>
   <span class="message">Faça o login</span>
 
-  <form class="form" [formGroup]="loginForm">
+  <form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
     <p-floatlabel variant="on">
       <label for="email">Email</label>
       <input id="email" pInputText fluid="true" formControlName="email" />
@@ -13,10 +13,10 @@
       <label for="password">Senha</label>
     </p-floatlabel>
 
-    <a class="link" routerLink="./forget-password">Esqueceu a senha?</a>
+    <a class="link" routerLink="/forget-password">Esqueceu a senha?</a>
 
-    <p-button class="button-submit" label="Entrar" />
+    <p-button type="submit" class="button-submit" label="Entrar" />
 
-    <a class="other-auth-link link" routerLink="./forget-password">Não tem conta?</a>
+    <a class="other-auth-link link" routerLink="/register">Não tem conta?</a>
   </form>
 </div>
