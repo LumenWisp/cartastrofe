@@ -1,0 +1,6 @@
+.page {
+  position: relative;
+  height: 100dvh;
+  padding: 20px;
+  background-color: var(--form-primary-color);
+}

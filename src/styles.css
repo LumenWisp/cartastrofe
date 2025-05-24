@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --form-primary-color: #353238;
+  --form-primary-color-hover: #535055;
+  --form-primary-color-active: #4ac746;
+  --form-background-color: #ffffff;
+  --form-message-color: #545454;
+  --form-link-color: #000000;
+  --form-floatlabel-color: #000000;
+}
+
+* {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}

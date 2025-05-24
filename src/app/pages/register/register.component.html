@@ -1,0 +1,25 @@
+<div class="form-container">
+  <h1>Bem-vindo</h1>
+  <span class="message">Faça o cadastro</span>
+
+  <form class="form" [formGroup]="registerForm">
+    <p-floatlabel variant="on">
+      <label for="username">Nome</label>
+      <input id="username" pInputText fluid="true" formControlName="username" />
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <label for="email">Email</label>
+      <input id="email" pInputText fluid="true" formControlName="email" />
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" />
+      <label for="password">Senha</label>
+    </p-floatlabel>
+
+    <p-button class="button-submit" label="Cadastrar" />
+
+    <a class="other-auth-link link" routerLink="./forget-password">Já tem conta?</a>
+  </form>
+</div>
