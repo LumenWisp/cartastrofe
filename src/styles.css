@@ -1,3 +1,5 @@
+@import "primeicons/primeicons.css";
+
 :root {
   --form-primary-color: #353238;
   --form-primary-color-hover: #535055;
@@ -14,4 +16,10 @@
   margin: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+}
+
+app-app-main p-menubarsub {
+  display: flex;
+  justify-content: end;
+  width: 100%;
 }
