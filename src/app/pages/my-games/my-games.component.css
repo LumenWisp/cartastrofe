@@ -1,0 +1,12 @@
+.panels-container {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
+  padding: 1rem;
+  margin-left: 3vw;
+  margin-right: 3vw;
+}
+
+.panel {
+  padding: 1.5rem;
+}
