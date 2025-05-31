@@ -1,11 +1,11 @@
 .panels-container {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(6, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, minmax(20rem, 1fr));
     padding: 1rem;
     margin-left: 3vw;
     margin-right: 3vw;
-    height: 300px;
+    height: 25rem;
 }
 
 .add-box{
