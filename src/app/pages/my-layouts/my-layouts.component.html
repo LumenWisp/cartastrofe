@@ -1,7 +1,7 @@
 <div class="panels-container">
-    <div class="add-box">
-  <i class="pi pi-plus plus-icon"></i>
-</div>
+    <div class="add-box" (click) = "goToCreateLayoutPage()">
+        <i class="pi pi-plus plus-icon"></i>
+    </div>
     <app-card-template></app-card-template>
     <app-card-template></app-card-template>
     <app-card-template></app-card-template>
@@ -12,3 +12,4 @@
     <app-card-template></app-card-template>
     <app-card-template></app-card-template>
 </div>
+<router-outlet></router-outlet>
