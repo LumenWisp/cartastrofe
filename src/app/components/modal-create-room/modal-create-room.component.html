@@ -1,1 +1,27 @@
-<p>modal-create-room works!</p>
+<p-dialog [(visible)]="display" [modal]="true" [closable]="false" [style]="{width: '400px'}">
+  <button class="create-room-close-button" (click)="close()">×</button>
+
+  <h2 class="create-room-title">Criar sala</h2>
+
+  <div class="create-room-form-container">
+    <div class="create-room-form-group">
+      <label for="gameName">Jogo</label>
+      <p-dropdown 
+        id="gameName"
+        [options]="gameOptions"
+        placeholder="Selecione o jogo">
+      </p-dropdown>
+    </div>
+
+    <div class="create-room-form-group">
+      <label for="playerCount">Número de jogadores</label>
+      <p-dropdown 
+        id="playerCount"
+        [options]="playerOptions"
+        placeholder="Selecione o nº de jogadores">
+      </p-dropdown>
+    </div>
+
+    <button type="button" class="create-room-button">CRIAR</button>
+  </div>
+</p-dialog>
