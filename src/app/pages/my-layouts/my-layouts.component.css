@@ -1,0 +1,29 @@
+.panels-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(6, minmax(200px, 1fr));
+    padding: 1rem;
+    margin-left: 3vw;
+    margin-right: 3vw;
+    height: 300px;
+}
+
+.add-box{
+    width: 20rem;
+    height: 25rem;
+    background-color: #C8C8C8;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-box:hover{
+    background-color: #A9A9A9;
+}
+
+.plus-icon{
+    font-size: 5rem;
+    color: #333;
+}
