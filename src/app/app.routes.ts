@@ -8,6 +8,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { MyGamesComponent } from './pages/my-games/my-games.component';
 import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
+import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 
 export const routes: Routes = [
   {
@@ -43,7 +44,11 @@ export const routes: Routes = [
       {
         path: 'my-games',
         component: MyGamesComponent,
-      }
+      },
+      {
+        path: 'my-layouts',
+        component: MyLayoutsComponent,
+      },
     ]
   }
 ];
