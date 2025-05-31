@@ -11,20 +11,10 @@
   <app-panel-game class="panel"></app-panel-game>
   <app-panel-game class="panel"></app-panel-game>
   <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
-  <app-panel-game class="panel"></app-panel-game>
 </div>
+
+<p-button (click)="showDialog()" label="Show" />
+
+<app-modal-create-game 
+  [(display)]="showCreateGameDialog">
+</app-modal-create-game>
