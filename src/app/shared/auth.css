@@ -12,24 +12,12 @@
   margin-inline: auto;
 }
 
-.form-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  width: 90%;
-  max-width: 700px;
-  padding: 10px 10px 40px;
-  border-radius: 10px;
-  background-color: var(--form-background-color);
-}
-
 .form {
   display: flex;
   flex-direction: column;
   row-gap: 20px;
-  max-width: 500px;
-  margin: 30px auto 0;
+  max-width: 400px;
+  margin: 40px auto 0;
 }
 
 .message {

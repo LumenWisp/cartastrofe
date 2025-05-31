@@ -1,6 +1,46 @@
 .page {
-  position: relative;
   height: 100dvh;
-  padding: 20px;
   background-color: var(--form-primary-color);
+}
+
+.form-container {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 90%;
+  max-width: 1000px;
+  height: 70%;
+  max-height: 500px;
+}
+
+.form-content {
+  flex: 1 1 0;
+  height: 100%;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background-color: var(--form-background-color);
+}
+
+.form-image {
+  display: none;
+  flex: 1 1 0;
+  height: 100%;
+  border-radius: 0 10px 10px 0;
+  background-image: url("/images/cards-form.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: center;
+}
+
+@media (min-width: 768px) {
+  .form-image {
+    display: block;
+  }
+
+  .form-content {
+    border-radius: 10px 0 0 10px;
+  }
 }
