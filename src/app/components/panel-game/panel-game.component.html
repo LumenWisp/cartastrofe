@@ -1,11 +1,11 @@
 <p-panel>
   <ng-template #header>
-    <p>Exploding Kittens - <span class="pi pi-book"></span></p>
+    <p>{{gameInfo.name}} - <span class="pi pi-book"></span></p>
   </ng-template>
 
-  <p><b>Descrição</b>: Joguin do gato explosivo cabum.</p>
+  <p><b>Descrição</b>: {{gameInfo.description}}</p>
 
-  <p><b>Nº jogadores</b>: 10</p>
+  <p><b>Nº jogadores</b>: {{countPlayersRange}}</p>
 
-  <p><b>Nº cartas</b>: 150</p>
+  <p><b>Nº cartas</b>: {{gameInfo.countCards}}</p>
 </p-panel>

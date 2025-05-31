@@ -3,13 +3,40 @@ import { PanelGameComponent } from '../../components/panel-game/panel-game.compo
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { GameInfo } from '../../types/game-info';
 
 @Component({
   selector: 'app-my-games',
-  imports: [PanelGameComponent, IconFieldModule, InputIconModule, InputTextModule],
+  imports: [
+    PanelGameComponent,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+  ],
   templateUrl: './my-games.component.html',
-  styleUrl: './my-games.component.css'
+  styleUrl: './my-games.component.css',
 })
 export class MyGamesComponent {
-
+  gamesInfo: GameInfo[] = [
+    {
+      name: 'Exploding Kittens',
+      description: 'Joguin do gato explosivo cabum.',
+      countPlayersMin: 2,
+      countPlayersMax: 10,
+      countCards: 150,
+    },
+    {
+      name: 'Yugioh',
+      description: 'Joguin do protagonista que mais roubou na história dos jogos de cartas.',
+      countPlayersMin: 2,
+      countPlayersMax: 2,
+      countCards: 1000,
+    },
+    {
+      name: 'Uno',
+      description: 'Joguin de destruição de amizades.',
+      countPlayersMin: 2,
+      countCards: 100,
+    },
+  ];
 }
