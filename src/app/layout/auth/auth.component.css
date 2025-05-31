@@ -20,7 +20,7 @@
   flex: 1 1 0;
   height: 100%;
   padding: 10px 20px;
-  border-radius: 10px 0 0 10px;
+  border-radius: 10px;
   background-color: var(--form-background-color);
 }
 
@@ -38,5 +38,9 @@
 @media (min-width: 768px) {
   .form-image {
     display: block;
+  }
+
+  .form-content {
+    border-radius: 10px 0 0 10px;
   }
 }
