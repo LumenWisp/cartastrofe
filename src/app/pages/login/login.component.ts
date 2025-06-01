@@ -23,7 +23,7 @@ export class LoginComponent {
   emailInput = '';
   passwordInput = '';
   users: User[] = [];
-  userTest: User = {name: 'a', email: 'a@a', password:'a'};
+  userTest: User = {userID: 0, name: 'a', email: 'a@a', password:'a'};
   
   constructor(
     private router: Router,
@@ -31,10 +31,13 @@ export class LoginComponent {
   ) {}
 
   ngOnInit(){
-    this.userService.addUser(this.userTest);
+    if(this.userService.getUsers().length === 0){
+      this.userService.addUser(this.userTest);
+    }
     this.users = this.userService.getUsers();
     console.log("ONICHAN");
     console.log(this.users);
+    console.log(this.users[0].userID);
   }
 
   onSubmit() {

@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-export interface User {
-  name: string;
-  email: string;
-  password: string;
-}
+import { User } from '../types/user';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +10,17 @@ export class UserService {
   private usersSubject = new BehaviorSubject<User[]>([]);
   // Observable público para os componentes se inscreverem
   users$: Observable<User[]> = this.usersSubject.asObservable();
+  private usersIDGenerator = 1;
 
   constructor() {}
 
   // Retorna o valor atual da lista
   getUsers(): User[] {
     return this.usersSubject.value;
+  }
+
+  getUsersNextID(){
+    return this.usersIDGenerator++;
   }
 
   // Substitui a lista inteira

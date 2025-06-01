@@ -21,7 +21,7 @@ export class RegisterComponent {
     password: new FormControl('', [Validators.required])
   });
 
-  register: User = {name: '', email: '', password: ''}
+  register: User = {userID: 0, name: '', email: '', password: ''}
   users: User[] = [];
   nameInput: string = '';
   emailInput: string = '';
@@ -38,7 +38,7 @@ export class RegisterComponent {
 
   onSubmit() {
 
-    this.register = {name: this.nameInput, email: this.emailInput, password: this.passwordInput} 
+    this.register = {userID: this.userService.getUsersNextID() ,name: this.nameInput, email: this.emailInput, password: this.passwordInput} 
 
     if (this.registerForm.valid && this.users.filter(user => user.email === this.emailInput && user.password === this.passwordInput).length === 0) {
 
