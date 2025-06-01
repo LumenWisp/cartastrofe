@@ -13,13 +13,15 @@ import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 
 export const routes: Routes = [
-
+  {
+    path: '**',
+    redirectTo: 'login',
+  },
   {
     path: 'rooms',
     component: RoomsComponent,
     title: 'Room',
   },
-
   {
     path: '',
     component: AuthComponent,
@@ -63,7 +65,7 @@ export const routes: Routes = [
         component: RoomsComponent,
       },
       {
-        path: 'create-layout',
+        path: 'my-layouts/create-layout',
         component: CreateLayoutComponent,
       }
     ]

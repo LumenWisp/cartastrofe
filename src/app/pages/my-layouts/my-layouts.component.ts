@@ -23,7 +23,7 @@ export class MyLayoutsComponent {
 
     console.log(this.route)
 
-    this.router.navigate(['../create-layout'], {
+    this.router.navigate(['create-layout'], {
       relativeTo: this.route
     });
   }
