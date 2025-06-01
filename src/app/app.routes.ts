@@ -9,8 +9,16 @@ import { MyGamesComponent } from './pages/my-games/my-games.component';
 import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
+import { RoomsComponent } from './pages/rooms/rooms.component';
 
 export const routes: Routes = [
+
+  {
+    path: 'rooms',
+    component: RoomsComponent,
+    title: 'Room',
+  },
+
   {
     path: '',
     component: AuthComponent,
@@ -49,6 +57,10 @@ export const routes: Routes = [
         path: 'my-layouts',
         component: MyLayoutsComponent,
       },
+      {
+        path: 'rooms',
+        component: RoomsComponent,
+      }
     ]
   }
 ];
