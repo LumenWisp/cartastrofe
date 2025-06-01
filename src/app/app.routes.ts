@@ -10,6 +10,7 @@ import { ForgetPasswordComponent } from './pages/forget-password/forget-password
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
+import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 
 export const routes: Routes = [
 
@@ -55,11 +56,15 @@ export const routes: Routes = [
       },
       {
         path: 'my-layouts',
-        component: MyLayoutsComponent,
+        component: MyLayoutsComponent
       },
       {
         path: 'rooms',
         component: RoomsComponent,
+      },
+      {
+        path: 'create-layout',
+        component: CreateLayoutComponent,
       }
     ]
   }
