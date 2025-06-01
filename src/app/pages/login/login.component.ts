@@ -5,6 +5,8 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { User } from '../../types/user';
+import {UserService} from '../../services/user-service.service'
 
 @Component({
   selector: 'app-login',
@@ -17,17 +19,33 @@ export class LoginComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required])
   });
-
+  
+  emailInput = '';
+  passwordInput = '';
+  users: User[] = [];
+  userTest: User = {name: 'a', email: 'a@a', password:'a'};
+  
   constructor(
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
+  ngOnInit(){
+    this.userService.addUser(this.userTest);
+    this.users = this.userService.getUsers();
+    console.log("ONICHAN");
+    console.log(this.users);
+  }
+
   onSubmit() {
-    if (this.loginForm.valid) {
+    if (this.loginForm.valid && this.users.filter(user => user.email === this.emailInput && user.password === this.passwordInput).length === 1) {
       console.log('Login feito com sucesso');
       this.router.navigate(['/my-games']);
-    } else {
+    }
+    else {
       console.log('Formulário inválido');
+      this.emailInput = '';
+      this.passwordInput = '';
     }
   }
 }

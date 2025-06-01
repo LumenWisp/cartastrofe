@@ -7,6 +7,7 @@ import { ModalCreateGameComponent } from '../../components/modal-create-game/mod
 import { ButtonModule } from 'primeng/button';
 
 import { GameInfo } from '../../types/game-info';
+import { User } from '../../types/user';
 
 @Component({
   selector: 'app-my-games',
