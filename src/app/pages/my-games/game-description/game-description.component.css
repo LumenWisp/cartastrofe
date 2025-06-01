@@ -1,0 +1,41 @@
+.box-game-title{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    /*background-color: #F3F0EF;*/
+}
+
+.game-title{
+    font-size: 2rem;
+}
+
+.box-back{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    padding-left: 1rem;
+    text-align: left;
+}
+
+.game-text-title{
+    text-align: center;
+    margin-top: 10px;
+}
+
+.rules-box{
+    width: 80%;
+    background-color: purple;
+}
+
+.custom-panel-left.p-splitterpanel-nested {
+    justify-content: flex-start;
+}
+
+.back-icon{
+    font-size: 2rem;
+}
+
+.pencil-icon{
+    font-size: 2rem;
+}

@@ -11,6 +11,7 @@ import { ResetPasswordComponent } from './pages/reset-password/reset-password.co
 import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
+import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
 
 export const routes: Routes = [
   {
@@ -63,6 +64,10 @@ export const routes: Routes = [
       {
         path: 'my-layouts/create-layout',
         component: CreateLayoutComponent,
+      },
+      {
+        path: 'my-games/game-description',
+        component: GameDescriptionComponent,
       }
     ]
   },

@@ -1,0 +1,44 @@
+<div>
+<p-splitter [panelSizes]="[25, 75]" [style]="{ height: '15rem' }" styleClass="mb-8">
+    <ng-template #panel>
+        <p-splitter layout="vertical" [panelSizes]="[30, 70]">
+            <ng-template #panel>
+                <div class="box-back custom-panel-left">
+                    <i class="pi pi-arrow-left back-icon"></i>
+                </div>
+            </ng-template>
+            <ng-template #panel>
+                <div class="box-game-title">
+                    <p class="game-title"> YU-GI-OH  <span class="pi pi-pencil pencil-icon"></span></p>
+                </div>
+            </ng-template>
+        </p-splitter>
+    </ng-template>
+    <ng-template #panel>
+        <div class="flex items-center justify-center h-full">
+            <img src="images\yu-gi-oh-banner-2.jpg" alt="">
+        </div>
+    </ng-template>
+</p-splitter>
+
+<h1 class="game-text-title">YU-GI-OH</h1>
+
+    <div class="">
+
+    </div>
+    <p-card styleClass="rules-box" [style]="{}">
+        <p>Este é um texto dentro da caixa do PrimeNG. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates incidunt ex eum enim deleniti qui non nemo, perspiciatis, consequuntur omnis soluta aut, maxime aperiam magni iste praesentium a? Animi, voluptatum.
+        Molestiae, fugiat! Blanditiis error dicta nam sapiente, doloremque fugit corrupti impedit sequi earum iure quos odio perspiciatis saepe necessitatibus explicabo quod est omnis consequatur doloribus voluptatibus possimus reiciendis dolore nisi?
+        Ex, neque et provident, sapiente, aperiam odio rem doloribus nulla necessitatibus minus voluptatibus architecto? Quam dignissimos officia impedit unde illum? Officia hic aut ea commodi iure amet ipsam assumenda porro!
+        Similique molestias ad deserunt corrupti dolores temporibus architecto nesciunt dignissimos aliquid incidunt! Adipisci iusto deserunt veniam assumenda aliquam nisi tenetur porro consequuntur ipsam, cum commodi veritatis eveniet quod ex voluptatem.
+        Deserunt sapiente eius sit ipsa velit commodi dolore perspiciatis ut explicabo culpa necessitatibus, dicta voluptatum aperiam molestias minima, voluptate illo vero odit modi voluptas numquam rerum? Voluptatibus quam veritatis hic!
+        Deleniti, qui tempore molestiae delectus similique fugiat aperiam laborum enim soluta inventore saepe, eum quam, repudiandae hic cumque! Sapiente eaque corporis, magni dolore iusto vero sit quis iste recusandae pariatur!
+        Laborum natus ullam modi consequuntur delectus adipisci, incidunt harum animi iste ex laboriosam officiis nam beatae nesciunt, fuga soluta asperiores doloremque veritatis autem consequatur facere velit perferendis! Earum, neque consectetur.
+        Iste sequi nisi dignissimos magnam odit laboriosam suscipit ipsum deleniti nobis odio consequatur deserunt totam reprehenderit recusandae iusto minima, veniam, repellat repudiandae obcaecati, nihil quia! Vitae ad nihil repellendus consectetur.
+        Aspernatur sapiente iusto error porro atque. Adipisci iure a quisquam debitis molestiae architecto ducimus, maiores distinctio, nulla inventore perferendis blanditiis id sequi tenetur, est sunt qui nemo quam illo vero.
+        Nobis quaerat doloribus similique distinctio quibusdam at praesentium ex! Eum, a qui, ea magnam maxime quo earum aliquam, dolorum perferendis repellat iure modi ut nihil explicabo ratione doloremque sapiente laudantium.</p>
+    </p-card>
+
+</div>
+
+<router-outlet></router-outlet>
