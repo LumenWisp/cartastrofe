@@ -14,10 +14,6 @@ import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-l
 
 export const routes: Routes = [
   {
-    path: '**',
-    redirectTo: 'login',
-  },
-  {
     path: 'rooms',
     component: RoomsComponent,
     title: 'Room',
@@ -69,5 +65,9 @@ export const routes: Routes = [
         component: CreateLayoutComponent,
       }
     ]
-  }
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
+  },
 ];

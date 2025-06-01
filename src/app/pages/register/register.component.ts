@@ -4,7 +4,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -19,10 +19,14 @@ export class RegisterComponent {
     password: new FormControl('', [Validators.required])
   });
 
+  constructor(
+    private router: Router
+  ) {}
+
   onSubmit() {
     if (this.registerForm.valid) {
       console.log('Registro feito com sucesso');
-      // Redirecionar para a página principal
+      this.router.navigate(['/my-games']);
     } else {
       console.log('Formulário inválido');
     }

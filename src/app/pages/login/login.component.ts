@@ -4,7 +4,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -18,10 +18,14 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required])
   });
 
+  constructor(
+    private router: Router
+  ) {}
+
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Login feito com sucesso');
-      // Redirecionar para a página principal
+      this.router.navigate(['/my-games']);
     } else {
       console.log('Formulário inválido');
     }
