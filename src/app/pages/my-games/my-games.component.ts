@@ -7,6 +7,8 @@ import { ModalCreateGameComponent } from '../../components/modal-create-game/mod
 import { ButtonModule } from 'primeng/button';
 
 import { GameInfo } from '../../types/game-info';
+import { GameInfoService } from '../../services/game-info.service';
+import { UserLoggedService } from '../../services/user-logged.service';
 import { User } from '../../types/user';
 
 @Component({
@@ -17,6 +19,20 @@ import { User } from '../../types/user';
 })
 export class MyGamesComponent {
   gamesInfo: GameInfo[] = [];
+
+  constructor(
+    private gameInfoService: GameInfoService,
+    private userLoggedService: UserLoggedService
+  ){}
+
+  ngOnInit(){
+    this.gamesInfo = this.gameInfoService.getGameInfosByUserID(this.userLoggedService.getUserLogged().userID)
+  }
+
+  get games(){
+    return this.gameInfoService.getGameInfosByUserID(this.userLoggedService.getUserLogged().userID)
+  }
+
 //  gamesInfo: GameInfo[] = [
 //    {
 //      name: 'Exploding Kittens',
