@@ -7,6 +7,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { User } from '../../types/user';
 import {UserService} from '../../services/user-service.service'
+import {UserLoggedService} from '../../services/user-logged.service'
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,8 @@ export class LoginComponent {
   
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private userLoggedService: UserLoggedService
   ) {}
 
   ngOnInit(){
@@ -42,7 +44,11 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid && this.users.filter(user => user.email === this.emailInput && user.password === this.passwordInput).length === 1) {
+
+      this.userLoggedService.setUserLogged(this.userService.findUser(this.emailInput, this.passwordInput));
+
       console.log('Login feito com sucesso');
+      console.log(this.userLoggedService.getUserLogged())
       this.router.navigate(['/my-games']);
     }
     else {

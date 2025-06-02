@@ -16,88 +16,77 @@ import { User } from '../../types/user';
   styleUrl: './my-games.component.css',
 })
 export class MyGamesComponent {
-  gamesInfo: GameInfo[] = [
-    {
-      name: 'Exploding Kittens',
-      description: 'Joguin do gato explosivo cabum.',
-      countPlayersMin: 2,
-      countPlayersMax: 10,
-      countCards: 150,
-    },
-    {
-      name: 'Yugioh',
-      description: 'Joguin do protagonista que mais roubou na história dos jogos de cartas.',
-      countPlayersMin: 2,
-      countPlayersMax: 2,
-      countCards: 1000,
-    },
-    {
-      name: 'Uno',
-      description: 'Joguin de destruição de amizades.',
-      countPlayersMin: 2,
-      countCards: 100,
-    },
-        {
-      name: 'Exploding Kittens',
-      description: 'Joguin do gato explosivo cabum.',
-      countPlayersMin: 2,
-      countPlayersMax: 10,
-      countCards: 150,
-    },
-    {
-      name: 'Yugioh',
-      description: 'Joguin do protagonista que mais roubou na história dos jogos de cartas.',
-      countPlayersMin: 2,
-      countPlayersMax: 2,
-      countCards: 1000,
-    },
-    {
-      name: 'Uno',
-      description: 'Joguin de destruição de amizades.',
-      countPlayersMin: 2,
-      countCards: 100,
-    },
-        {
-      name: 'Exploding Kittens',
-      description: 'Joguin do gato explosivo cabum.',
-      countPlayersMin: 2,
-      countPlayersMax: 10,
-      countCards: 150,
-    },
-    {
-      name: 'Yugioh',
-      description: 'Joguin do protagonista que mais roubou na história dos jogos de cartas.',
-      countPlayersMin: 2,
-      countPlayersMax: 2,
-      countCards: 1000,
-    },
-    {
-      name: 'Uno',
-      description: 'Joguin de destruição de amizades.',
-      countPlayersMin: 2,
-      countCards: 100,
-    },
-        {
-      name: 'Exploding Kittens',
-      description: 'Joguin do gato explosivo cabum.',
-      countPlayersMin: 2,
-      countPlayersMax: 10,
-      countCards: 150,
-    },
-    {
-      name: 'Yugioh',
-      description: 'Joguin do protagonista que mais roubou na história dos jogos de cartas.',
-      countPlayersMin: 2,
-      countPlayersMax: 2,
-      countCards: 1000,
-    },
-    {
-      name: 'Uno',
-      description: 'Joguin de destruição de amizades.',
-      countPlayersMin: 2,
-      countCards: 100,
-    },
-  ];
+  gamesInfo: GameInfo[] = [];
+//  gamesInfo: GameInfo[] = [
+//    {
+//      name: 'Exploding Kittens',
+//      countPlayersMin: 2,
+//      countPlayersMax: 10,
+//      countCards: 150,
+//    },
+//    {
+//      name: 'Yugioh',
+//      countPlayersMin: 2,
+//      countPlayersMax: 2,
+//      countCards: 1000,
+//    },
+//    {
+//      name: 'Uno',
+//      countPlayersMin: 2,
+//      countCards: 100,
+//    },
+//        {
+//      name: 'Exploding Kittens',
+//      countPlayersMin: 2,
+//      countPlayersMax: 10,
+//      countCards: 150,
+//    },
+//    {
+//      name: 'Yugioh',
+//      countPlayersMin: 2,
+//      countPlayersMax: 2,
+//      countCards: 1000,
+//    },
+//    {
+//      name: 'Uno',
+//      countPlayersMin: 2,
+//      countCards: 100,
+//    },
+//        {
+//      name: 'Exploding Kittens',
+//      countPlayersMin: 2,
+//      countPlayersMax: 10,
+//      countCards: 150,
+//    },
+//    {
+//      name: 'Yugioh',
+//      countPlayersMin: 2,
+//      countPlayersMax: 2,
+//      countCards: 1000,
+//    },
+//    {
+//      name: 'Uno',
+//      countPlayersMin: 2,
+//      countCards: 100,
+//    },
+//        {
+//      name: 'Exploding Kittens',
+//      countPlayersMin: 2,
+//      countPlayersMax: 10,
+//      countCards: 150,
+//    },
+//    {
+//      name: 'Yugioh',
+//      countPlayersMin: 2,
+//      countPlayersMax: 2,
+//      countCards: 1000,
+//    },
+//    {
+//      name: 'Uno',
+//      countPlayersMin: 2,
+//      countCards: 100,
+//    },
+//  ];
 
   showCreateGameDialog: boolean = false;
 

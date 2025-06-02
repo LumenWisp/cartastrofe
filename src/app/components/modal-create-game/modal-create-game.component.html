@@ -6,14 +6,14 @@
   <div class="form-container">
     <div>
       <label for="gameName">Nome</label>
-      <input pInputText id="gameName" placeholder="Digite o nome do jogo">
+      <input pInputText id="gameName" placeholder="Digite o nome do jogo" [(ngModel)]="gameName">
     </div>
 
     <div>
       <label for="gameMode">Modo</label>
-      <p-dropdown placeholder="Selecione o modo" id="gameMode" [options]="modes"></p-dropdown>
+      <p-dropdown placeholder="Selecione o modo" id="gameMode" [options]="modes" [(ngModel)]="gameMode" ></p-dropdown>
     </div>
 
-    <button type="button" class="create-button" (click)="close()">CRIAR</button>
+    <button type="button" class="create-button" (click)="close();createGame()">CRIAR</button>
   </div>
 </p-dialog>

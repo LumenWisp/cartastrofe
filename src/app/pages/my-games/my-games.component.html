@@ -3,13 +3,13 @@
   <input type="text" pInputText placeholder="Search" />
 </p-iconfield>
 
+<p-button (click)="showDialog()" label="Show" />
+
 <div class="panels-container">
   @for (gameInfo of gamesInfo; track $index) {
     <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
   }
 </div>
-
-<p-button (click)="showDialog()" label="Show" />
 
 <app-modal-create-game
   [(display)]="showCreateGameDialog">

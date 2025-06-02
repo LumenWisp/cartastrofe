@@ -51,4 +51,10 @@ export class UserService {
       this.usersSubject.next(current);
     }
   }
+
+  findUser(email: string, password: string): User{
+
+    return this.getUsers().filter(user => user.email === email && user.password === password)[0];
+    }
+
 }
