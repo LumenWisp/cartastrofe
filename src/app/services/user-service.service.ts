@@ -12,7 +12,17 @@ export class UserService {
   users$: Observable<User[]> = this.usersSubject.asObservable();
   private usersIDGenerator = 1;
 
+  private userLogged: User = {userID: 0, name: '', email: '', password:''};
+
   constructor() {}
+
+  setUserLogged(user: User){
+    this.userLogged = user;
+  }
+
+  getUserLogged(): User{
+    return this.userLogged;
+  }
 
   // Retorna o valor atual da lista
   getUsers(): User[] {

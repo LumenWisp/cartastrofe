@@ -5,11 +5,10 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { ButtonModule } from 'primeng/button';
+import { UserService } from '../../services/user-service.service';
 
 import { GameInfo } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
-import { UserLoggedService } from '../../services/user-logged.service';
-import { User } from '../../types/user';
 
 @Component({
   selector: 'app-my-games',
@@ -22,15 +21,15 @@ export class MyGamesComponent {
 
   constructor(
     private gameInfoService: GameInfoService,
-    private userLoggedService: UserLoggedService
+    private userService: UserService
   ){}
 
   ngOnInit(){
-    this.gamesInfo = this.gameInfoService.getGameInfosByUserID(this.userLoggedService.getUserLogged().userID)
+    this.gamesInfo = this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID)
   }
 
   get games(){
-    return this.gameInfoService.getGameInfosByUserID(this.userLoggedService.getUserLogged().userID)
+    return this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID)
   }
 
 //  gamesInfo: GameInfo[] = [

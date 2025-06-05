@@ -6,7 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GameInfo } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
-import { UserLoggedService } from '../../services/user-logged.service';
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-modal-create-game',
@@ -38,7 +38,7 @@ export class ModalCreateGameComponent {
 
   constructor(
     private gameInfoService: GameInfoService,
-    private userLoggedService: UserLoggedService
+    private userService: UserService
   ){}
 
   close() {
@@ -55,11 +55,11 @@ export class ModalCreateGameComponent {
         countPlayersMin: 0,
         countPlayersMax: 0,
         countCards: 0,
-        userID: this.userLoggedService.getUserLogged().userID
+        userID: this.userService.getUserLogged().userID
       }
     );
 
     console.log(this.gameInfoService.getGameInfos())
-    console.log(this.gameInfoService.getGameInfosByUserID(this.userLoggedService.getUserLogged().userID))
+    console.log(this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID))
   }
 }
