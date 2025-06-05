@@ -21,33 +21,21 @@ export class GameInfoService {
     return this.gameInfoIDGenerator++;
   }
 
-  // Substitui a lista inteira
-  setGameInfos(gameInfos: GameInfo[]): void {
-    this.gameInfosSubject.next(gameInfos);
-  }
-
   // Adiciona um novo GameInfo
   addGameInfo(gameInfo: GameInfo): void {
     const current = this.gameInfosSubject.value;
     this.gameInfosSubject.next([...current, gameInfo]);
   }
 
-  // Remove GameInfo por índice
-  removeGameInfo(index: number): void {
+  // Remove GameInfo por ID
+  removeGameInfo(id: number): void {
     const current = [...this.gameInfosSubject.value];
-    if (index >= 0 && index < current.length) {
-      current.splice(index, 1);
-      this.gameInfosSubject.next(current);
-    }
-  }
+    const index = current.findIndex(game => game.gameInfoID === id);
 
-  // Atualiza GameInfo por índice
-  updateGameInfo(index: number, updated: GameInfo): void {
-    const current = [...this.gameInfosSubject.value];
-    if (index >= 0 && index < current.length) {
-      current[index] = updated;
-      this.gameInfosSubject.next(current);
-    }
+    if (index !== -1) {
+        current.splice(index, 1);
+        this.gameInfosSubject.next(current);
+      }
   }
 
   // Busca todos os GameInfo com base no userID

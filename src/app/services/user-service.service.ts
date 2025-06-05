@@ -44,27 +44,9 @@ export class UserService {
     this.usersSubject.next([...current, user]);
   }
 
-  // Remove usuário por índice
-  removeUser(index: number) {
-    const current = [...this.usersSubject.value];
-    if (index >= 0 && index < current.length) {
-      current.splice(index, 1);
-      this.usersSubject.next(current);
-    }
-  }
-
-  // Atualiza um usuário existente por índice
-  updateUser(index: number, updatedUser: User) {
-    const current = [...this.usersSubject.value];
-    if (index >= 0 && index < current.length) {
-      current[index] = updatedUser;
-      this.usersSubject.next(current);
-    }
-  }
-
   findUser(email: string, password: string): User{
 
     return this.getUsers().filter(user => user.email === email && user.password === password)[0];
-    }
+  }
 
 }
