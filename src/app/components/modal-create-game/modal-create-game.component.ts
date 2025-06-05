@@ -22,7 +22,7 @@ export class ModalCreateGameComponent {
   gameName: string = ''
   gameMode: string = ''
   game: GameInfo = {
-    gameInfoID : 0,
+    id : 0,
     name : '',
     countPlayersMin : 0,
     countPlayersMax : 0,
@@ -50,7 +50,7 @@ export class ModalCreateGameComponent {
 
     this.gameInfoService.addGameInfo(
       {
-        gameInfoID: this.gameInfoService.getGameInfoNextID(),
+        id: this.gameInfoService.getGameInfoNextID(),
         name: this.gameName,
         countPlayersMin: 0,
         countPlayersMax: 0,

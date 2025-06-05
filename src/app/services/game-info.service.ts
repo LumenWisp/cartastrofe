@@ -30,7 +30,7 @@ export class GameInfoService {
   // Remove GameInfo por ID
   removeGameInfo(id: number): void {
     const current = [...this.gameInfosSubject.value];
-    const index = current.findIndex(game => game.gameInfoID === id);
+    const index = current.findIndex(game => game.id === id);
 
     if (index !== -1) {
         current.splice(index, 1);
