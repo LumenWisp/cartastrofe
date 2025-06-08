@@ -19,12 +19,12 @@ export class LoginComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required])
   });
-  
+
   emailInput = '';
   passwordInput = '';
   users: User[] = [];
   userTest: User = {userID: 0, name: 'a', email: 'a@a', password:'a'};
-  
+
   constructor(
     private router: Router,
     private userService: UserService
@@ -35,9 +35,6 @@ export class LoginComponent {
       this.userService.addUser(this.userTest);
     }
     this.users = this.userService.getUsers();
-    console.log("ONICHAN");
-    console.log(this.users);
-    console.log(this.users[0].userID);
   }
 
   onSubmit() {
@@ -45,12 +42,9 @@ export class LoginComponent {
 
       this.userService.setUserLogged(this.userService.findUser(this.emailInput, this.passwordInput));
 
-      console.log('Login feito com sucesso');
-      console.log(this.userService.getUserLogged())
       this.router.navigate(['/my-games']);
     }
     else {
-      console.log('Formulário inválido');
       this.emailInput = '';
       this.passwordInput = '';
     }

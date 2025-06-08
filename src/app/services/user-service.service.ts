@@ -18,6 +18,7 @@ export class UserService {
 
   setUserLogged(user: User){
     this.userLogged = user;
+    localStorage.setItem('user', JSON.stringify(user))
   }
 
   getUserLogged(): User{

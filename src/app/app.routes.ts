@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-// layouts
+
 import { AuthComponent } from './layout/auth/auth.component';
 import { AppMainComponent } from './layout/app-main/app-main.component';
-// pages
+
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { MyGamesComponent } from './pages/my-games/my-games.component';
@@ -13,11 +13,41 @@ import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
 
+import { authGuard } from './auth.guard';
+
 export const routes: Routes = [
   {
-    path: 'rooms',
-    component: RoomsComponent,
-    title: 'Room',
+    path: '',
+    component: AppMainComponent,
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
+    children: [
+      {
+        path: 'my-games',
+        component: MyGamesComponent,
+        title: 'My Games',
+      },
+      {
+        path: 'my-layouts',
+        component: MyLayoutsComponent,
+        title: 'My Layouts',
+      },
+      {
+        path: 'rooms',
+        component: RoomsComponent,
+        title: 'Rooms',
+      },
+      {
+        path: 'my-layouts/create-layout',
+        component: CreateLayoutComponent,
+        title: 'Create Layout',
+      },
+      {
+        path: 'my-games/game-description',
+        component: GameDescriptionComponent,
+        title: 'Game Description',
+      },
+    ],
   },
   {
     path: '',
@@ -42,37 +72,7 @@ export const routes: Routes = [
         path: 'reset-password/:token',
         component: ResetPasswordComponent,
         title: 'Redefinir Senha',
-      }
-    ]
-  },
-  {
-    path: '',
-    component: AppMainComponent,
-    children: [
-      {
-        path: 'my-games',
-        component: MyGamesComponent,
       },
-      {
-        path: 'my-layouts',
-        component: MyLayoutsComponent
-      },
-      {
-        path: 'rooms',
-        component: RoomsComponent,
-      },
-      {
-        path: 'my-layouts/create-layout',
-        component: CreateLayoutComponent,
-      },
-      {
-        path: 'my-games/game-description',
-        component: GameDescriptionComponent,
-      }
-    ]
-  },
-  {
-    path: '**',
-    redirectTo: 'login',
+    ],
   },
 ];
