@@ -1,53 +1,119 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../types/user';
 
+/**
+ * Serviço para gerenciador os usuários do sistema
+ *
+ * Esta implementação usa o localstorage como armazenamento para:
+ * - usuário registrados
+ * - usuário logado
+ *
+ * Futuramente será trocado para um banco de dados.
+ *
+ * OBS.: Não utiliza dados em memória, uma vez que são voláteis e resetam quando o serviço
+ * é reutilizado (por exemplo, tentar acessar uma rota manualmente faz resetar os dados).
+ */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-  // Estado interno da lista de usuários
-  private usersSubject = new BehaviorSubject<User[]>([]);
-  // Observable público para os componentes se inscreverem
-  users$: Observable<User[]> = this.usersSubject.asObservable();
-  private usersIDGenerator = 1;
+  // chaves para acessar o localstorage (futuramente serão
+  // removidas quando o sistema estiver usando um banco de dados)
+  static readonly USER_LOGGED = 'user';
+  static readonly USERS = 'users';
+  static readonly USER_ID = 'id';
 
-  private userLogged: User = {userID: 0, name: '', email: '', password:''};
-
-  constructor() {}
-
-  setUserLogged(user: User){
-    this.userLogged = user;
-    localStorage.setItem('user', JSON.stringify(user))
+  private setUserLogged(user: User): void {
+    localStorage.setItem(UserService.USER_LOGGED, JSON.stringify(user));
   }
 
-  getUserLogged(): User{
-    return this.userLogged;
+  /**
+   * Retorna o usuário logado se houver, caso contrário, null é retornado.
+   */
+  getUserLogged(): User | null {
+    const user = localStorage.getItem(UserService.USER_LOGGED);
+
+    if (user === null) return null;
+
+    return JSON.parse(user);
   }
 
-  // Retorna o valor atual da lista
+  /**
+   * Retorna se o usuário está logado ou não.
+   */
+  isUserLogged(): boolean {
+    return localStorage.getItem(UserService.USER_LOGGED) !== null;
+  }
+
+  /**
+   * Retorna a lista de usuários cadastrados.
+   */
   getUsers(): User[] {
-    return this.usersSubject.value;
+    const users = localStorage.getItem(UserService.USERS);
+
+    if (users === null) return [];
+
+    return JSON.parse(users);
   }
 
-  getUsersNextID(){
-    return this.usersIDGenerator++;
+  /**
+   * Retorna o próximo id de usuário e faz um auto increment para o próximo id.
+   */
+  private getNextUserId() {
+    const userId = localStorage.getItem(UserService.USER_ID);
+    let id = 0;
+
+    if (userId !== null) id = parseInt(JSON.parse(userId)) + 1;
+    localStorage.setItem(UserService.USER_ID, JSON.stringify(id));
+
+    return id;
   }
 
-  // Substitui a lista inteira
-  setUsers(users: User[]) {
-    this.usersSubject.next(users);
+  /**
+   * Registra um usuário e o salva.
+   * @param name nome do usuário
+   * @param email email do usuário
+   * @param password senha do usuário
+   */
+  registerUser(username: string, email: string, password: string): void {
+    const user: User = {
+      id: this.getNextUserId(),
+      username,
+      email,
+      password,
+    };
+
+    const users = this.getUsers();
+    users.push(user);
+    localStorage.setItem(UserService.USERS, JSON.stringify(users));
   }
 
-  // Adiciona um novo usuário à lista
-  addUser(user: User) {
-    const current = this.usersSubject.value;
-    this.usersSubject.next([...current, user]);
+  /**
+   * Faz o login do usuário e o coloca como logado se existir o registro salvo.
+   * @param email email do usuário
+   * @param password senha do usuário
+   */
+  loginUser(email: string, password: string): void {
+    const users = this.getUsers();
+
+    const user = users.find(user => user.email === email && user.password === password)
+    if (user) this.setUserLogged(user)
   }
 
-  findUser(email: string, password: string): User{
 
-    return this.getUsers().filter(user => user.email === email && user.password === password)[0];
+  /**
+   * Retorna se o email de um usuário existe ou não.
+   * @param email email do usuário
+   */
+  emailExists(email: string): boolean {
+    const users = this.getUsers();
+
+    return users.some(user => user.email === email)
   }
 
+  findUser(email: string, password: string): User {
+    return this.getUsers().filter(
+      (user) => user.email === email && user.password === password
+    )[0];
+  }
 }

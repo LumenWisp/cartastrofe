@@ -3,50 +3,52 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { User } from '../../types/user';
-import {UserService} from '../../services/user-service.service'
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-login',
-  imports: [FloatLabelModule, InputTextModule, PasswordModule, ReactiveFormsModule, RouterLink, ButtonModule],
+  imports: [
+    FloatLabelModule,
+    InputTextModule,
+    PasswordModule,
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../shared/auth.css'],
 })
 export class LoginComponent {
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required])
+    password: new FormControl('', [Validators.required]),
   });
 
-  emailInput = '';
-  passwordInput = '';
-  users: User[] = [];
-  userTest: User = {userID: 0, name: 'a', email: 'a@a', password:'a'};
-
-  constructor(
-    private router: Router,
-    private userService: UserService
-  ) {}
-
-  ngOnInit(){
-    if(this.userService.getUsers().length === 0){
-      this.userService.addUser(this.userTest);
-    }
-    this.users = this.userService.getUsers();
-  }
+  constructor(private router: Router, private userService: UserService) {}
 
   onSubmit() {
-    if (this.loginForm.valid && this.users.filter(user => user.email === this.emailInput && user.password === this.passwordInput).length === 1) {
-
-      this.userService.setUserLogged(this.userService.findUser(this.emailInput, this.passwordInput));
+    if (
+      this.loginForm.valid &&
+      this.loginForm.value.email &&
+      this.loginForm.value.password &&
+      this.userService.emailExists(this.loginForm.value.email)
+    ) {
+      this.userService.loginUser(
+        this.loginForm.value.email,
+        this.loginForm.value.password
+      );
 
       this.router.navigate(['/my-games']);
-    }
-    else {
-      this.emailInput = '';
-      this.passwordInput = '';
     }
   }
 }
