@@ -2,64 +2,62 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { GameInfo } from '../../types/game-info';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { GameInfoService } from '../../services/game-info.service';
-import { UserService } from '../../services/user-service.service';
+import { GameModes } from '../../types/game-mode';
 
 @Component({
   selector: 'app-modal-create-game',
   standalone: true,
-  imports: [DialogModule, ButtonModule, InputTextModule, DropdownModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    DialogModule,
+    ButtonModule,
+    InputTextModule,
+    RadioButtonModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
   templateUrl: './modal-create-game.component.html',
-  styleUrl: './modal-create-game.component.css'
+  styleUrl: './modal-create-game.component.css',
 })
 export class ModalCreateGameComponent {
-  @Input() display: boolean = false;
-  @Output() displayChange = new EventEmitter<boolean>();
+  @Input() showModal = false;
+  @Output() showModalChange = new EventEmitter<boolean>();
 
-  gameName: string = ''
-  gameMode: string = ''
-  game: GameInfo = {
-    id : 0,
-    name : '',
-    countPlayersMin : 0,
-    countPlayersMax : 0,
-    countCards : 0,
-    userID : 0
-  }
+  form = new FormGroup({
+    gameName: new FormControl('', [Validators.required]),
+    gameMode: new FormControl(GameModes.STRUCTURED, [Validators.required]),
+  });
 
   modes = [
-    { label: 'Estruturado', value: 'estruturado' },
-    { label: 'Livre', value: 'livre' },
+    { label: 'Estruturado', value: GameModes.STRUCTURED },
+    { label: 'Livre', value: GameModes.FREE },
   ];
-
 
   constructor(
     private gameInfoService: GameInfoService,
-    private userService: UserService
-  ){}
+  ) {}
 
   close() {
-    this.display = false;
-    this.displayChange.emit(this.display);
+    this.showModalChange.emit(false);
   }
 
-  createGame(){
-
-    // this.gameInfoService.addGameInfo(
-    //   {
-    //     id: this.gameInfoService.getGameInfoNextID(),
-    //     name: this.gameName,
-    //     countPlayersMin: 0,
-    //     countPlayersMax: 0,
-    //     countCards: 0,
-    //     userID: this.userService.getUserLogged().userID
-    //   }
-    // );
-
-    // console.log(this.gameInfoService.getGameInfos())
-    // console.log(this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID))
+  createGame() {
+    if (this.form.valid && this.form.value.gameName) {
+      this.gameInfoService.addGameInfo({
+        name: this.form.value.gameName,
+        countPlayersMin: 0,
+        countPlayersMax: 0,
+        countCards: 0,
+      });
+      this.close();
+    }
   }
 }

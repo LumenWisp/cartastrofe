@@ -1,19 +1,40 @@
-<p-dialog [(visible)]="display" [modal]="true" [closable]="false" [style]="{width: '400px'}">
-  <button class="close-button" (click)="close()">×</button>
-
-  <h2>Criar novo jogo</h2>
-
-  <div class="form-container">
+<p-dialog
+  header="Criar novo jogo"
+  [(visible)]="showModal"
+  (onHide)="close()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <form class="form" [formGroup]="form" (submit)="createGame()">
     <div>
-      <label for="gameName">Nome</label>
-      <input pInputText id="gameName" placeholder="Digite o nome do jogo" [(ngModel)]="gameName">
+      <label for="gameName" class="label">Nome do jogo</label>
+      <input
+        id="gameName"
+        pInputText
+        placeholder="Digite o nome do jogo"
+        formControlName="gameName"
+      />
     </div>
 
     <div>
-      <label for="gameMode">Modo</label>
-      <p-dropdown placeholder="Selecione o modo" id="gameMode" [options]="modes" [(ngModel)]="gameMode" ></p-dropdown>
+      <div>Modo de jogo</div>
+
+      <div class="gamemode-groups">
+        @for (gameMode of modes; track $index) {
+          <div class="gamemode-group">
+            <p-radio-button
+              name="gameMode"
+              [inputId]="gameMode.value"
+              [value]="gameMode.value"
+              formControlName="gameMode"
+            />
+            <label [for]="gameMode.value" class="label">{{gameMode.label}}</label>
+          </div>
+        }
+      </div>
     </div>
 
-    <button type="button" class="create-button" (click)="close();createGame()">CRIAR</button>
-  </div>
+    <p-button type="submit" label="CRIAR" />
+  </form>
 </p-dialog>
