@@ -1,15 +1,15 @@
-<div class="panels-container">
-    <div class="add-box" (click) = "goToCreateLayoutPage()">
-        <i class="pi pi-plus plus-icon"></i>
-    </div>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
-    <app-card-template></app-card-template>
+<div class="page">
+  <div class="panels-container" #panels>
+    <button class="add-box" pButton (click)="goToCreateLayoutPage()">
+      <span class="pi pi-plus plus-icon" pButtonIcon></span>
+    </button>
+
+    @for (cardLayout of (cardLayouts$ | async); track $index) {
+      <app-card-template></app-card-template>
+    }
+
+    @for (gameInfo of remainingGameInfoSpace(); track $index) {
+      <div class="placeholder-card-layout"></div>
+    }
+  </div>
 </div>
-<router-outlet></router-outlet>

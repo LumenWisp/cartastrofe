@@ -59,7 +59,6 @@ export class GameInfoService {
    */
   addGameInfo(gameInfoData: Omit<GameInfo, 'id' | 'userId'>): void {
     const userLogged = this.userService.getUserLogged();
-
     if (!userLogged) return;
 
     const gameInfo: GameInfo = {

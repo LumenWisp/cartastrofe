@@ -1,51 +1,43 @@
 import { Injectable } from '@angular/core';
 import { CardLayout } from '../types/card-layout';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { UserService } from './user-service.service';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardLayoutService {
+  // chaves para acessar o localstorage (futuramente serão removidas quando o sistema estiver usando um banco de dados)
+  static readonly CARD_LAYOUT = 'cardLayout_games';
+  static readonly CARD_LAYOUT_ID = 'cardLayout_id';
+
   private cardLayoutsSubject = new BehaviorSubject<CardLayout[]>([]);
-  cardLayouts$: Observable<CardLayout[]> = this.cardLayoutsSubject.asObservable();
-  private cardLayoutIDGenerator = 1;
+  readonly cardLayouts$: Observable<CardLayout[]> = this.cardLayoutsSubject.asObservable();
 
-  constructor() {}
+  constructor(
+    private localStorageService: LocalStorageService,
+    private userService: UserService
+  ) {}
 
-  // Retorna a lista atual
-  getCardLayouts(): CardLayout[] {
-    return this.cardLayoutsSubject.value;
+  /**
+   * Pega os cardLayouts do usuário logado.
+   */
+  fetchCardLayouts() {
+    const userLogged = this.userService.getUserLogged();
+    if (!userLogged) return;
+
+    const cardLayoutsValue = this.localStorageService.get(CardLayoutService.CARD_LAYOUT)
+    if (cardLayoutsValue === undefined) return;
+
+    const cardLayouts = (cardLayoutsValue as CardLayout[]).filter((gameInfo) => gameInfo.userId === userLogged.id)
+    this.cardLayoutsSubject.next(cardLayouts);
   }
 
-  getCardLayoutNextID(): number {
-    return this.cardLayoutIDGenerator++;
-  }
-
-  // Adiciona um novo CardLayout
-  addCardLayout(cardLayout: CardLayout): void {
-    const current = this.cardLayoutsSubject.value;
-    this.cardLayoutsSubject.next([...current, cardLayout]);
-  }
-
-  // Remove CardLayout por ID
-  removeCardLayout(id: number): void {
-    const current = [...this.cardLayoutsSubject.value];
-    const index = current.findIndex(layout => layout.id === id);
-
-    if (index !== -1) {
-      current.splice(index, 1);
-      this.cardLayoutsSubject.next(current);
-    }
-  }
-
-  // Atualiza CardLayout por ID
-  updateCardLayoutByID(id: number, updated: CardLayout): void {
-    const current = [...this.cardLayoutsSubject.value];
-    const index = current.findIndex(layout => layout.id === id);
-
-    if (index !== -1) {
-      current[index] = updated;
-      this.cardLayoutsSubject.next(current);
-    }
+  /**
+   * Retorna o total de cardLayouts do usuário logado.
+   */
+  get totalCardLayouts() {
+    return this.cardLayoutsSubject.value.length;
   }
 }

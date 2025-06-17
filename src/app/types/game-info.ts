@@ -1,8 +1,8 @@
 export interface GameInfo {
-  id: number,
+  id: number;
   name: string;
   countPlayersMin: number;
   countPlayersMax?: number;
   countCards: number;
-  userId: number
+  userId: number;
 }
