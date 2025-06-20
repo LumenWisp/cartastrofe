@@ -43,7 +43,7 @@ export const routes: Routes = [
         title: 'Create Layout',
       },
       {
-        path: 'my-games/game-description',
+        path: 'my-games/game-description/:gameId',
         component: GameDescriptionComponent,
         title: 'Game Description',
       },

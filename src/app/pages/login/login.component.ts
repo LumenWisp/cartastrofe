@@ -40,15 +40,19 @@ export class LoginComponent {
     if (
       this.loginForm.valid &&
       this.loginForm.value.email &&
-      this.loginForm.value.password &&
-      this.userService.emailExists(this.loginForm.value.email)
+      this.loginForm.value.password
     ) {
       this.userService.loginUser(
         this.loginForm.value.email,
         this.loginForm.value.password
-      );
-
-      this.router.navigate(['/my-games']);
+      ).subscribe({
+        error: (err) => {
+          console.error('Login failed:', err);
+        },
+        complete: () => {
+          this.router.navigate(['/my-games']);
+        }
+      });
     }
   }
 }

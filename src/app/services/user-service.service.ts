@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from '../types/user';
 import { LocalStorageService } from './local-storage.service';
+import { Observable } from 'rxjs';
 
 /**
  * Serviço para gerenciar os usuários do sistema
@@ -51,8 +52,12 @@ export class UserService {
   /**
    * Retorna a lista de usuários cadastrados.
    */
-  getUsers(): User[] {
-    return this.localStorageService.get(UserService.USERS) ?? [];
+  getUsers(): Observable<User[]> {
+    return new Observable<User[]>(observer => {
+      const users = this.localStorageService.get(UserService.USERS) ?? [];
+      observer.next(users);
+      observer.complete();
+    });
   }
 
   /**
@@ -68,18 +73,26 @@ export class UserService {
    * @param email email do usuário
    * @param password senha do usuário
    */
-  registerUser(username: string, email: string, password: string): void {
-    const users = this.getUsers();
+  registerUser(username: string, email: string, password: string): Observable<void> {
+    return new Observable<void>(observer => {
+      this.getUsers().subscribe({
+        next: users => {
+          if (users.some((user) => user.email === email)) {
+            observer.error('Email já cadastrado');
+            return;
+          }
 
-    if (this.emailExists(email)) return;
-
-    users.push({
-      id: this.getNextUserId(),
-      username,
-      email,
-      password,
+          users.push({
+            id: this.getNextUserId(),
+            username,
+            email,
+            password,
+          });
+          this.localStorageService.set(UserService.USERS, users);
+          observer.complete();
+        }
+      })
     });
-    this.localStorageService.set(UserService.USERS, users);
   }
 
   /**
@@ -87,11 +100,21 @@ export class UserService {
    * @param email email do usuário
    * @param password senha do usuário
    */
-  loginUser(email: string, password: string): void {
-    const users = this.getUsers();
+  loginUser(email: string, password: string): Observable<void> {
+    return new Observable<void>(observer => {
+      this.getUsers().subscribe({
+        next: users => {
+          const user = users.find((user) => user.email === email && user.password === password);
+          if (!user) {
+            observer.error('Email ou senha inválidos');
+            return;
+          }
 
-    const user = users.find((user) => user.email === email && user.password === password);
-    if (user) this.setUserLogged(user);
+          this.setUserLogged(user);
+          observer.complete();
+        }
+      })
+    });
   }
 
   /**
@@ -99,15 +122,5 @@ export class UserService {
    */
   logoutUser() {
     this.localStorageService.remove(UserService.USER_LOGGED);
-  }
-
-  /**
-   * Retorna se o email de um usuário existe ou não.
-   * @param email email do usuário
-   */
-  emailExists(email: string): boolean {
-    const users = this.getUsers();
-
-    return users.some((user) => user.email === email);
   }
 }

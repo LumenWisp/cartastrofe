@@ -3,11 +3,11 @@ import { PanelModule } from 'primeng/panel';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { GameInfo } from '../../types/game-info';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-panel-game',
-  imports: [PanelModule, AvatarGroupModule, AvatarModule],
+  imports: [PanelModule, AvatarGroupModule, AvatarModule, RouterLink],
   templateUrl: './panel-game.component.html',
   styleUrl: './panel-game.component.css',
 })

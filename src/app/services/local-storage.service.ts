@@ -57,9 +57,11 @@ export class LocalStorageService {
     const value = this.get(key);
 
     // verifica se o valor existe
-    if (value === undefined) return 0;
+    if (value === undefined) {
+      this.set(key, 0);
+      return 0;
+    }
 
-    // garante que o valor é numérico
     if (typeof value !== 'number') throw new Error(`O valor associado a ${key} não é numérico: ${value}`);
 
     const next = value + 1;

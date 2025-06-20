@@ -35,15 +35,54 @@ export class GameInfoService {
   /**
    * Pega os gameInfos do usuário logado.
    */
-  fetchGameInfos(): void {
-    const userLogged = this.userService.getUserLogged();
-    if (!userLogged) return;
+  getGameInfos(): Observable<GameInfo[]> {
+    return new Observable<GameInfo[]>(observer => {
+      const userLogged = this.userService.getUserLogged();
+      if (!userLogged) {
+        observer.next([]);
+        observer.complete();
+        return;
+      }
 
-    const gameInfosValue = this.localStorageService.get(GameInfoService.GAMES)
-    if (gameInfosValue === undefined) return;
+      const gameInfosValue = this.localStorageService.get(GameInfoService.GAMES)
+      if (gameInfosValue === undefined) {
+        observer.next([]);
+        observer.complete();
+        return;
+      }
 
-    const gameInfos = (gameInfosValue as GameInfo[]).filter((gameInfo) => gameInfo.userId === userLogged.id)
-    this.gameInfosSubject.next(gameInfos);
+      const gameInfos = (gameInfosValue as GameInfo[]).filter((gameInfo) => gameInfo.userId === userLogged.id)
+
+      this.gameInfosSubject.next(gameInfos);
+      observer.next(gameInfos);
+      observer.complete();
+    });
+  }
+
+  /**
+   * Pega o gameInfo cujo `id === gameId`.
+   * @param gameId id do gameInfo
+   */
+  getGameInfoById(gameId: number): Observable<GameInfo | null> {
+    return new Observable<GameInfo | null>(observer => {
+      const userLogged = this.userService.getUserLogged();
+      if (!userLogged) {
+        observer.next(null);
+        observer.complete();
+        return;
+      }
+
+      const gameInfosValue = this.localStorageService.get(GameInfoService.GAMES)
+      if (gameInfosValue === undefined) {
+        observer.next(null);
+        observer.complete();
+        return;
+      }
+
+      const gameInfo = (gameInfosValue as GameInfo[]).find((gameInfo) => gameInfo.userId === userLogged.id && gameInfo.id === gameId) ?? null
+      observer.next(gameInfo);
+      observer.complete();
+    });
   }
 
   /**
@@ -57,17 +96,25 @@ export class GameInfoService {
    * Adiciona um gameInfo aos gameInfos do usuário logado.
    * @param gameInfoData informações do jogo
    */
-  addGameInfo(gameInfoData: Omit<GameInfo, 'id' | 'userId'>): void {
-    const userLogged = this.userService.getUserLogged();
-    if (!userLogged) return;
+  addGameInfo(gameInfoData: Omit<GameInfo, 'id' | 'userId'>): Observable<GameInfo | null> {
+    return new Observable<GameInfo | null>(observer => {
+      const userLogged = this.userService.getUserLogged();
+      if (!userLogged) {
+        observer.next(null);
+        observer.complete();
+        return;
+      }
 
-    const gameInfo: GameInfo = {
-      ...gameInfoData,
-      id: this.localStorageService.autoIncrement(GameInfoService.GAMES_ID),
-      userId: userLogged.id,
-    };
+      const gameInfo: GameInfo = {
+        ...gameInfoData,
+        id: this.localStorageService.autoIncrement(GameInfoService.GAMES_ID),
+        userId: userLogged.id,
+      };
 
-    this.gameInfosSubject.next([...this.gameInfosSubject.value, gameInfo]);
-    this.localStorageService.set(GameInfoService.GAMES, this.gameInfosSubject.value);
+      this.gameInfosSubject.next([...this.gameInfosSubject.value, gameInfo]);
+      this.localStorageService.set(GameInfoService.GAMES, this.gameInfosSubject.value);
+      observer.next(gameInfo);
+      observer.complete();
+    })
   }
 }

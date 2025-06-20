@@ -56,7 +56,7 @@ export class ModalCreateGameComponent {
         countPlayersMin: 0,
         countPlayersMax: 0,
         countCards: 0,
-      });
+      }).subscribe();
       this.close();
     }
   }

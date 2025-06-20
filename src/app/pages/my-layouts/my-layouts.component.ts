@@ -30,7 +30,7 @@ export class MyLayoutsComponent {
   }
 
   @HostListener('window:resize')
-  remainingGameInfoSpace() {
+  remainingCardLayoutSpace() {
     if (!this.panelsEl) return [];
     const style = getComputedStyle(this.panelsEl.nativeElement);
     const columns = style.getPropertyValue('grid-template-columns');

@@ -39,16 +39,21 @@ export class RegisterComponent {
       this.registerForm.valid &&
       this.registerForm.value.username &&
       this.registerForm.value.email &&
-      this.registerForm.value.password &&
-      !this.userService.emailExists(this.registerForm.value.email)
+      this.registerForm.value.password
     ) {
       this.userService.registerUser(
         this.registerForm.value.username,
         this.registerForm.value.email,
         this.registerForm.value.password
-      );
+      ).subscribe({
+        error: (err) => {
+          console.error('Registration failed:', err);
+        },
+        complete: () => {
+          this.router.navigate(['/login']);
+        }
+      });
 
-      this.router.navigate(['/login']);
     }
   }
 }
