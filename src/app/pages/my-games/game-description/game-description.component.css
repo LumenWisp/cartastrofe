@@ -1,9 +1,7 @@
 .top-content {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  height: 100px;
-  width: 100%;
-  overflow: hidden;
   border-bottom: 1px solid black;
 }
 
@@ -11,8 +9,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  padding-inline: 40px;
+  height: 50px;
+  width: 50px;
   border-right: 1px solid black;
   color: black;
   text-decoration: none;
@@ -20,17 +18,40 @@
 }
 
 .back-icon {
-  font-size: 2rem;
+  font-size: 1.3rem;
 }
 
 .game-name {
-  flex-grow: 1;
-  max-width: 300px;
   padding-inline: 20px;
   font-size: 1.5rem;
 }
 
 .game-banner {
-  height: 100%;
-  flex-grow: 1;
+  width: 100%;
+  object-fit: cover;
+}
+
+.content {
+  padding: 10px;
+}
+
+@media (min-width: 768px) {
+  .top-content {
+    flex-wrap: nowrap;
+  }
+
+  .back-link {
+    height: 100px;
+  }
+
+  .game-name {
+    flex-grow: 1;
+    max-width: 300px;
+  }
+
+  .game-banner {
+    width: auto;
+    height: 100px;
+    flex-grow: 1;
+  }
 }
