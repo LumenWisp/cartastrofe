@@ -6,8 +6,11 @@
 name: Link Branch to Prefixed Trello Card
 
 on:
-  create
-
+  push:
+    branches:
+      - '**'
+      - '!main'
+      - '!master'
 jobs:
   link-to-trello:
     if: github.ref_type == 'branch'
