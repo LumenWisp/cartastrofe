@@ -1,0 +1,77 @@
+# This GitHub Action links a new branch to a Trello card using its title prefix (e.g., TICKET-142).
+# It triggers when a branch is created (e.g., "feature/TICKET-142-login-fix").
+# It then searches the specified Trello board for a card named "TICKET-142..."
+# and attaches the branch URL to that card.
+
+name: Link Branch to Prefixed Trello Card
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+      - '!master'
+jobs:
+  link-to-trello:
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    
+    env:
+      TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
+      TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
+      TRELLO_BOARD_ID: ${{ secrets.TRELLO_BOARD_ID }}
+
+    steps:
+      - name: Get Branch Name
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+      - name: Parse Ticket ID from Branch Name
+        # CHANGED: This step now looks for a pattern like 'TICKET-142' or 'BUG-99'.
+        # The regex '[A-Z]+-[0-9]+' finds one or more uppercase letters, a hyphen, and one or more numbers.
+        id: parse_id
+        run: |
+          TICKET_ID=$(echo "${{ env.BRANCH_NAME }}" | grep -o -E '[A-Z]+-[0-9]+' | head -n 1)
+          if [ -z "$TICKET_ID" ]; then
+            echo "No ticket ID (e.g., TICKET-123) found in branch name. Skipping."
+            exit 0
+          else
+            echo "ticket_id=$TICKET_ID" >> $GITHUB_OUTPUT
+            echo "Found Ticket ID: $TICKET_ID"
+          fi
+
+      - name: Find Trello Card ID via Search
+        # This step runs only if a ticket ID was found.
+        # It searches the board for a card name starting with that ID.
+        id: find_card
+        if: steps.parse_id.outputs.ticket_id
+        run: |
+          TICKET_ID="${{ steps.parse_id.outputs.ticket_id }}"
+          # The API response is piped to 'jq' to extract the first matching card's ID.
+          CARD_ID=$(curl -s --request GET \
+            --url "https://api.trello.com/1/search?query=name:^${TICKET_ID}&idBoards=${{ env.TRELLO_BOARD_ID }}&modelTypes=cards&card_fields=id" \
+            --header "Authorization: OAuth oauth_consumer_key=\"${{ env.TRELLO_API_KEY }}\", oauth_token=\"${{ env.TRELLO_API_TOKEN }}\"" \
+            --header 'Accept: application/json' \
+            | jq -r '.cards[0].id')
+            
+          if [ -z "$CARD_ID" ] || [ "$CARD_ID" == "null" ]; then
+            echo "Could not find a Trello card on board ${{ env.TRELLO_BOARD_ID }} starting with '${TICKET_ID}'."
+            exit 0
+          else
+            echo "card_id=$CARD_ID" >> $GITHUB_OUTPUT
+            echo "Found matching Trello Card ID: $CARD_ID"
+          fi
+
+      - name: Add Branch as Attachment to Trello Card
+        # This step runs only if a Card ID was successfully found.
+        if: steps.find_card.outputs.card_id
+        run: |
+          CARD_ID="${{ steps.find_card.outputs.card_id }}"
+          BRANCH_URL="${{ github.server_url }}/${{ github.repository }}/tree/${{ env.BRANCH_NAME }}"
+          ATTACHMENT_NAME="Git Branch: ${{ env.BRANCH_NAME }}"
+          curl --request POST \
+            --url "https://api.trello.com/1/cards/${CARD_ID}/attachments" \
+            --header 'Accept: application/json' \
+            --data "key=${{ env.TRELLO_API_KEY }}" \
+            --data "token=${{ env.TRELLO_API_TOKEN }}" \
+            --data "name=${ATTACHMENT_NAME}" \
+            --data "url=${BRANCH_URL}"
