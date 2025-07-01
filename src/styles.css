@@ -8,3 +8,12 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
+:root {
+    --primary: #ff6f61;
+    --secondary: #2d3142;
+    --accent: #f4d35e;
+    --bg: #f9fafc;
+    --card-bg: #fff;
+    --shadow: 0 4px 24px rgba(44,62,80,0.08);
+}

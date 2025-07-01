@@ -14,8 +14,14 @@ import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-l
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
 
 import { authGuard } from './auth.guard';
+import { HomepageComponent } from './pages/homepage/homepage.component';
 
 export const routes: Routes = [
+  {
+      path: '',
+      component: HomepageComponent,
+      title: 'Cartastrofe | Homepage'
+  },
   {
     path: '',
     component: AppMainComponent,
