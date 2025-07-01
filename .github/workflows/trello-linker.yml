@@ -48,7 +48,7 @@ jobs:
           TICKET_ID="${{ steps.parse_id.outputs.ticket_id }}"
           # The API response is piped to 'jq' to extract the first matching card's ID.
           CARD_ID=$(curl -s --request GET \
-            --url "https://api.trello.com/1/search?query=name:^${TICKET_ID} &idBoards=${{ env.TRELLO_BOARD_ID }}&modelTypes=cards&card_fields=id" \
+            --url "https://api.trello.com/1/search?query=name:^${TICKET_ID}&idBoards=${{ env.TRELLO_BOARD_ID }}&modelTypes=cards&card_fields=id" \
             --header "Authorization: OAuth oauth_consumer_key=\"${{ env.TRELLO_API_KEY }}\", oauth_token=\"${{ env.TRELLO_API_TOKEN }}\"" \
             --header 'Accept: application/json' \
             | jq -r '.cards[0].id')
