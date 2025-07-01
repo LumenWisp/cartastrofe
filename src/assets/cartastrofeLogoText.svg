@@ -1,0 +1,9 @@
+<svg class="logo" height="48" viewBox="0 0 280 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="2" y="2" width="44" height="44" rx="12" fill="#ff6f61"/>
+    <rect x="12" y="12" width="24" height="24" rx="6" fill="#f4d35e"/>
+    <rect x="36" y="8" width="8" height="8" rx="2" fill="#fff" opacity="0.7"/>
+    <rect x="8" y="36" width="8" height="8" rx="2" fill="#fff" opacity="0.7"/>
+    <text x="56" y="36" font-family="Montserrat, sans-serif" font-size="32" font-weight="700" fill="#2d3142" letter-spacing="2">
+        Cartastrofe
+    </text>
+</svg>
