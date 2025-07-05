@@ -6,9 +6,7 @@
 <p-button (click)="showDialog()" label="Show" />
 
 <div class="panels-container">
-  @for (gameInfo of games; track $index) {
-    <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
-  }
+  
 </div>
 
 <app-modal-create-game

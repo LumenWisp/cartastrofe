@@ -5,7 +5,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { User } from '../../types/user';
+import { UserEntity } from '../../types/user';
 import {UserService} from '../../services/user-service.service'
 
 @Component({
@@ -22,8 +22,7 @@ export class LoginComponent {
 
   emailInput = '';
   passwordInput = '';
-  users: User[] = [];
-  userTest: User = {userID: 0, name: 'a', email: 'a@a', password:'a'};
+  users: UserEntity[] = [];
 
   constructor(
     private router: Router,
@@ -31,16 +30,13 @@ export class LoginComponent {
   ) {}
 
   ngOnInit(){
-    if(this.userService.getUsers().length === 0){
-      this.userService.addUser(this.userTest);
-    }
-    this.users = this.userService.getUsers();
+
   }
 
   onSubmit() {
-    if (this.loginForm.valid && this.users.filter(user => user.email === this.emailInput && user.password === this.passwordInput).length === 1) {
+    if (this.loginForm.valid) {
 
-      this.userService.setUserLogged(this.userService.findUser(this.emailInput, this.passwordInput));
+      this.userService.login(this.emailInput, this.passwordInput);
 
       this.router.navigate(['/my-games']);
     }

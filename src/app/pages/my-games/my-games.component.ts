@@ -25,12 +25,12 @@ export class MyGamesComponent {
   ){}
 
   ngOnInit(){
-    this.gamesInfo = this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID)
+    //this.gamesInfo = this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged())
   }
 
-  get games(){
-    return this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID)
-  }
+//  get games(){
+//   return this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged())
+//  }
 
 //  gamesInfo: GameInfo[] = [
 //    {

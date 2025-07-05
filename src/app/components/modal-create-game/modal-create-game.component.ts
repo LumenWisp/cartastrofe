@@ -24,6 +24,8 @@ export class ModalCreateGameComponent {
   game: GameInfo = {
     id : 0,
     name : '',
+    description: '',
+    title: '',
     countPlayersMin : 0,
     countPlayersMax : 0,
     countCards : 0,
@@ -48,18 +50,16 @@ export class ModalCreateGameComponent {
 
   createGame(){
 
-    this.gameInfoService.addGameInfo(
-      {
-        id: this.gameInfoService.getGameInfoNextID(),
-        name: this.gameName,
-        countPlayersMin: 0,
-        countPlayersMax: 0,
-        countCards: 0,
-        userID: this.userService.getUserLogged().userID
-      }
-    );
+//    this.gameInfoService.addGameInfo(
+//      {
+//        id: this.gameInfoService.getGameInfoNextID(),
+//        name: this.gameName,
+//        countPlayersMin: 0,
+//        countPlayersMax: 0,
+//        countCards: 0,
+//        userID: this.userService.getUserLogged()
+//      }
+//    );
 
-    console.log(this.gameInfoService.getGameInfos())
-    console.log(this.gameInfoService.getGameInfosByUserID(this.userService.getUserLogged().userID))
   }
 }
