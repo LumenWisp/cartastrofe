@@ -1,0 +1,12 @@
+<div class="sidebar-right">
+
+    <p-button routerLink="/my-games" label="Sair" />
+
+  <p-panel header="Jogadores">
+    @for (nome of nomes; track nome) {
+    <div class="menu-item">
+      {{ nome }}
+    </div>
+    }
+  </p-panel>
+</div>

@@ -1,0 +1,29 @@
+.link {
+  color: var(--form-link-color);
+}
+
+.button-submit {
+  --p-button-primary-background: var(--form-primary-color);
+  --p-button-primary-border-color: var(--form-primary-color);
+  --p-button-primary-hover-background: var(--form-primary-color-hover);
+  --p-button-primary-hover-border-color: var(--form-primary-color-hover);
+  --p-button-primary-active-background: var(--form-primary-color-active);
+  --p-button-primary-active-border-color: var(--form-primary-color-active);
+  margin-inline: auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  max-width: 400px;
+  margin: 40px auto 0;
+}
+
+.message {
+  color: var(--form-message-color);
+}
+
+.other-auth-link {
+  margin: 20px auto 0;
+}

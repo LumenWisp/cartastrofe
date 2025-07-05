@@ -1,0 +1,19 @@
+<p-dialog [(visible)]="display" [modal]="true" [closable]="false" [style]="{width: '400px'}">
+  <button class="close-button" (click)="close()">×</button>
+
+  <h2>Criar novo jogo</h2>
+
+  <div class="form-container">
+    <div>
+      <label for="gameName">Nome</label>
+      <input pInputText id="gameName" placeholder="Digite o nome do jogo" [(ngModel)]="gameName">
+    </div>
+
+    <div>
+      <label for="gameMode">Modo</label>
+      <p-dropdown placeholder="Selecione o modo" id="gameMode" [options]="modes" [(ngModel)]="gameMode" ></p-dropdown>
+    </div>
+
+    <button type="button" class="create-button" (click)="close();createGame()">CRIAR</button>
+  </div>
+</p-dialog>

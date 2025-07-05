@@ -1,0 +1,23 @@
+<h1>Bem-vindo</h1>
+<span class="message">Faça o cadastro</span>
+
+<form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <p-floatlabel variant="on">
+    <label for="username">Nome</label>
+    <input id="username" pInputText fluid="true" formControlName="username" [(ngModel)]="nameInput" />
+  </p-floatlabel>
+
+  <p-floatlabel variant="on">
+    <label for="email">Email</label>
+    <input id="email" pInputText fluid="true" formControlName="email" [(ngModel)]="emailInput" />
+  </p-floatlabel>
+
+  <p-floatlabel variant="on">
+    <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" [(ngModel)]="passwordInput" />
+    <label for="password">Senha</label>
+  </p-floatlabel>
+
+  <p-button type="submit" class="button-submit" label="Cadastrar" />
+
+  <a class="other-auth-link link" routerLink="/login">Já tem conta?</a>
+</form>

@@ -1,0 +1,81 @@
+<div data-scroll-container>
+    <header>
+        <img src="assets/cartastrofeLogoText.svg" alt="Cartastrofe Logo" class="logo" height="48" />
+        <nav class="desktop-nav">
+            <a class="link" routerLink="/login">Login</a>
+        </nav>
+        <button id="lang-toggle" class="desktop-lang" (click)="changeLanguage()">{{ currentLanguage }}</button>
+        <button id="hamburger-btn" aria-label="Open menu" (click)="openSidebar()">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect y="7" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
+            <rect y="14.5" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
+            <rect y="22" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
+        </svg>
+        </button>
+    </header>
+    <aside #sidebar id="sidebar" [class.open]="isSidebarOpen" (click)="onSidebarBackdropClick($event, sidebar)">
+        <div class="sidebar-content">
+        <button id="close-sidebar" aria-label="Close menu" (click)="closeSidebar()">&times;</button>
+        <nav class="sidebar-nav">
+            <a class="link" routerLink="/login">Login</a>
+        </nav>
+        <button id="sidebar-lang-toggle" (click)="changeLanguage()">{{ currentLanguage }}</button>
+        </div>
+    </aside>
+    <section class="hero">
+        <div class="hero-flex">
+            <div class="hero-text">
+                <h1 id="hero-title">Design Cards. Build Games. Unleash Creativity.</h1>
+                <p id="hero-desc">
+                    Cartastrofe is your modern, intuitive card game builder and player. Create, customize, play and share stunning card games — no coding skills needed!
+                </p>
+                <button routerLink="/login" class="cta-btn" id="cta-btn">Start Building</button>
+            </div>
+            <!-- 3D Rotating Card -->
+            <div class="card-3d-container">
+                <div #card3d class="card-3d" id="card3d" (mousemove)="mouseMoveCard($event, card3d)" (mouseleave)="resetCardRotation(card3d)" (click)="rotateCard(card3d)">
+                    <div class="card-3d-face card-3d-front">
+                        <div class="card-3d-content">
+                            <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
+                            <h2>Design,</h2>
+                            <h2>Build,</h2>
+                            <h2>Play!</h2>
+                        </div>
+                    </div>
+                    <div class="card-3d-face card-3d-back">
+                        <div class="card-3d-content">
+                            <h2>Cartastrofe</h2>
+                            <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="features">
+        <div class="feature-card">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm1 17.93V20a1 1 0 0 1-2 0v-.07A8.006 8.006 0 0 1 4.07 13H4a1 1 0 0 1 0-2h.07A8.006 8.006 0 0 1 11 4.07V4a1 1 0 0 1 2 0v.07A8.006 8.006 0 0 1 19.93 11H20a1 1 0 0 1 0 2h-.07A8.006 8.006 0 0 1 13 19.93z"/></svg>
+            <h3>Instant Preview</h3>
+            <p>See your card updates in real time with our live preview editor.</p>
+        </div>
+        <div class="feature-card">
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" rx="2" fill="var(--accent)"/>
+                <rect x="14" y="3" width="7" height="7" rx="2" fill="var(--primary)"/>
+                <rect x="3" y="14" width="7" height="7" rx="2" fill="var(--primary)"/>
+                <rect x="14" y="14" width="7" height="7" rx="2" fill="var(--accent)"/>
+                <path d="M10 7h4M7 10v4M17 10v4M10 17h4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <h3>No-Code Game Logic</h3>
+            <p>Build complete card games visually using intuitive drag-and-drop logic blocks — no programming required.</p>
+        </div>
+        <div class="feature-card">
+            <svg viewBox="0 0 24 24"><path d="M12 2l4 4-4 4-4-4zm0 16l4-4-4-4-4 4zm8-8l-4 4-4-4 4-4zm-16 0l4 4 4-4-4-4z"/></svg>
+            <h3>Drag & Drop</h3>
+            <p>Effortlessly arrange elements with a smooth drag-and-drop interface.</p>
+        </div>
+    </section>
+    <footer>
+        &copy; 2024 Cartastrofe. All rights reserved.
+    </footer>
+</div>
