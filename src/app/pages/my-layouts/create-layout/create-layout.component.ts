@@ -9,7 +9,5 @@ import { InputTextModule } from 'primeng/inputtext';
   styleUrl: './create-layout.component.css'
 })
 export class CreateLayoutComponent {
-
   value: string = ''
-
 }

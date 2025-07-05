@@ -1,4 +1,5 @@
 export interface CardLayout {
-    id: number,
-    name: string
+  id: number;
+  name: string;
+  userId: number;
 }

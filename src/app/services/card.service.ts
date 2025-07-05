@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Card } from '../types/card'; 
+import { Card } from '../types/card';
 
 @Injectable({
   providedIn: 'root'
@@ -13,44 +13,31 @@ export class CardService {
   constructor() {}
 
   // Retorna a lista atual
-  getCards(): Card[] {
-    return this.cardsSubject.value;
+  getCards() {
+
   }
 
-  getCardNextID(): number {
-    return this.cardIDGenerator++;
+  getCardNextID() {
+
   }
 
   // Adiciona um novo Card
   addCard(card: Card): void {
-    const current = this.cardsSubject.value;
-    this.cardsSubject.next([...current, card]);
+
   }
 
   // Remove Card por ID
-  removeCard(id: number): void {
-    const current = [...this.cardsSubject.value];
-    const index = current.findIndex(card => card.id === id);
+  removeCard(id: number) {
 
-    if (index !== -1) {
-        current.splice(index, 1);
-        this.cardsSubject.next(current);
-      }
   }
 
   // Atualiza Card por ID
-  updateCardByID(id: number, updated: Card): void {
-    const current = [...this.cardsSubject.value];
-    const index = current.findIndex(card => card.id === id);
+  updateCardByID(id: number, updated: Card) {
 
-    if (index !== -1) {
-      current[index] = updated;
-      this.cardsSubject.next(current);
-    }
   }
 
   // Busca todos os Cards com base no gameID
-  getCardsByGameID(gameID: number): Card[] {
-    return this.cardsSubject.value.filter(card => card.gameID === gameID);
+  getCardsByGameID(gameID: number) {
+
   }
 }

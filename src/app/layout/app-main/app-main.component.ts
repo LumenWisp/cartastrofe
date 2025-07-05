@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { ModalCreateRoomComponent } from '../../components/modal-create-room/modal-create-room.component';
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-app-main',
@@ -35,7 +36,13 @@ export class AppMainComponent {
     {
       label: 'Logout',
       icon: 'pi pi-sign-out',
-      routerLink: '/login',
+      command: () => {
+        // FAZER LOGOUT CORRETAMENTE
+        // this.userService.logoutUser();
+        this.router.navigate(['login']);
+      },
     },
   ];
+
+  constructor(private router: Router, private userService: UserService) {}
 }

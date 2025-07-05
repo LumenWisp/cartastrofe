@@ -1,45 +1,45 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { GameInfo } from '../types/game-info'; 
+import { GameInfo } from '../types/game-info';
+import { UserService } from './user-service.service';
+
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameInfoService {
   private gameInfosSubject = new BehaviorSubject<GameInfo[]>([]);
-  gameInfos$: Observable<GameInfo[]> = this.gameInfosSubject.asObservable();
-  private gameInfoIDGenerator = 1;
+  readonly gameInfos$: Observable<GameInfo[]> = this.gameInfosSubject.asObservable();
 
   constructor() {}
 
-  // Retorna a lista atual
-  getGameInfos(): GameInfo[] {
-    return this.gameInfosSubject.value;
+  /**
+   * Pega os gameInfos do usuário logado.
+   */
+  getGameInfos() {
+
   }
 
-  getGameInfoNextID(){
-    return this.gameInfoIDGenerator++;
+  /**
+   * Pega o gameInfo cujo `id === gameId`.
+   * @param gameId id do gameInfo
+   */
+  getGameInfoById(gameId: number) {
+
   }
 
-  // Adiciona um novo GameInfo
-  addGameInfo(gameInfo: GameInfo): void {
-    const current = this.gameInfosSubject.value;
-    this.gameInfosSubject.next([...current, gameInfo]);
+  /**
+   * Retorna o total de gameInfos do usuário logado.
+   */
+  get totalGameInfos(): number {
+    return 10; // para manter algumas funcionalidades operando normalmente, mas deve ser removida posteriormente
   }
 
-  // Remove GameInfo por ID
-  removeGameInfo(id: number): void {
-    const current = [...this.gameInfosSubject.value];
-    const index = current.findIndex(game => game.id === id);
+  /**
+   * Adiciona um gameInfo aos gameInfos do usuário logado.
+   * @param gameInfoData informações do jogo
+   */
+  addGameInfo(gameInfoData: Omit<GameInfo, 'id' | 'userId'>) {
 
-    if (index !== -1) {
-        current.splice(index, 1);
-        this.gameInfosSubject.next(current);
-      }
-  }
-
-  // Busca todos os GameInfo com base no userID
-  getGameInfosByUserID(userID: number): GameInfo[] {
-    return this.gameInfosSubject.value.filter(game => game.userID === userID);
   }
 }
