@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="pt" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="353710927888215012" datatype="html">
+        <source>Logo do Cartastrofe</source>
+        <target>Cartastrofe Logo</target>
+      </trans-unit>
+      <trans-unit id="600376029726528115" datatype="html">
+        <source>Entrar</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="6253772665008576640" datatype="html">
+        <source>Crie Cartas. Construa Jogos. Liberte a Criatividade.</source>
+        <target state="new">Design Cards. Build Games. Unleash Creativity.</target>
+      </trans-unit>
+      <trans-unit id="6807385338038304904" datatype="html">
+        <source> Cartastrofe é seu construtor e jogador de jogos de cartas moderno e intuitivo. Crie, personalize, jogue e compartilhe jogos de cartas incríveis — sem precisar programar! </source>
+        <target> Cartastrofe is your modern, intuitive card game builder and player. Create, customize, play and share stunning card games — no coding skills needed! </target>
+      </trans-unit>
+      <trans-unit id="406622880309129633" datatype="html">
+        <source>Comece a Criar</source>
+        <target>Start Building</target>
+      </trans-unit>
+      <trans-unit id="4742226700923254218" datatype="html">
+        <source>Crie,</source>
+        <target>Design,</target>
+      </trans-unit>
+      <trans-unit id="6497387607656728720" datatype="html">
+        <source>Construa,</source>
+        <target>Build,</target>
+      </trans-unit>
+      <trans-unit id="8998288947112774550" datatype="html">
+        <source>Jogue!</source>
+        <target>Play!</target>
+      </trans-unit>
+      <trans-unit id="2668346190235062419" datatype="html">
+        <source>Visualização Instantânea</source>
+        <target>Instant Preview</target>
+      </trans-unit>
+      <trans-unit id="815333606244991901" datatype="html">
+        <source>Veja as atualizações das suas cartas em tempo real com nosso editor de visualização ao vivo.</source>
+        <target>See your card updates in real time with our live preview editor.</target>
+      </trans-unit>
+      <trans-unit id="5086693872633082393" datatype="html">
+        <source>Lógica de Jogo Sem Código</source>
+        <target>No-Code Game Logic</target>
+      </trans-unit>
+      <trans-unit id="762774042065750990" datatype="html">
+        <source>Construa jogos de cartas completos visualmente usando blocos de lógica intuitivos de arrastar e soltar — sem necessidade de programação.</source>
+        <target>Build complete card games visually using intuitive drag-and-drop logic blocks — no programming required.</target>
+      </trans-unit>
+      <trans-unit id="9172640063228137137" datatype="html">
+        <source>Arraste &amp; Solte</source>
+        <target>Drag &amp; Drop</target>
+      </trans-unit>
+      <trans-unit id="5299763248363159793" datatype="html">
+        <source>Organize elementos facilmente com uma interface suave de arrastar e soltar.</source>
+        <target>Effortlessly arrange elements with a smooth drag-and-drop interface.</target>
+      </trans-unit>
+      <trans-unit id="1982205560748265101" datatype="html">
+        <source> © 2024 Cartastrofe. Todos os direitos reservados. </source>
+        <target> © 2024 Cartastrofe. All rights reserved. </target>
+      </trans-unit>
+      <trans-unit id="8638025204932626520" datatype="html">
+        <source>PT-BR</source>
+        <target>EN</target>
+      </trans-unit>
+      <trans-unit id="7125230548364470318" datatype="html">
+        <source>Bem-vindo</source>
+        <target>Welcome</target>
+      </trans-unit>
+      <trans-unit id="7626160246540559076" datatype="html">
+        <source>Faça o login</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="4768749765465246664" datatype="html">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="150555469217751648" datatype="html">
+        <source>Senha</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="2065284140798559983" datatype="html">
+        <source>Esqueceu a senha?</source>
+        <target>Forgot Password?</target>
+      </trans-unit>
+      <trans-unit id="8620128156725122377" datatype="html">
+        <source>Não tem conta?</source>
+        <target>No account?</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

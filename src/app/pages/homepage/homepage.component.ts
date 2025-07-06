@@ -12,7 +12,7 @@ export class HomepageComponent implements AfterViewInit {
   scroll: LocomotiveScroll = new LocomotiveScroll;
 
   // Language Variables
-  currentLanguage = 'PT-BR';
+  currentLanguage = $localize `PT-BR`;
 
   // Sidebar Variables
   isSidebarOpen = false;
@@ -29,11 +29,16 @@ export class HomepageComponent implements AfterViewInit {
     });
   }
   
-  changeLanguage() {
-    this.currentLanguage = this.currentLanguage === 'PT-BR' ? 'EN' : 'PT-BR';
-    
-    // API here to change language
-    alert("This feature is not available yet. Please check back later.");
+  changeLanguage() {    
+    const currentURL = window.location.href.split('/')[0] + '//' + window.location.href.split('/')[2];
+
+    if (this.currentLanguage === 'PT-BR') {
+      this.currentLanguage = 'EN';
+      window.location.href = `${currentURL}/en-US`;
+    } else {
+      this.currentLanguage = 'PT-BR';
+      window.location.href = `${currentURL}/pt`;
+    }
   }
 
   openSidebar() {

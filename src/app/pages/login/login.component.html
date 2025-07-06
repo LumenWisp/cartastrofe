@@ -1,20 +1,20 @@
-<h1>Bem-vindo</h1>
-<span class="message">Faça o login</span>
+<h1 i18n>Bem-vindo</h1>
+<span class="message" i18n>Faça o login</span>
 
 <form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
   <p-floatlabel variant="on">
-    <label for="email">Email</label>
+    <label for="email" i18n>Email</label>
     <input id="email" pInputText fluid="true" formControlName="email" [(ngModel)]="emailInput" />
   </p-floatlabel>
 
   <p-floatlabel variant="on">
     <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" [(ngModel)]="passwordInput" />
-    <label for="password">Senha</label>
+    <label for="password" i18n>Senha</label>
   </p-floatlabel>
 
-  <a class="link" routerLink="/forget-password">Esqueceu a senha?</a>
+  <a class="link" routerLink="/forget-password" i18n>Esqueceu a senha?</a>
 
-  <p-button type="submit" class="button-submit" label="Entrar" />
+  <p-button type="submit" class="button-submit" label="Entrar" i18n-label/>
 
-  <a class="other-auth-link link" routerLink="/register">Não tem conta?</a>
+  <a class="other-auth-link link" routerLink="/register" i18n>Não tem conta?</a>
 </form>
