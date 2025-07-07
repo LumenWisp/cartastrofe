@@ -7,6 +7,8 @@ import { ButtonModule } from 'primeng/button';
 import { GameInfoService } from '../../services/game-info.service';
 import { PanelModule } from 'primeng/panel';
 import { CommonModule } from '@angular/common';
+import { UserEntity } from '../../types/user';
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-my-games',
@@ -25,9 +27,18 @@ import { CommonModule } from '@angular/common';
 export class MyGamesComponent {
   showCreateGameModal: boolean = false;
 
+  user: UserEntity | null = null;
+
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
 
-  constructor(private gameInfoService: GameInfoService) {}
+  constructor(
+    private gameInfoService: GameInfoService,
+    private userService: UserService
+  ) {}
+
+  ngOnInit(){
+    this.user = this.userService.getUserLogged();
+  }
 
   @HostListener('window:resize')
   remainingGameInfoSpace() {

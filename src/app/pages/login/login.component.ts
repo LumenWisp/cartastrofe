@@ -10,7 +10,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
 
 @Component({
@@ -32,20 +31,22 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required]),
   });
 
-  emailInput = '';
-  passwordInput = '';
-  users: UserEntity[] = [];
-
   constructor(private router: Router, private userService: UserService) {}
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.userService.login(this.emailInput, this.passwordInput);
+      const email = this.loginForm.get('email')?.value
+      const password = this.loginForm.get('password')?.value
 
-      this.router.navigate(['/my-games']);
-    } else {
-      this.emailInput = '';
-      this.passwordInput = '';
+      if(email && password){
+        try{
+          this.userService.login(email, password);
+          this.router.navigate(['/my-games']);
+        }
+        catch(err){
+          console.log("email ou senha inválidos", err)
+        }
+      }
     }
   }
 }

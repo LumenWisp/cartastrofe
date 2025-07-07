@@ -1,10 +1,10 @@
 export interface GameInfo {
-  id: number;
+  id: string;
   name: string;
   description: string;
   title: string;
   countPlayersMin: number;
   countPlayersMax?: number;
   countCards: number;
-  userId: number;
+  userId: string;
 }
