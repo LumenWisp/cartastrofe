@@ -13,7 +13,6 @@ import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
 
-import { authGuard } from './auth.guard';
 import { HomepageComponent } from './pages/homepage/homepage.component';
 
 export const routes: Routes = [
@@ -25,8 +24,6 @@ export const routes: Routes = [
   {
     path: '',
     component: AppMainComponent,
-    canActivate: [authGuard],
-    canActivateChild: [authGuard],
     children: [
       {
         path: 'my-games',
@@ -49,7 +46,7 @@ export const routes: Routes = [
         title: 'Create Layout',
       },
       {
-        path: 'my-games/game-description',
+        path: 'my-games/game-description/:gameId',
         component: GameDescriptionComponent,
         title: 'Game Description',
       },

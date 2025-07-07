@@ -1,114 +1,21 @@
-:host ::ng-deep .p-dialog {
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 90vw;
-  padding: 1.5rem;
-  background-color: #f3f0ef;
-  border: 1px solid #000;
-  box-sizing: border-box;
-  position: relative;
-}
-
-h2 {
-  font-size: 1.25rem;
-  font-weight: bold;
-  text-align: center;
-  margin: 0 0 1rem 0;
-}
-
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  cursor: pointer;
-  font-size: 1.25rem;
-  padding: 0;
-  line-height: 1;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-input, .p-dropdown {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 1rem;
-  border: 1px solid #ccc;
-  margin-bottom: 1rem;
-  box-sizing: border-box;
-  font-size: 1rem;
-}
-
-.create-button {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 1.5rem;
-  border: 2px solid #000;
-  background: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-  font-size: 1rem;
-}
-
-.create-button:hover {
-  background: #000;
-  color: #fff;
-}
-
-.form-container {
+.form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  row-gap: 20px;
 }
 
-/* Responsividade */
-@media (max-width: 400px) {
-  :host ::ng-deep .p-dialog {
-    width: 95vw;
-    padding: 1rem;
-  }
+.label {
+  display: block;
 }
 
-@media (max-width: 320px) {
-  :host ::ng-deep .p-dialog {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-    border: none;
-    margin: 0;
-    padding: 1rem;
-  }
+.gamemode-groups {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+}
 
-  .close-button {
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    font-size: 1rem;
-    border-width: 1px;
-  }
-
-  input, .p-dropdown {
-    font-size: 0.9rem;
-  }
-
-  .create-button {
-    font-size: 0.9rem;
-  }
+.gamemode-group {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
 }
