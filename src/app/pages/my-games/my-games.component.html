@@ -10,14 +10,14 @@
       <span class="create-game-label" pButtonLabel>Criar jogo</span>
     </button>
 
-    <!-- @for (gameInfo of (gameInfos$ | async); track $index) {
-      <app-panel-game [gameInfo]="gameInfo" />
-    } -->
-
-    @for (gameInfo of remainingGameInfoSpace(); track $index) {
-      <div class="placeholder-panel-game"></div>
+     @for (gameInfo of games; track $index) {
+      <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
     }
+
+    <!--@for (gameInfo of remainingGameInfoSpace(); track $index) {
+      <div class="placeholder-panel-game"></div>
+    }-->
   </div>
 </div>
 
-<app-modal-create-game [(showModal)]="showCreateGameModal" />
+<app-modal-create-game [(showModal)]="showCreateGameModal" (loadGame)="loadGames()" />

@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { GameInfo } from '../types/game-info';
 import { UserService } from './user-service.service';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { collection, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
 
 
@@ -21,8 +21,18 @@ export class GameInfoService {
   /**
    * Pega os gameInfos do usuário logado.
    */
-  getGameInfos() {
+  async getGameInfos(userId: string) {
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+    const queryRef = query(refCollection, where('userId', '==', userId));
 
+    const snapshot = await getDocs(queryRef)
+    const results: GameInfo[] = []
+
+    snapshot.forEach((item) => {
+      results.push(item.data() as GameInfo)
+    })
+
+    return results;
   }
 
   /**

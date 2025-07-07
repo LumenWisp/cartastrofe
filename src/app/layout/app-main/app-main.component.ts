@@ -38,7 +38,7 @@ export class AppMainComponent {
       icon: 'pi pi-sign-out',
       command: () => {
         // FAZER LOGOUT CORRETAMENTE
-        // this.userService.logoutUser();
+         this.userService.logout();
         this.router.navigate(['login']);
       },
     },

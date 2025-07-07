@@ -33,14 +33,14 @@ export class LoginComponent {
 
   constructor(private router: Router, private userService: UserService) {}
 
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.valid) {
       const email = this.loginForm.get('email')?.value
       const password = this.loginForm.get('password')?.value
 
       if(email && password){
         try{
-          this.userService.login(email, password);
+          await this.userService.login(email, password);
           this.router.navigate(['/my-games']);
         }
         catch(err){

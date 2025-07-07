@@ -9,6 +9,8 @@ import { PanelModule } from 'primeng/panel';
 import { CommonModule } from '@angular/common';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
+import { GameInfo } from '../../types/game-info';
+import { PanelGameComponent } from '../../components/panel-game/panel-game.component';
 
 @Component({
   selector: 'app-my-games',
@@ -17,6 +19,7 @@ import { UserService } from '../../services/user-service.service';
     InputIconModule,
     InputTextModule,
     ModalCreateGameComponent,
+    PanelGameComponent,
     ButtonModule,
     PanelModule,
     CommonModule,
@@ -28,6 +31,7 @@ export class MyGamesComponent {
   showCreateGameModal: boolean = false;
 
   user: UserEntity | null = null;
+  games: GameInfo[] = []
 
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
 
@@ -36,8 +40,9 @@ export class MyGamesComponent {
     private userService: UserService
   ) {}
 
-  ngOnInit(){
+  async ngOnInit(){
     this.user = this.userService.getUserLogged();
+    await this.loadGames()
   }
 
   @HostListener('window:resize')
@@ -51,6 +56,10 @@ export class MyGamesComponent {
     const remainder = occupiedColumns % columns;
     const count = remainder === 0 ? columns : columns - remainder;
     return new Array(count).fill(null);
+  }
+
+  async loadGames(){
+    if(this.user) this.games = await this.gameInfoService.getGameInfos(this.user?.userID)
   }
 
   showDialog() {

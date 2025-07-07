@@ -33,6 +33,7 @@ import { GameInfoService } from '../../services/game-info.service';
 export class ModalCreateGameComponent {
   @Input() showModal = false;
   @Output() showModalChange = new EventEmitter<boolean>();
+  @Output() loadGame = new EventEmitter<void>();
 
   user: UserEntity | null = null;
 
@@ -81,5 +82,7 @@ export class ModalCreateGameComponent {
       }
 
     }
+    this.showModalChange.emit()
+    this.loadGame.emit()
   }
 }
