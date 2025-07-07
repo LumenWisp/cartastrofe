@@ -30,7 +30,10 @@ export class RegisterComponent {
   registerForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6)
+    ]),
   });
 
   constructor(private router: Router, private userService: UserService) {}

@@ -20,9 +20,9 @@ export class ModalCreateRoomComponent {
   @Input() display: boolean = false;
   @Output() displayChange = new EventEmitter<boolean>();
 
-  gameOptions = [];
+  gameOptions: any = [];
   playerOptions = [];
-  games: GameInfo[] = []
+  games: GameInfo[] = [];
   user: UserEntity | null = null;
 
   constructor(
@@ -32,11 +32,14 @@ export class ModalCreateRoomComponent {
 
   async ngOnInit(){
     this.user = this.userService.getUserLogged();
-    await this.loadGames()
+    await this.loadGames();
   }
 
   async loadGames(){
-    if(this.user) this.games = await this.gameInfoService.getGameInfos(this.user?.userID)
+    if(this.user) this.games = await this.gameInfoService.getGameInfos(this.user?.userID);
+    this.games.forEach((game) => {
+      this.gameOptions.push({label: game.name, value: game.name});
+    })
   }
 
   close() {
