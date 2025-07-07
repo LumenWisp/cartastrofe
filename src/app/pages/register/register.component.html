@@ -4,16 +4,16 @@
 <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <p-floatlabel variant="on">
     <label for="name">Nome</label>
-    <input id="name" pInputText fluid="true" formControlName="name"/>
+    <input id="name" pInputText [fluid]="true" formControlName="name" />
   </p-floatlabel>
 
   <p-floatlabel variant="on">
     <label for="email">Email</label>
-    <input id="email" pInputText fluid="true" formControlName="email"/>
+    <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
 
   <p-floatlabel variant="on">
-    <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password"/>
+    <p-password inputId="password" [toggleMask]="true" [feedback]="false" [fluid]="true" formControlName="password" />
     <label for="password">Senha</label>
   </p-floatlabel>
 

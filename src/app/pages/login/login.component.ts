@@ -3,46 +3,52 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { UserEntity } from '../../types/user';
-import {UserService} from '../../services/user-service.service'
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-login',
-  imports: [FloatLabelModule, InputTextModule, PasswordModule, ReactiveFormsModule, RouterLink, ButtonModule],
+  imports: [
+    FloatLabelModule,
+    InputTextModule,
+    PasswordModule,
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../shared/auth.css'],
 })
 export class LoginComponent {
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required])
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6)]),
   });
 
-  emailInput = '';
-  passwordInput = '';
-  users: UserEntity[] = [];
+  constructor(private router: Router, private userService: UserService) {}
 
-  constructor(
-    private router: Router,
-    private userService: UserService
-  ) {}
-
-  ngOnInit(){
-
-  }
-
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.valid) {
+      const email = this.loginForm.get('email')?.value
+      const password = this.loginForm.get('password')?.value
 
-      this.userService.login(this.emailInput, this.passwordInput);
-
-      this.router.navigate(['/my-games']);
-    }
-    else {
-      this.emailInput = '';
-      this.passwordInput = '';
+      if(email && password){
+        try{
+          await this.userService.login(email, password);
+          this.router.navigate(['/my-games']);
+        }
+        catch(err){
+          console.log("email ou senha inválidos", err)
+        }
+      }
     }
   }
 }

@@ -1,14 +1,23 @@
-<p-iconfield>
-  <p-inputicon styleClass="pi pi-search" />
-  <input type="text" pInputText placeholder="Search" />
-</p-iconfield>
+<div class="page">
+  <p-iconfield>
+    <p-inputicon class="pi pi-search" />
+    <input class="search-input" type="text" pInputText placeholder="Search" [fluid]="true" />
+  </p-iconfield>
 
-<p-button (click)="showDialog()" label="Show" />
+  <div class="panels-container" #panels>
+    <button pButton (click)="showDialog()">
+      <span class="pi pi-plus" pButtonIcon></span>
+      <span class="create-game-label" pButtonLabel>Criar jogo</span>
+    </button>
 
-<div class="panels-container">
-  
+     @for (gameInfo of games; track $index) {
+      <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
+    }
+
+    <!--@for (gameInfo of remainingGameInfoSpace(); track $index) {
+      <div class="placeholder-panel-game"></div>
+    }-->
+  </div>
 </div>
 
-<app-modal-create-game
-  [(display)]="showCreateGameDialog">
-</app-modal-create-game>
+<app-modal-create-game [(showModal)]="showCreateGameModal" (loadGame)="loadGames()" />

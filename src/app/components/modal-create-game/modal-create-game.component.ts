@@ -2,64 +2,87 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { GameModes } from '../../enum/game-mode';
 import { GameInfo } from '../../types/game-info';
-import { GameInfoService } from '../../services/game-info.service';
 import { UserService } from '../../services/user-service.service';
+import { UserEntity } from '../../types/user';
+import { GameInfoService } from '../../services/game-info.service';
 
 @Component({
   selector: 'app-modal-create-game',
   standalone: true,
-  imports: [DialogModule, ButtonModule, InputTextModule, DropdownModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    DialogModule,
+    ButtonModule,
+    InputTextModule,
+    RadioButtonModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
   templateUrl: './modal-create-game.component.html',
-  styleUrl: './modal-create-game.component.css'
+  styleUrl: './modal-create-game.component.css',
 })
 export class ModalCreateGameComponent {
-  @Input() display: boolean = false;
-  @Output() displayChange = new EventEmitter<boolean>();
+  @Input() showModal = false;
+  @Output() showModalChange = new EventEmitter<boolean>();
+  @Output() loadGame = new EventEmitter<void>();
 
-  gameName: string = ''
-  gameMode: string = ''
-  game: GameInfo = {
-    id : 0,
-    name : '',
-    description: '',
-    title: '',
-    countPlayersMin : 0,
-    countPlayersMax : 0,
-    countCards : 0,
-    userID : 0
-  }
-
-  modes = [
-    { label: 'Estruturado', value: 'estruturado' },
-    { label: 'Livre', value: 'livre' },
-  ];
-
+  user: UserEntity | null = null;
 
   constructor(
-    private gameInfoService: GameInfoService,
-    private userService: UserService
-  ){}
+    private userService: UserService,
+    private gameInfoService: GameInfoService
+  ){ }
 
-  close() {
-    this.display = false;
-    this.displayChange.emit(this.display);
+  ngOnInit(){
+    this.user = this.userService.getUserLogged();
   }
 
-  createGame(){
+  form = new FormGroup({
+    gameName: new FormControl('', [Validators.required]),
+    gameMode: new FormControl(GameModes.STRUCTURED, [Validators.required]),
+  });
 
-//    this.gameInfoService.addGameInfo(
-//      {
-//        id: this.gameInfoService.getGameInfoNextID(),
-//        name: this.gameName,
-//        countPlayersMin: 0,
-//        countPlayersMax: 0,
-//        countCards: 0,
-//        userID: this.userService.getUserLogged()
-//      }
-//    );
+  modes = [
+    { label: 'Estruturado', value: GameModes.STRUCTURED },
+    { label: 'Livre', value: GameModes.FREE },
+  ];
 
+  close() {
+    this.showModalChange.emit(false);
+  }
+
+  async createGame() {
+
+    if(this.form.valid){
+      
+      const gameName = this.form.get('gameName')?.value;
+
+      if(gameName && this.user){
+
+        const gameInfo: GameInfo = {
+        id: '',
+        name: gameName,
+        description: 'parelelepipedo',
+        title: 'onichan',
+        countPlayersMin: 2,
+        countPlayersMax: 11,
+        countCards: 25,
+        userId: this.user?.userID
+        }
+        await this.gameInfoService.addGameInfo(gameInfo);
+      }
+
+    }
+    this.showModalChange.emit()
+    this.loadGame.emit()
   }
 }

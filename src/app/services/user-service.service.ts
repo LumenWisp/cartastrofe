@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '@angular/fire/auth';
+import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
+import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  private path = FirestoreTablesEnum.USER;
 
   private currentUserData: UserEntity | null = null;
 
@@ -33,6 +35,7 @@ export class UserService {
     const uid = cred.user.uid;
 
     const userData: UserEntity = {
+      userID: uid,
       name: user.name,
       email: user.email,
       password: ''
@@ -42,13 +45,23 @@ export class UserService {
   }
 
   async login(email: string, password: string): Promise<UserEntity | null> {
+    // Autentica o usuário com Firebase Auth
     const cred = await signInWithEmailAndPassword(this.auth, email, password);
     const uid = cred.user.uid;
-    const docSnap = await getDoc(doc(this.firestore, 'user', uid));
 
-    if (docSnap.exists()) {
-      this.currentUserData = docSnap.data() as UserEntity;
-      return this.currentUserData;
+    // Busca os dados do Firestore com o UID
+    const docSnap = await getDoc(doc(this.firestore, this.path, uid));
+
+    if(docSnap.exists()){
+      const refCollection = collection(this.firestore, this.path);
+      const queryRef = query(refCollection, where('email', '==', email), where('password', '==', password), limit(1));
+
+      const docRef = await getDocs(queryRef)
+
+      if (!docRef.empty) {
+        this.currentUserData = docRef.docs[0].data() as UserEntity;
+        return this.currentUserData;
+      }
     }
 
     return null;
