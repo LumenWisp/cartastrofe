@@ -1,11 +1,9 @@
 <p-panel>
   <ng-template #header>
-    <p>{{gameInfo.name}} - <span class="pi pi-book" (click) = "goToDescriptionGamePage()"></span></p>
+    <p>{{gameInfo.name}} - <a class="pi pi-book" [routerLink]="['game-description', gameInfo.id]"></a></p>
   </ng-template>
 
   <p><b>Nº jogadores</b>: {{countPlayersRange}}</p>
 
   <p><b>Nº cartas</b>: {{gameInfo.countCards}}</p>
 </p-panel>
-
-<router-outlet></router-outlet>

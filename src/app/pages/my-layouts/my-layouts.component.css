@@ -1,29 +1,37 @@
+.page {
+  padding: 1rem 2rem;
+}
+
 .panels-container {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(5, minmax(20rem, 1fr));
-    padding: 1rem;
-    margin-left: 3vw;
-    margin-right: 3vw;
-    height: 25rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 90%), 1fr));
+  gap: 1rem;
+  margin-top: 20px;
 }
 
-.add-box{
-    width: 20rem;
-    height: 25rem;
-    background-color: #C8C8C8;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.add-box {
+  width: 100%;
+  height: 350px;
+  background-color: #c8c8c8;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.add-box:hover{
-    background-color: #A9A9A9;
+.add-box:hover {
+  background-color: #a9a9a9;
 }
 
-.plus-icon{
-    font-size: 5rem;
-    color: #333;
+.plus-icon {
+  font-size: 5rem;
+  color: #333;
+}
+.placeholder-card-layout {
+  width: 100%;
+  height: 100%;
+  min-height: 350px;
+  border: dashed black 2px;
+  border-radius: 20px;
 }

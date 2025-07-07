@@ -3,9 +3,9 @@
     <p-button routerLink="/my-games" label="Sair" />
 
   <p-panel header="Jogadores">
-    @for (nome of nomes; track nome) {
+    @for (user of users; track $index) {
     <div class="menu-item">
-      {{ nome }}
+      {{ user.name }}
     </div>
     }
   </p-panel>

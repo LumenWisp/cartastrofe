@@ -2,8 +2,7 @@
   height: 40px;
 }
 
-header {
-
+.header {
   position: sticky;
   width: 100%;
   top: 0;
