@@ -1,53 +1,74 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../types/user';
+import { Injectable, inject } from '@angular/core';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '@angular/fire/auth';
+import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
+import { UserEntity } from '../types/user';
+import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  // Estado interno da lista de usuários
-  private usersSubject = new BehaviorSubject<User[]>([]);
-  // Observable público para os componentes se inscreverem
-  users$: Observable<User[]> = this.usersSubject.asObservable();
-  private usersIDGenerator = 1;
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+  private path = FirestoreTablesEnum.USER;
 
-  private userLogged: User = {userID: 0, name: '', email: '', password:''};
+  private currentUserData: UserEntity | null = null;
 
-  constructor() {}
+  constructor() {
 
-  setUserLogged(user: User){
-    this.userLogged = user;
-    localStorage.setItem('user', JSON.stringify(user))
+    onAuthStateChanged(this.auth, async (user) => {
+      if (user) {
+        const docSnap = await getDoc(doc(this.firestore, 'user', user.uid));
+        if (docSnap.exists()) {
+          this.currentUserData = docSnap.data() as UserEntity;
+        }
+      } else {
+        this.currentUserData = null;
+      }
+    });
   }
 
-  getUserLogged(): User{
-    return this.userLogged;
+  getUserLogged(): UserEntity | null {
+    return this.currentUserData;
   }
 
-  // Retorna o valor atual da lista
-  getUsers(): User[] {
-    return this.usersSubject.value;
+  async register(user: UserEntity): Promise<void> {
+    const cred = await createUserWithEmailAndPassword(this.auth, user.email, user.password);
+    const uid = cred.user.uid;
+
+    const userData: UserEntity = {
+      userID: uid,
+      name: user.name,
+      email: user.email,
+      password: ''
+    };
+
+    await setDoc(doc(this.firestore, 'user', uid), userData);
   }
 
-  getUsersNextID(){
-    return this.usersIDGenerator++;
+  async login(email: string, password: string): Promise<UserEntity | null> {
+    // Autentica o usuário com Firebase Auth
+    const cred = await signInWithEmailAndPassword(this.auth, email, password);
+    const uid = cred.user.uid;
+
+    // Busca os dados do Firestore com o UID
+    const docSnap = await getDoc(doc(this.firestore, this.path, uid));
+
+    if(docSnap.exists()){
+      const refCollection = collection(this.firestore, this.path);
+      const queryRef = query(refCollection, where('email', '==', email), where('password', '==', password), limit(1));
+
+      const docRef = await getDocs(queryRef)
+
+      if (!docRef.empty) {
+        this.currentUserData = docRef.docs[0].data() as UserEntity;
+        return this.currentUserData;
+      }
+    }
+
+    return null;
   }
 
-  // Substitui a lista inteira
-  setUsers(users: User[]) {
-    this.usersSubject.next(users);
+  async logout(): Promise<void> {
+    await signOut(this.auth);
+    this.currentUserData = null;
   }
-
-  // Adiciona um novo usuário à lista
-  addUser(user: User) {
-    const current = this.usersSubject.value;
-    this.usersSubject.next([...current, user]);
-  }
-
-  findUser(email: string, password: string): User{
-
-    return this.getUsers().filter(user => user.email === email && user.password === password)[0];
-  }
-
 }

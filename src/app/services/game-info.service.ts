@@ -1,45 +1,74 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { GameInfo } from '../types/game-info'; 
+import { GameInfo } from '../types/game-info';
+import { UserService } from './user-service.service';
+import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { collection, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { UtilsService } from './utils.service';
+
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameInfoService {
-  private gameInfosSubject = new BehaviorSubject<GameInfo[]>([]);
-  gameInfos$: Observable<GameInfo[]> = this.gameInfosSubject.asObservable();
-  private gameInfoIDGenerator = 1;
+  private firestore = inject(Firestore);
+  pathGameInfo = FirestoreTablesEnum.GAME_INFO
 
-  constructor() {}
+  constructor(
+    private utilsService: UtilsService
+  ) {}
 
-  // Retorna a lista atual
-  getGameInfos(): GameInfo[] {
-    return this.gameInfosSubject.value;
+  /**
+   * Pega os gameInfos do usuário logado.
+   */
+  async getGameInfos(userId: string) {
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+    const queryRef = query(refCollection, where('userId', '==', userId));
+
+    const snapshot = await getDocs(queryRef)
+    const results: GameInfo[] = []
+
+    snapshot.forEach((item) => {
+      results.push(item.data() as GameInfo)
+    })
+
+    return results;
   }
 
-  getGameInfoNextID(){
-    return this.gameInfoIDGenerator++;
+  /**
+   * Pega o gameInfo cujo `id === gameId`.
+   * @param gameId id do gameInfo
+   */
+  getGameInfoById(gameId: number) {
+
   }
 
-  // Adiciona um novo GameInfo
-  addGameInfo(gameInfo: GameInfo): void {
-    const current = this.gameInfosSubject.value;
-    this.gameInfosSubject.next([...current, gameInfo]);
+  /**
+   * Retorna o total de gameInfos do usuário logado.
+   */
+  get totalGameInfos(): number {
+    return 10; // para manter algumas funcionalidades operando normalmente, mas deve ser removida posteriormente
   }
 
-  // Remove GameInfo por ID
-  removeGameInfo(id: number): void {
-    const current = [...this.gameInfosSubject.value];
-    const index = current.findIndex(game => game.id === id);
+  /**
+   * Adiciona um gameInfo aos gameInfos do usuário logado.
+   * @param gameInfoData informações do jogo
+   */
+  async addGameInfo(gameInfo: GameInfo) {
 
-    if (index !== -1) {
-        current.splice(index, 1);
-        this.gameInfosSubject.next(current);
-      }
-  }
+    const id = await this.utilsService.generateKey()
 
-  // Busca todos os GameInfo com base no userID
-  getGameInfosByUserID(userID: number): GameInfo[] {
-    return this.gameInfosSubject.value.filter(game => game.userID === userID);
+    const gameInfoObject = {
+        id: id,
+        name: gameInfo.name,
+        description: gameInfo.description,
+        title: gameInfo.title,
+        countPlayersMin: gameInfo.countPlayersMin,
+        countPlayersMax: gameInfo.countPlayersMax,
+        countCards: gameInfo.countCards,
+        userId: gameInfo.userId
+        }
+
+    await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
   }
 }
