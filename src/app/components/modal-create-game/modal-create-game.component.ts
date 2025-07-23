@@ -80,11 +80,6 @@ export class ModalCreateGameComponent {
         }
         await this.gameInfoService.addGameInfo(gameInfo);
       }
-
-      else {
-        console.log('gameName: ', gameName + 'this.user: ', this.user)
-      }
-
     }
     this.showModalChange.emit()
     this.loadGame.emit()
