@@ -1,9 +1,11 @@
-<p-panel>
-  <ng-template #header>
-    <p>{{gameInfo.name}} - <a class="pi pi-book" [routerLink]="['game-description', gameInfo.id]"></a></p>
-  </ng-template>
+<div class="panel-wrapper" (click)="goToEditGamePage()">
+  <p-panel class="panel-game">
+    <ng-template #header>
+      <p>{{gameInfo.name}} - <a class="pi pi-book" (click)="goToDescriptionGamePage()"></a></p>
+    </ng-template>
 
-  <p><b>Nº jogadores</b>: {{countPlayersRange}}</p>
+    <p><b>Nº jogadores</b>: {{countPlayersRange}}</p>
 
-  <p><b>Nº cartas</b>: {{gameInfo.countCards}}</p>
-</p-panel>
+    <p><b>Nº cartas</b>: {{gameInfo.countCards}}</p>
+  </p-panel>
+</div>

@@ -3,11 +3,11 @@ import { PanelModule } from 'primeng/panel';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { GameInfo } from '../../types/game-info';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-panel-game',
-  imports: [PanelModule, AvatarGroupModule, AvatarModule, RouterLink],
+  imports: [PanelModule, AvatarGroupModule, AvatarModule],
   templateUrl: './panel-game.component.html',
   styleUrl: './panel-game.component.css',
 })
@@ -34,8 +34,14 @@ export class PanelGameComponent {
   }
 
   goToDescriptionGamePage() {
-    this.router.navigate(['game-description'], {
+    this.router.navigate(['game-description', this.gameInfo.id], {
       relativeTo: this.route,
     });
+  }
+
+  goToEditGamePage() {
+    this.router.navigate(['game-edit', this.gameInfo.id], {
+      relativeTo: this.route,
+    })
   }
 }
