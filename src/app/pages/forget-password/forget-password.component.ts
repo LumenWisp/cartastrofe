@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { FormBase } from '../../shared/form-base';
+import { FormManager } from '../../shared/form-manager';
 
 @Component({
   selector: 'app-forget-password',
@@ -12,7 +12,7 @@ import { FormBase } from '../../shared/form-base';
   templateUrl: './forget-password.component.html',
   styleUrls: ['./forget-password.component.css', '../../shared/auth.css'],
 })
-export class ForgetPasswordComponent extends FormBase {
+export class ForgetPasswordComponent extends FormManager implements OnDestroy {
   resetRequested = false;
 
   constructor() {
@@ -30,7 +30,13 @@ export class ForgetPasswordComponent extends FormBase {
     super(form, errorMessages);
   }
 
+  ngOnDestroy() {
+    this.cleanUp();
+  }
+
   async submit() {
+    this.checkFields();
+
     if (this.form.valid) {
       this.resetRequested = true;
       console.log('Solicitação de redefinição enviada');

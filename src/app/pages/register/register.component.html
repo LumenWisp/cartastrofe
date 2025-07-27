@@ -1,7 +1,7 @@
 <h1>Bem-vindo</h1>
 <span class="message">Faça o cadastro</span>
 
-<form class="form" [formGroup]="form" (ngSubmit)="submitForm()">
+<form class="form" [formGroup]="form" (ngSubmit)="submit()">
   <p-floatlabel variant="on">
     <label for="name">Nome</label>
     <input id="name" pInputText [fluid]="true" formControlName="name" />

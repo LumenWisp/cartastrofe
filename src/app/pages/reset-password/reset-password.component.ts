@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { FormBase } from '../../shared/form-base';
+import { FormManager } from '../../shared/form-manager';
 
 @Component({
   selector: 'app-reset-password',
@@ -12,7 +12,7 @@ import { FormBase } from '../../shared/form-base';
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css', '../../shared/auth.css'],
 })
-export class ResetPasswordComponent extends FormBase {
+export class ResetPasswordComponent extends FormManager implements OnDestroy {
   constructor() {
     const form = new FormGroup({
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
@@ -28,7 +28,13 @@ export class ResetPasswordComponent extends FormBase {
     super(form, errorMessages);
   }
 
+  ngOnDestroy() {
+    this.cleanUp();
+  }
+
   async submit() {
+    this.checkFields();
+
     if (this.form.valid) {
       console.log('Senha redefinida com sucesso');
       // Aqui você pode chamar o serviço de redefinição de senha

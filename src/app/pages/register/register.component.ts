@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -12,7 +12,8 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
-import { FormBase } from '../../shared/form-base';
+import { FormManager } from '../../shared/form-manager';
+import { FirebaseError } from '@angular/fire/app';
 
 @Component({
   selector: 'app-register',
@@ -27,7 +28,7 @@ import { FormBase } from '../../shared/form-base';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css', '../../shared/auth.css'],
 })
-export class RegisterComponent extends FormBase {
+export class RegisterComponent extends FormManager implements OnDestroy {
   constructor(private router: Router, private userService: UserService) {
     const form = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -42,6 +43,7 @@ export class RegisterComponent extends FormBase {
       email: {
         required: 'Email é obrigatório',
         email: 'Email inválido',
+        'auth/email-already-in-use': 'Email já está em uso',
       },
       password: {
         required: 'Senha é obrigatória',
@@ -52,25 +54,37 @@ export class RegisterComponent extends FormBase {
     super(form, errorMessages);
   }
 
-  async submit() {
-    if (this.form.valid) {
-      const name = this.form.get('name')?.value;
-      const email = this.form.get('email')?.value;
-      const password = this.form.get('password')?.value;
+  ngOnDestroy() {
+    this.cleanUp();
+  }
 
-      if (name && email && password) {
-        let register: UserEntity = {
-          userID: '',
-          name: name,
-          email: email,
-          password: password,
-        };
-        await this.userService.register(register);
-        console.log('Registro feito com sucesso');
-        this.router.navigate(['/login']);
-      }
-    } else {
+  async submit() {
+    this.checkFields();
+
+    if (!this.form.valid) {
       console.log('Formulário inválido');
+      return;
+    }
+
+    const { name, email, password } = this.form.value;
+
+    try {
+      await this.userService.register(name, email, password);
+
+      console.log('Registro feito com sucesso');
+      this.router.navigate(['/login']);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/email-already-in-use') {
+          this.setError('email', 'auth/email-already-in-use');
+        } else if (error.code === 'auth/invalid-email') {
+          this.setError('email', 'email');
+        }
+
+        console.error('Erro ao registrar usuário:', error.code);
+      } else {
+        console.error('Erro desconhecido ao registrar usuário:', error);
+      }
     }
   }
 }

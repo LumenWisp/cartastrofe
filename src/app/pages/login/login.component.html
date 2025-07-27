@@ -1,7 +1,7 @@
 <h1>Bem-vindo</h1>
 <span class="message">Faça o login</span>
 
-<form class="form" [formGroup]="form" (submit)="submitForm()">
+<form class="form" [formGroup]="form" (submit)="submit()">
   <p-floatlabel variant="on">
     <label for="email">Email</label>
     <input id="email" pInputText [fluid]="true" formControlName="email" />
@@ -25,6 +25,10 @@
   }
   <span class="message">A senha deve ter pelo menos 6 caracteres</span>
   <a class="forget-password-link" routerLink="/forget-password">Esqueceu a senha?</a>
+
+  @if (checkFormError()) {
+    <span class="form-error login-error-message">{{ getFormErrorMessage('Formulário inválido') }}</span>
+  }
 
   <p-button type="submit" class="button-submit" label="Entrar" />
 
