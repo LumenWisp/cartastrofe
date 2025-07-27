@@ -1,5 +1,4 @@
 @import "primeicons/primeicons.css";
-@import "./app/shared/form-variables.css";
 
 * {
   padding: 0;
@@ -16,4 +15,16 @@
     --bg: #f9fafc;
     --card-bg: #fff;
     --shadow: 0 4px 24px rgba(44,62,80,0.08);
+}
+
+a {
+  color: black;
+}
+
+a:hover {
+  color: #2c2c2c;
+}
+
+.p-password-mask-icon:hover {
+  cursor: pointer;
 }

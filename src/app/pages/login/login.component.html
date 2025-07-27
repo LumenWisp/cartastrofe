@@ -1,20 +1,32 @@
 <h1>Bem-vindo</h1>
 <span class="message">Faça o login</span>
 
-<form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
+<form class="form" [formGroup]="form" (submit)="submitForm()">
   <p-floatlabel variant="on">
     <label for="email">Email</label>
-    <input id="email" pInputText fluid="true" formControlName="email" />
+    <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
+  @if (checkError('email')) {
+    <span class="form-error">{{ getErrorMessage('email', 'Campo inválido') }}</span>
+  }
 
   <p-floatlabel variant="on">
-    <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" />
+    <p-password
+      inputId="password"
+      [toggleMask]="true"
+      [feedback]="false"
+      [fluid]="true"
+      formControlName="password"
+    />
     <label for="password">Senha</label>
   </p-floatlabel>
-
-  <a class="link" routerLink="/forget-password">Esqueceu a senha?</a>
+  @if (checkError('password')) {
+    <span class="form-error">{{ getErrorMessage('password', 'Campo inválido') }}</span>
+  }
+  <span class="message">A senha deve ter pelo menos 6 caracteres</span>
+  <a class="forget-password-link" routerLink="/forget-password">Esqueceu a senha?</a>
 
   <p-button type="submit" class="button-submit" label="Entrar" />
 
-  <a class="other-auth-link link" routerLink="/register">Não tem conta?</a>
+  <a class="other-auth-link" routerLink="/register">Não tem conta?</a>
 </form>

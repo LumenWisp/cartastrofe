@@ -1,23 +1,33 @@
 <h1>Bem-vindo</h1>
 <span class="message">Faça o cadastro</span>
 
-<form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<form class="form" [formGroup]="form" (ngSubmit)="submitForm()">
   <p-floatlabel variant="on">
     <label for="name">Nome</label>
     <input id="name" pInputText [fluid]="true" formControlName="name" />
   </p-floatlabel>
+  @if (checkError('name')) {
+    <span class="form-error">{{ getErrorMessage('name', 'Campo inválido') }}</span>
+  }
 
   <p-floatlabel variant="on">
     <label for="email">Email</label>
     <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
+  @if (checkError('email')) {
+    <span class="form-error">{{ getErrorMessage('email', 'Campo inválido') }}</span>
+  }
 
   <p-floatlabel variant="on">
     <p-password inputId="password" [toggleMask]="true" [feedback]="false" [fluid]="true" formControlName="password" />
     <label for="password">Senha</label>
   </p-floatlabel>
+  @if (checkError('password')) {
+    <span class="form-error">{{ getErrorMessage('password', 'Campo inválido') }}</span>
+  }
+  <span class="message">A senha deve ter pelo menos 6 caracteres</span>
 
   <p-button type="submit" class="button-submit" label="Cadastrar" />
 
-  <a class="other-auth-link link" routerLink="/login">Já tem conta?</a>
+  <a class="other-auth-link" routerLink="/login">Já tem conta?</a>
 </form>

@@ -4,6 +4,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { FormBase } from '../../shared/form-base';
 
 @Component({
   selector: 'app-forget-password',
@@ -11,15 +12,26 @@ import { RouterLink } from '@angular/router';
   templateUrl: './forget-password.component.html',
   styleUrls: ['./forget-password.component.css', '../../shared/auth.css'],
 })
-export class ForgetPasswordComponent {
-  forgetForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-  });
-
+export class ForgetPasswordComponent extends FormBase {
   resetRequested = false;
 
-  onSubmit() {
-    if (this.forgetForm.valid) {
+  constructor() {
+    const form = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+    });
+
+    const errorMessages = {
+      email: {
+        required: 'Email é obrigatório',
+        email: 'Email inválido',
+      },
+    };
+
+    super(form, errorMessages);
+  }
+
+  async submit() {
+    if (this.form.valid) {
       this.resetRequested = true;
       console.log('Solicitação de redefinição enviada');
       // Aqui você pode chamar o serviço de envio de email

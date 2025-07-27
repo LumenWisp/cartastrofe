@@ -4,6 +4,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { FormBase } from '../../shared/form-base';
 
 @Component({
   selector: 'app-reset-password',
@@ -11,13 +12,24 @@ import { RouterLink } from '@angular/router';
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css', '../../shared/auth.css'],
 })
-export class ResetPasswordComponent {
-  resetForm = new FormGroup({
-    password: new FormControl('', [Validators.required]),
-  });
+export class ResetPasswordComponent extends FormBase {
+  constructor() {
+    const form = new FormGroup({
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    });
 
-  onSubmit() {
-    if (this.resetForm.valid) {
+    const errorMessages = {
+      password: {
+        required: 'Senha é obrigatória',
+        minlength: 'Senha deve ter pelo menos 6 caracteres',
+      },
+    };
+
+    super(form, errorMessages);
+  }
+
+  async submit() {
+    if (this.form.valid) {
       console.log('Senha redefinida com sucesso');
       // Aqui você pode chamar o serviço de redefinição de senha
     } else {
