@@ -1,0 +1,10 @@
+.logo {
+  height: 40px;
+}
+
+.header {
+  position: sticky;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+}

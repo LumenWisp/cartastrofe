@@ -30,19 +30,14 @@ import { PanelGameComponent } from '../../components/panel-game/panel-game.compo
 export class MyGamesComponent {
   showCreateGameModal: boolean = false;
 
-  user: UserEntity | null = null;
   games: GameInfo[] = []
 
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
 
-  constructor(
-    private gameInfoService: GameInfoService,
-    private userService: UserService
-  ) {}
+  constructor(private gameInfoService: GameInfoService) {}
 
-  async ngOnInit(){
-    this.user = this.userService.getUserLogged();
-    await this.loadGames()
+  ngOnInit() {
+    this.loadGames();
   }
 
   @HostListener('window:resize')
@@ -52,14 +47,21 @@ export class MyGamesComponent {
     const style = getComputedStyle(this.panelsEl.nativeElement);
     const styleColumns = style.getPropertyValue('grid-template-columns');
     const columns = styleColumns.split(' ').length;
-    const occupiedColumns = this.gameInfoService.totalGameInfos + 1;
+    const occupiedColumns = this.gameInfoService.getTotalGameInfos() + 1;
     const remainder = occupiedColumns % columns;
     const count = remainder === 0 ? columns : columns - remainder;
     return new Array(count).fill(null);
   }
 
-  async loadGames(){
-    if(this.user) this.games = await this.gameInfoService.getGameInfos(this.user?.userID)
+  loadGames() {
+    this.gameInfoService.getGameInfos().subscribe({
+      next: (games) => {
+        this.games = games;
+      },
+      error: (error) => {
+        console.error('Error loading games:', error);
+      }
+    });
   }
 
   showDialog() {

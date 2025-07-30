@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, filter, Observable, retry, switchMap, take } from 'rxjs';
 import { GameInfo } from '../types/game-info';
 import { UserService } from './user-service.service';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { collection, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
 
 
@@ -15,24 +15,33 @@ export class GameInfoService {
   pathGameInfo = FirestoreTablesEnum.GAME_INFO
 
   constructor(
+    private userService: UserService,
     private utilsService: UtilsService
   ) {}
 
   /**
    * Pega os gameInfos do usuário logado.
    */
-  async getGameInfos(userId: string) {
-    const refCollection = collection(this.firestore, this.pathGameInfo);
-    const queryRef = query(refCollection, where('userId', '==', userId));
+  getGameInfos() {
+    return this.userService.currentUser$.pipe(
+      switchMap(async (user) => {
+        if (!user) return [];
 
-    const snapshot = await getDocs(queryRef)
-    const results: GameInfo[] = []
+        const userId = user.userID;
 
-    snapshot.forEach((item) => {
-      results.push(item.data() as GameInfo)
-    })
+        const refCollection = collection(this.firestore, this.pathGameInfo);
+        const queryRef = query(refCollection, where('userId', '==', userId));
 
-    return results;
+        const snapshot = await getDocs(queryRef)
+        const results: GameInfo[] = []
+
+        snapshot.forEach((item) => {
+          results.push(item.data() as GameInfo)
+        })
+
+        return results;
+      })
+    );
   }
 
   /**
@@ -46,8 +55,8 @@ export class GameInfoService {
   /**
    * Retorna o total de gameInfos do usuário logado.
    */
-  get totalGameInfos(): number {
-    return 10; // para manter algumas funcionalidades operando normalmente, mas deve ser removida posteriormente
+  getTotalGameInfos(): number {
+    return 0;
   }
 
   /**

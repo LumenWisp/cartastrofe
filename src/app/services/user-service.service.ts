@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, getAuth, user, User, setPersistence, authState } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { map, startWith } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +15,20 @@ export class UserService {
 
   private currentUserData: UserEntity | null = null;
 
-  constructor() {
+  readonly user$ = user(this.auth);
+  readonly currentUser$ = this.user$.pipe(
+    map(user => {
+      return user
+        ? {
+            email: user.email!,
+            userID: user.uid
+          }
+        : null;
+    }),
+    startWith(undefined)
+  );
 
-    onAuthStateChanged(this.auth, async (user) => {
-      if (user) {
-        const docSnap = await getDoc(doc(this.firestore, 'user', user.uid));
-        if (docSnap.exists()) {
-          this.currentUserData = docSnap.data() as UserEntity;
-        }
-      } else {
-        this.currentUserData = null;
-      }
-    });
-  }
+  constructor() {}
 
   getUserLogged(): UserEntity | null {
     return this.currentUserData;

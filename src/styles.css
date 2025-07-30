@@ -25,6 +25,15 @@ a:hover {
   color: #2c2c2c;
 }
 
-.p-password-mask-icon:hover {
+p-password .p-password-mask-icon:hover {
   cursor: pointer;
+}
+
+p-menubar .p-menubar-button {
+  order: 1;
+}
+
+body {
+  height: 100dvh;
+  background: var(--p-app-body);
 }

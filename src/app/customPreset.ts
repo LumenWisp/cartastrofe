@@ -29,5 +29,32 @@ export const themePreset = definePreset(Aura, {
       900: '{red.900}',
       950: '{red.950}',
     },
+    app: {
+      body: 'white',
+    },
+  },
+  components: {
+    menubar: {
+      root: {
+        borderRadius: '0',
+        background: '{primary-800}',
+        borderColor: '{primary-800}',
+      },
+      submenu: {
+        background: '{primary-700}',
+        borderColor: '{primary-700}',
+      },
+      item: {
+        color: 'white',
+        focusBackground: 'white',
+        iconColor: 'white',
+        iconFocusColor: 'black',
+      },
+      mobileButton: {
+        color: 'white',
+        hoverColor: 'black',
+        hoverBackground: 'white',
+      }
+    },
   },
 });
