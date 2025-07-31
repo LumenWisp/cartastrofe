@@ -1,5 +1,7 @@
+// angular
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+// primeng
 import { updatePreset } from '@primeng/themes';
 
 @Component({

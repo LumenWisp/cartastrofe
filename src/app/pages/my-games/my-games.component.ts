@@ -1,16 +1,19 @@
+// angular
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+// primeng
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { ButtonModule } from 'primeng/button';
-import { GameInfoService } from '../../services/game-info.service';
 import { PanelModule } from 'primeng/panel';
-import { CommonModule } from '@angular/common';
-import { UserEntity } from '../../types/user';
-import { UserService } from '../../services/user-service.service';
-import { GameInfo } from '../../types/game-info';
+// components
+import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { PanelGameComponent } from '../../components/panel-game/panel-game.component';
+// services
+import { GameInfoService } from '../../services/game-info.service';
+// types
+import { GameInfo } from '../../types/game-info';
 
 @Component({
   selector: 'app-my-games',
@@ -64,7 +67,7 @@ export class MyGamesComponent {
     });
   }
 
-  showDialog() {
+  showModal() {
     this.showCreateGameModal = true;
   }
 }

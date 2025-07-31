@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { CardTemplateComponent } from "../../components/card-template/card-template.component";
+import { CardTemplateComponent } from '../../components/card-template/card-template.component';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputIconModule } from 'primeng/inputicon';

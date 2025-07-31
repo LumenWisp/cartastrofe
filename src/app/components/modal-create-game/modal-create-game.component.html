@@ -7,31 +7,74 @@
   [resizable]="false"
 >
   <form class="form" [formGroup]="form" (submit)="createGame()">
-    <div>
-      <label for="gameName" class="label">Nome do jogo</label>
+    <p-floatlabel variant="on" class="floatlabel">
       <input
-        id="gameName"
+        id="name"
         pInputText
-        placeholder="Digite o nome do jogo"
-        formControlName="gameName"
+        [fluid]="true"
+        formControlName="name"
       />
+      <label for="name">Nome do jogo</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="floatlabel">
+      <textarea
+        pTextarea
+        id="description"
+        [autoResize]="false"
+        [fluid]="true"
+        formControlName="description"
+      ></textarea>
+      <label for="description">Descrição do jogo</label>
+    </p-floatlabel>
+
+    <div class="inline-input">
+      <span>Modo de jogo</span>
+
+      <p-selectbutton
+        [options]="modes"
+        [allowEmpty]="false"
+        formControlName="gameMode"
+      >
+        <ng-template #item let-item>
+          <span [pTooltip]="item.description" tooltipPosition="top">{{ item.value }}</span>
+        </ng-template>
+      </p-selectbutton>
     </div>
 
-    <div>
-      <div>Modo de jogo</div>
+    <div class="inline-input">
+      <span>Número de jogadores <br> (mínimo 2, máximo 99)</span>
 
-      <div class="gamemode-groups">
-        @for (gameMode of modes; track $index) {
-          <div class="gamemode-group">
-            <p-radio-button
-              name="gameMode"
-              [inputId]="gameMode.value"
-              [value]="gameMode.value"
-              formControlName="gameMode"
-            />
-            <label [for]="gameMode.value" class="label">{{gameMode.label}}</label>
-          </div>
-        }
+      <div class="stacked-input">
+        <span>Min</span>
+
+        <p-inputnumber
+          id="countPlayersMin"
+          inputId="integeronly"
+          [showButtons]="true"
+          [min]="2"
+          [max]="99"
+          [fluid]="true"
+          [allowEmpty]="false"
+          buttonLayout="vertical"
+          formControlName="countPlayersMin"
+        />
+      </div>
+
+      <div class="stacked-input">
+        <span>Max</span>
+
+        <p-inputnumber
+          id="countPlayersMax"
+          inputId="integeronly"
+          [showButtons]="true"
+          [min]="2"
+          [max]="99"
+          [fluid]="true"
+          [allowEmpty]="false"
+          buttonLayout="vertical"
+          formControlName="countPlayersMax"
+        />
       </div>
     </div>
 

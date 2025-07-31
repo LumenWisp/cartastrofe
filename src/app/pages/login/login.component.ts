@@ -1,18 +1,17 @@
+// angular
 import { Component, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { FirebaseError } from '@angular/fire/app';
+// primeng
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+// services
 import { UserService } from '../../services/user-service.service';
+// shared
 import { FormManager } from '../../shared/form-manager';
-import { FirebaseError } from '@angular/fire/app';
 
 @Component({
   selector: 'app-login',

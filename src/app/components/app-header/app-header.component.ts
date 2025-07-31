@@ -1,8 +1,11 @@
+// angular
 import { Component, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
+// primeng
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
+// services
 import { UserService } from '../../services/user-service.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-app-header',

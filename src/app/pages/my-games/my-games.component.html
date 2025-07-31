@@ -5,12 +5,12 @@
   </p-iconfield>
 
   <div class="panels-container" #panels>
-    <button pButton (click)="showDialog()">
+    <button pButton (click)="showModal()">
       <span class="pi pi-plus" pButtonIcon></span>
       <span class="create-game-label" pButtonLabel>Criar jogo</span>
     </button>
 
-     @for (gameInfo of games; track $index) {
+    @for (gameInfo of games; track $index) {
       <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
     }
 
@@ -20,4 +20,4 @@
   </div>
 </div>
 
-<app-modal-create-game [(showModal)]="showCreateGameModal" (loadGame)="loadGames()" />
+<app-modal-create-game [(showModal)]="showCreateGameModal" (gameCreated)="loadGames()" />

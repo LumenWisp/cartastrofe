@@ -1,9 +1,12 @@
+// angular
 import { Component } from '@angular/core';
-import {  RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+// primeng
 import { MenubarModule } from 'primeng/menubar';
-import { ModalCreateRoomComponent } from '../../components/modal-create-room/modal-create-room.component';
 import { updatePreset } from '@primeng/themes';
-import { AppHeaderComponent } from "../../components/app-header/app-header.component";
+// components
+import { ModalCreateRoomComponent } from '../../components/modal-create-room/modal-create-room.component';
+import { AppHeaderComponent } from '../../components/app-header/app-header.component';
 
 @Component({
   selector: 'app-app-main',

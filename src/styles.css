@@ -26,11 +26,19 @@ a:hover {
 }
 
 p-password .p-password-mask-icon:hover {
-  cursor: pointer;
+  cursor: pointer; /* mostra que o ícone de "mostrar senha" é clicável */
 }
 
 p-menubar .p-menubar-button {
-  order: 1;
+  order: 1; /* posiciona o menu de hamburguer à direita */
+}
+
+p-dialog .p-dialog-content {
+  overflow-y: visible;
+}
+
+textarea {
+  resize: none;
 }
 
 body {
