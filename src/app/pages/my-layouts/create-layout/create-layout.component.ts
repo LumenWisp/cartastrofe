@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { MenuModule } from 'primeng/menu';
 import { CardFieldTypes } from '../../../enum/card-field-types.enum';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-create-layout',
-  imports: [CdkDrag, CdkDropList, MenuModule],
+  imports: [CdkDrag, CdkDropList, MenuModule, TextareaModule],
   templateUrl: './create-layout.component.html',
   styleUrl: './create-layout.component.css',
 })

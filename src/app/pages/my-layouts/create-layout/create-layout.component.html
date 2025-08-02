@@ -11,9 +11,7 @@
        @for (cardField of cardFields; track cardField) {
 
         @if (cardField.type === 'TEXT') {
-          <div class="campo" cdkDrag cdkDragBoundary=".carta-molde">
-            eu sou um campo de texto
-          </div>
+          <textarea rows="5" cols="40" pTextarea [autoResize]="true" cdkDrag cdkDragBoundary=".carta-molde"></textarea>
         }
 
         @else if (cardField.type === 'IMAGE') {
