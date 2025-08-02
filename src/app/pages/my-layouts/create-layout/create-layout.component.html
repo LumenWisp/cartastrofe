@@ -1,3 +1,27 @@
-<input type="text" pInputText/>
+<div class="layout">
+  <!-- Menu Lateral -->
+  <div class="menu-lateral">
+    <p-menu [model]="menuItems"></p-menu>
+  </div>
 
-<router-outlet></router-outlet>
+  <!-- Área Central -->
+  <div class="area-central">
+    <div class="carta-molde">
+      <!-- Aqui os blocos serão adicionados -->
+       @for (cardField of cardFields; track cardField) {
+
+        @if (cardField.type === 'TEXT') {
+          <div class="campo" cdkDrag cdkDragBoundary=".carta-molde">
+            eu sou um campo de texto
+          </div>
+        }
+
+        @else if (cardField.type === 'IMAGE') {
+          <div class="campo" cdkDrag cdkDragBoundary=".carta-molde">
+            eu sou um campo de imagem
+          </div>
+        }  
+       }
+    </div>
+  </div>
+</div>
