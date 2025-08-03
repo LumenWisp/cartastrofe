@@ -21,6 +21,7 @@ export class AppHeaderComponent {
       label: 'Meus jogos',
       icon: 'pi pi-wrench',
       routerLink: '/my-games',
+      
     },
     {
       label: 'Meus layouts',

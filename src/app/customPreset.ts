@@ -56,5 +56,15 @@ export const themePreset = definePreset(Aura, {
         hoverBackground: 'white',
       }
     },
+    panel: {
+      root: {
+        background: '{primary-400}',
+        borderColor: '{primary-400}',
+        color: 'white',
+      },
+      header: {
+        color: 'white',
+      },
+    },
   },
 });

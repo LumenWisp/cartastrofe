@@ -1,3 +1,5 @@
-.panel-wrapper {
-  cursor: pointer;
+.gap-items {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
 }
