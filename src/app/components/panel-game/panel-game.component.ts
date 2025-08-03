@@ -1,6 +1,6 @@
 // angular
 import { Component, Input, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 // primeng
 import { PanelModule } from 'primeng/panel';
