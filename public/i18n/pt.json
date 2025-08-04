@@ -25,5 +25,14 @@
 		"hero-desc": "Cartastrofe é o seu criador e jogador de jogos de cartas moderno e intuitivo. Crie, personalize, jogue e compartilhe jogos de cartas incríveis — sem precisar de habilidades de programação!",
 		"hero-title": "Crie cartas. Crie jogos. Liberte a criatividade.",
 		"login": "Entrar"
+	},
+	"login": {
+		"email": "Email",
+		"forgot-password": "Esqueceu a senha?",
+		"login-message": "Faça o login",
+		"password-label": "Senha",
+		"register-prompt": "Não tem conta? Cadastre-se",
+		"submit-button": "Entrar",
+		"title": "Bem-vindo!"
 	}
 }

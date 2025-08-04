@@ -1,20 +1,20 @@
-<h1>Bem-vindo</h1>
-<span class="message">Faça o login</span>
+<h1>{{ 'login.title' | translate }}</h1>
+<span class="message">{{ 'login.login-message' | translate }}</span>
 
 <form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
   <p-floatlabel variant="on">
-    <label for="email">Email</label>
+    <label for="email">{{'login.email' | translate }}</label>
     <input id="email" pInputText fluid="true" formControlName="email" />
   </p-floatlabel>
 
   <p-floatlabel variant="on">
     <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" />
-    <label for="password">Senha</label>
+    <label for="password">{{'login.password-label' | translate }}</label>
   </p-floatlabel>
 
-  <a class="link" routerLink="/forget-password">Esqueceu a senha?</a>
+  <a class="link" routerLink="/forget-password">{{'login.forgot-password' | translate }}</a>
 
-  <p-button type="submit" class="button-submit" label="Entrar" />
+  <p-button type="submit" class="button-submit" label="{{'login.submit-button' | translate }}" />
 
-  <a class="other-auth-link link" routerLink="/register">Não tem conta?</a>
+  <a class="other-auth-link link" routerLink="/register">{{'login.register-prompt' | translate }}</a>
 </form>

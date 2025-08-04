@@ -25,5 +25,14 @@
 		"hero-desc": "Cartastrofe is your modern, intuitive card game builder and player. Create, customize, play and share stunning card games — no coding skills needed!",
 		"hero-title": "Design Cards. Build Games. Unleash Creativity.",
 		"login": "Login"
+	},
+	"login": {
+		"email": "Email",
+		"forgot-password": "Forgot password?",
+		"login-message": "Login",
+		"password-label": "Password",
+		"register-prompt": "Don't have an account? Sign up",
+		"submit-button": "Login",
+		"title": "Welcome!"
 	}
 }
