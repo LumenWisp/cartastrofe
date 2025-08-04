@@ -1,0 +1,29 @@
+{
+	"homepage": {
+		"card": {
+			"card-back-title": "Cartastrofe",
+			"card-desc-1": "Crie,",
+			"card-desc-2": "Construa,",
+			"card-desc-3": "Jogue!"
+		},
+		"feature-cards": {
+			"card-1": {
+				"desc": "Veja as atualizações da sua carta com nosso editor em tempo real.",
+				"title": "Visualização instantânea"
+			},
+			"card-2": {
+				"desc": "Crie jogos de cartas completos visualmente usando blocos lógicos intuitivos de arrastar e soltar — sem necessidade de programação.",
+				"title": "Lógica de jogo sem código"
+			},
+			"card-3": {
+				"desc": "Organize elementos sem esforço com uma interface amigável de arrastar e soltar.",
+				"title": "Drag & Drop"
+			}
+		},
+		"footer": "2025 Cartastrofe. Todos os direitos reservados.",
+		"hero-button": "Comece a construir",
+		"hero-desc": "Cartastrofe é o seu criador e jogador de jogos de cartas moderno e intuitivo. Crie, personalize, jogue e compartilhe jogos de cartas incríveis — sem precisar de habilidades de programação!",
+		"hero-title": "Crie cartas. Crie jogos. Liberte a criatividade.",
+		"login": "Entrar"
+	}
+}

@@ -1,15 +1,19 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import LocomotiveScroll from 'locomotive-scroll';
+import { TranslatePipe, TranslateDirective, TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-homepage',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe, TranslateDirective],
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.css'
 })
+
 export class HomepageComponent implements AfterViewInit {
   scroll: LocomotiveScroll = new LocomotiveScroll;
+
+  translate = inject(TranslateService);
 
   // Language Variables
   currentLanguage = 'PT-BR';
@@ -30,10 +34,13 @@ export class HomepageComponent implements AfterViewInit {
   }
   
   changeLanguage() {
-    this.currentLanguage = this.currentLanguage === 'PT-BR' ? 'EN' : 'PT-BR';
-    
-    // API here to change language
-    alert("This feature is not available yet. Please check back later.");
+    if (this.currentLanguage === 'PT-BR') {
+      this.translate.use('en-US');
+      this.currentLanguage = 'EN-US';
+    } else {
+      this.translate.use('pt');
+      this.currentLanguage = 'PT-BR';
+    }
   }
 
   openSidebar() {

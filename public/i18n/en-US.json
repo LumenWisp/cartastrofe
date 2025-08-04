@@ -1,0 +1,29 @@
+{
+	"homepage": {
+		"card": {
+			"card-back-title": "Cartastrofe",
+			"card-desc-1": "Design,",
+			"card-desc-2": "Build,",
+			"card-desc-3": "Play!"
+		},
+		"feature-cards": {
+			"card-1": {
+				"desc": "See your card updates in real time with our live preview editor.",
+				"title": "Instant Preview"
+			},
+			"card-2": {
+				"desc": "Build complete card games visually using intuitive drag-and-drop logic blocks — no programming required.",
+				"title": "No-Code Game Logic"
+			},
+			"card-3": {
+				"desc": "Effortlessly arrange elements with a smooth drag-and-drop interface.",
+				"title": "Drag & Drop"
+			}
+		},
+		"footer": "2025 Cartastrofe. All rights reserved.",
+		"hero-button": "Start Building",
+		"hero-desc": "Cartastrofe is your modern, intuitive card game builder and player. Create, customize, play and share stunning card games — no coding skills needed!",
+		"hero-title": "Design Cards. Build Games. Unleash Creativity.",
+		"login": "Login"
+	}
+}
