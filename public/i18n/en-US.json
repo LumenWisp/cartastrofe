@@ -1,4 +1,12 @@
 {
+	"forget-password": {
+		"email": "Email",
+		"login-prompt": "Back to login",
+		"message": "Inform your email to reset password",
+		"resend": "Resend",
+		"send": "Send",
+		"title": "Forgot Password"
+	},
 	"homepage": {
 		"card": {
 			"card-back-title": "Cartastrofe",

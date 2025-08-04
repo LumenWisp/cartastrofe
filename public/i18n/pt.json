@@ -1,4 +1,12 @@
 {
+	"forget-password": {
+		"email": "Email",
+		"login-prompt": "Voltar ao login",
+		"message": "Informe seu email para redefinir a senha",
+		"resend": "Reenviar",
+		"send": "Enviar",
+		"title": "Esqueci a Senha"
+	},
 	"homepage": {
 		"card": {
 			"card-back-title": "Cartastrofe",

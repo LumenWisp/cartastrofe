@@ -4,10 +4,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forget-password',
-  imports: [FloatLabelModule, InputTextModule, ButtonModule, ReactiveFormsModule, RouterLink],
+  imports: [FloatLabelModule, InputTextModule, ButtonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './forget-password.component.html',
   styleUrls: ['./forget-password.component.css', '../../shared/auth.css'],
 })
