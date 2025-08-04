@@ -43,5 +43,12 @@
 		"register-message": "Sign-up",
 		"submit-button": "Sign-up",
 		"title": "Welcome!"
+	},
+	"reset-password": {
+		"login-prompt": "Back to login",
+		"message": "Choose your new password",
+		"new-password-label": "New password",
+		"submit-button": "Reset password",
+		"title": "Reset Password"
 	}
 }

@@ -43,5 +43,12 @@
 		"register-message": "Faça o cadastro",
 		"submit-button": "Cadastrar",
 		"title": "Bem-vindo!"
+	},
+	"reset-password": {
+		"login-prompt": "Voltar ao login",
+		"message": "Digite sua nova senha",
+		"new-password-label": "Nova senha",
+		"submit-button": "Resetar senha",
+		"title": "Resetar Senha"
 	}
 }
