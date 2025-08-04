@@ -34,5 +34,14 @@
 		"register-prompt": "Não tem conta? Cadastre-se",
 		"submit-button": "Entrar",
 		"title": "Bem-vindo!"
+	},
+	"register": {
+		"email": "Email",
+		"login-prompt": "Já tem conta? Faça o login",
+		"name-label": "Nome",
+		"password": "Senha",
+		"register-message": "Faça o cadastro",
+		"submit-button": "Cadastrar",
+		"title": "Bem-vindo!"
 	}
 }

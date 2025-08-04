@@ -34,5 +34,14 @@
 		"register-prompt": "Don't have an account? Sign up",
 		"submit-button": "Login",
 		"title": "Welcome!"
+	},
+	"register": {
+		"email": "Email",
+		"login-prompt": "Already have an account? Sign-in",
+		"name-label": "Name",
+		"password": "Password",
+		"register-message": "Sign-up",
+		"submit-button": "Sign-up",
+		"title": "Welcome!"
 	}
 }

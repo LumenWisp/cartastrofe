@@ -12,6 +12,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import {UserService} from '../../services/user-service.service'
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +23,7 @@ import {UserService} from '../../services/user-service.service'
     ButtonModule,
     ReactiveFormsModule,
     RouterLink,
+    TranslatePipe
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css', '../../shared/auth.css'],
