@@ -10,7 +10,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { GameModes } from '../../enum/game-mode';
+import { GameModesEnum } from '../../enum/game-modes.enum';
 import { GameInfo } from '../../types/game-info';
 import { UserService } from '../../services/user-service.service';
 import { UserEntity } from '../../types/user';
@@ -48,12 +48,12 @@ export class ModalCreateGameComponent {
 
   form = new FormGroup({
     gameName: new FormControl('', [Validators.required]),
-    gameMode: new FormControl(GameModes.STRUCTURED, [Validators.required]),
+    gameMode: new FormControl(GameModesEnum.STRUCTURED, [Validators.required]),
   });
 
   modes = [
-    { label: 'Estruturado', value: GameModes.STRUCTURED },
-    { label: 'Livre', value: GameModes.FREE },
+    { label: 'Estruturado', value: GameModesEnum.STRUCTURED },
+    { label: 'Livre', value: GameModesEnum.FREE },
   ];
 
   close() {

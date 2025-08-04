@@ -1,4 +1,4 @@
-export enum CardFieldTypes {
+export enum CardFieldTypesEnum {
   IMAGE = 'IMAGE',
   TEXT = 'TEXT',
 }

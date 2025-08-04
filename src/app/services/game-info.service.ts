@@ -26,7 +26,7 @@ export class GameInfoService {
     const queryRef = query(refCollection, where('userId', '==', userId));
 
     const snapshot = await getDocs(queryRef)
-    const results: GameInfo[] = []
+    const results: GameInfo[] = [];
 
     snapshot.forEach((item) => {
       results.push(item.data() as GameInfo)

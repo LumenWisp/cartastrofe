@@ -5,7 +5,8 @@ import { ButtonModule } from 'primeng/button';
 import { InputIconModule } from 'primeng/inputicon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardLayoutService } from '../../services/card-layout.service';
-import { CardLayout } from '../../types/card-layout';
+import { UserService } from '../../services/user-service.service';
+import { CardLayoutModel } from '../../types/card-layout';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -16,7 +17,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './my-layouts.component.css'
 })
 export class MyLayoutsComponent {
-  cardLayouts$: Observable<CardLayout[]>;
+  cardLayouts$: Observable<CardLayoutModel[]>;
 
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
 
@@ -24,8 +25,10 @@ export class MyLayoutsComponent {
     private router: Router,
     private route: ActivatedRoute,
     private cardLayoutService: CardLayoutService,
+    private userService: UserService,
   ) {
-    this.cardLayoutService.fetchCardLayouts();
+
+    const cardLayouts = this.cardLayoutService.fetchCardLayouts(userService.getUserLogged()!.userID);
     this.cardLayouts$ = cardLayoutService.cardLayouts$;
   }
 
