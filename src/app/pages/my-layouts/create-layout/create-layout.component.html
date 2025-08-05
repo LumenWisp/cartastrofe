@@ -6,16 +6,16 @@
 
   <!-- Área Central -->
   <div class="area-central">
-    <div class="carta-molde">
+    <div class="carta-molde" #containerRef>
       <!-- Aqui os blocos serão adicionados -->
        @for (cardField of cardFields; track cardField) {
 
         @if (cardField.type === 'TEXT') {
-          <textarea rows="5" cols="40" pTextarea [autoResize]="true" cdkDrag cdkDragBoundary=".carta-molde"></textarea>
+          <textarea rows="5" cols="40" pTextarea [autoResize]="true" [readonly]="true" cdkDrag cdkDragBoundary=".carta-molde" class="textarea" #fieldRefs></textarea>
         }
 
         @else if (cardField.type === 'IMAGE') {
-          <div class="campo" cdkDrag cdkDragBoundary=".carta-molde">
+          <div class="campo" cdkDrag cdkDragBoundary=".carta-molde" #fieldRefs>
             eu sou um campo de imagem
           </div>
         }  

@@ -1,12 +1,10 @@
 import { CardFieldTypesEnum } from "../enum/card-field-types.enum";
 
 export interface CardLayoutFieldModel {
-  id?: string;
-  idCardTemplate?: string;
   //idName: string;
   type: CardFieldTypesEnum;
-  x: number;
-  y: number;
+  x: number; // Distância do lado esquerdo do campo até o lado esquerdo do layout
+  y: number; // Distância do topo do campo até o topo do layout
   width: number;
   height: number;
 }

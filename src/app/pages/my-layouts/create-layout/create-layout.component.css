@@ -2,6 +2,10 @@
 CSS FEITO INTEIRAMENTE PELO CHAT, MODIFIQUEM CASO TENHA ALGUMA MERDA
 */
 
+.textarea {
+  cursor: auto;
+}
+
 .layout {
   display: flex;
   height: 100vh;
