@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, OnInit } from '@angular/core';
 import { CardTemplateComponent } from "../../components/card-template/card-template.component";
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -15,7 +15,7 @@ import { CardLayoutModel } from '../../types/card-layout';
   templateUrl: './my-layouts.component.html',
   styleUrl: './my-layouts.component.css'
 })
-export class MyLayoutsComponent {
+export class MyLayoutsComponent implements OnInit {
 
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
   cardLayouts: CardLayoutModel[] = [];

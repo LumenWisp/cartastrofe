@@ -1,9 +1,24 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from '@angular/fire/auth';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+} from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { CardLayoutModel } from '../types/card-layout';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -14,25 +29,39 @@ export class UserService {
   private currentUserData: UserEntity | null = null;
 
   constructor() {
-
     onAuthStateChanged(this.auth, async (user) => {
       if (user) {
         const docSnap = await getDoc(doc(this.firestore, 'user', user.uid));
         if (docSnap.exists()) {
           this.currentUserData = docSnap.data() as UserEntity;
+
+          localStorage.setItem('user', JSON.stringify(this.currentUserData));
         }
       } else {
         this.currentUserData = null;
+        localStorage.removeItem('user');
       }
     });
   }
 
   getUserLogged(): UserEntity | null {
-    return this.currentUserData;
+    if (this.currentUserData) return this.currentUserData;
+
+    const raw = localStorage.getItem('user');
+    if (raw) {
+      this.currentUserData = JSON.parse(raw);
+      return this.currentUserData;
+    }
+
+    return null;
   }
 
   async register(user: UserEntity): Promise<void> {
-    const cred = await createUserWithEmailAndPassword(this.auth, user.email, user.password);
+    const cred = await createUserWithEmailAndPassword(
+      this.auth,
+      user.email,
+      user.password
+    );
     const uid = cred.user.uid;
 
     const userData: UserEntity = {
@@ -54,11 +83,16 @@ export class UserService {
     // Busca os dados do Firestore com o UID
     const docSnap = await getDoc(doc(this.firestore, this.path, uid));
 
-    if(docSnap.exists()){
+    if (docSnap.exists()) {
       const refCollection = collection(this.firestore, this.path);
-      const queryRef = query(refCollection, where('email', '==', email), where('password', '==', password), limit(1));
+      const queryRef = query(
+        refCollection,
+        where('email', '==', email),
+        where('password', '==', password),
+        limit(1)
+      );
 
-      const docRef = await getDocs(queryRef)
+      const docRef = await getDocs(queryRef);
 
       if (!docRef.empty) {
         this.currentUserData = docRef.docs[0].data() as UserEntity;
@@ -72,5 +106,6 @@ export class UserService {
   async logout(): Promise<void> {
     await signOut(this.auth);
     this.currentUserData = null;
+    localStorage.removeItem('user');
   }
 }
