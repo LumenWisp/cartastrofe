@@ -4,12 +4,14 @@
       <span class="pi pi-plus plus-icon" pButtonIcon></span>
     </button>
 
-    @for (cardLayout of (cardLayouts$ | async); track $index) {
+    @for (cardLayout of cardLayouts; track $index) {
       <app-card-template></app-card-template>
     }
 
+    <!-- 
     @for (gameInfo of remainingCardLayoutSpace(); track $index) {
       <div class="placeholder-card-layout"></div>
     }
+    -->
   </div>
 </div>

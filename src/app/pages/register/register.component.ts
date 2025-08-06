@@ -52,7 +52,8 @@ export class RegisterComponent {
           userID: '',
           name: name,
           email: email,
-          password: password
+          password: password,
+          cardLayoutsIds: []
         }
         await this.userService.register(register);
         console.log('Registro feito com sucesso');

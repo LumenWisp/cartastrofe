@@ -3,6 +3,7 @@ import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signO
 import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { CardLayoutModel } from '../types/card-layout';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -38,7 +39,8 @@ export class UserService {
       userID: uid,
       name: user.name,
       email: user.email,
-      password: ''
+      password: '',
+      cardLayoutsIds: [],
     };
 
     await setDoc(doc(this.firestore, 'user', uid), userData);

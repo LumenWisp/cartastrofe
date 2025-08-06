@@ -6,9 +6,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardLayoutService } from '../../services/card-layout.service';
 import { UserService } from '../../services/user-service.service';
-import { CardLayoutModel } from '../../types/card-layout';
-import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { CardLayoutModel } from '../../types/card-layout';
 
 @Component({
   selector: 'app-my-layouts',
@@ -17,19 +16,19 @@ import { CommonModule } from '@angular/common';
   styleUrl: './my-layouts.component.css'
 })
 export class MyLayoutsComponent {
-  cardLayouts$: Observable<CardLayoutModel[]>;
 
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
+  cardLayouts: CardLayoutModel[] = [];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private cardLayoutService: CardLayoutService,
     private userService: UserService,
-  ) {
+  ) {}
 
-    const cardLayouts = this.cardLayoutService.fetchCardLayouts(userService.getUserLogged()!.userID);
-    this.cardLayouts$ = cardLayoutService.cardLayouts$;
+  async ngOnInit() { 
+    this.cardLayouts = await this.cardLayoutService.fetchCardLayouts(this.userService.getUserLogged()!.userID)
   }
 
   @HostListener('window:resize')
