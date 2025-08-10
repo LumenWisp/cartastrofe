@@ -1,4 +1,12 @@
 {
+	"app-main": {
+		"menu-items": {
+			"create-room": "Criar Sala",
+			"logout": "Sair",
+			"my-games": "Meus Jogos",
+			"my-layouts": "Meus Layouts"
+		}
+	},
 	"forget-password": {
 		"email": "Email",
 		"login-prompt": "Voltar ao login",
@@ -6,6 +14,10 @@
 		"resend": "Reenviar",
 		"send": "Enviar",
 		"title": "Esqueci a Senha"
+	},
+	"game-mode": {
+		"free": "Livre",
+		"structured": "Estruturado"
 	},
 	"homepage": {
 		"card": {
@@ -42,6 +54,20 @@
 		"register-prompt": "Não tem conta? Cadastre-se",
 		"submit-button": "Entrar",
 		"title": "Bem-vindo!"
+	},
+	"modal-create-game": {
+		"game-mode": "Modo de Jogo",
+		"game-name": "Nome do Jogo",
+		"game-name-placeholder": "Digite o nome do jogo",
+		"header": "Criar Jogo",
+		"submit-button": "CRIAR"
+	},
+	"my-games": {
+		"create-game": "Criar jogo"
+	},
+	"panel-game": {
+		"number-of-cards": "Nº cartas",
+		"number-of-players": "Nº jogadores"
 	},
 	"register": {
 		"email": "Email",

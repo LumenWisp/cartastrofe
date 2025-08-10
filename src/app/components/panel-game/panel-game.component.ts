@@ -4,10 +4,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { GameInfo } from '../../types/game-info';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-panel-game',
-  imports: [PanelModule, AvatarGroupModule, AvatarModule, RouterLink],
+  imports: [PanelModule, AvatarGroupModule, AvatarModule, RouterLink, TranslatePipe],
   templateUrl: './panel-game.component.html',
   styleUrl: './panel-game.component.css',
 })

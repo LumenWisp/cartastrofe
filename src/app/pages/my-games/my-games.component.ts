@@ -11,6 +11,7 @@ import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
 import { GameInfo } from '../../types/game-info';
 import { PanelGameComponent } from '../../components/panel-game/panel-game.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-my-games',
@@ -23,6 +24,7 @@ import { PanelGameComponent } from '../../components/panel-game/panel-game.compo
     ButtonModule,
     PanelModule,
     CommonModule,
+    TranslatePipe
   ],
   templateUrl: './my-games.component.html',
   styleUrl: './my-games.component.css',

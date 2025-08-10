@@ -5,7 +5,7 @@ import { TranslatePipe, TranslateDirective, TranslateService } from "@ngx-transl
 
 @Component({
   selector: 'app-homepage',
-  imports: [RouterLink, TranslatePipe, TranslateDirective],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.css'
 })

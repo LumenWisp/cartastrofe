@@ -1,4 +1,12 @@
 {
+	"app-main": {
+		"menu-items": {
+			"create-room": "Create Room",
+			"logout": "Logout",
+			"my-games": "My Games",
+			"my-layouts": "My Layouts"
+		}
+	},
 	"forget-password": {
 		"email": "Email",
 		"login-prompt": "Back to login",
@@ -6,6 +14,10 @@
 		"resend": "Resend",
 		"send": "Send",
 		"title": "Forgot Password"
+	},
+	"game-mode": {
+		"free": "Free",
+		"structured": "Structured"
 	},
 	"homepage": {
 		"card": {
@@ -42,6 +54,20 @@
 		"register-prompt": "Don't have an account? Sign up",
 		"submit-button": "Login",
 		"title": "Welcome!"
+	},
+	"modal-create-game": {
+		"game-mode": "Game Mode",
+		"game-name": "Game Name",
+		"game-name-placeholder": "Enter game name",
+		"header": "Create Game",
+		"submit-button": "CREATE"
+	},
+	"my-games": {
+		"create-game": "Create game"
+	},
+	"panel-game": {
+		"number-of-cards": "Nº cards",
+		"number-of-players": "Nº players"
 	},
 	"register": {
 		"email": "Email",
