@@ -62,6 +62,12 @@
 		"header": "Create Game",
 		"submit-button": "CREATE"
 	},
+	"modal-create-room": {
+		"create-room": "Create room",
+		"game-name": "Game",
+		"game-name-placeholder": "Select game",
+		"submit-button": "CREATE"
+	},
 	"my-games": {
 		"create-game": "Create game"
 	},
@@ -84,5 +90,8 @@
 		"new-password-label": "New password",
 		"submit-button": "Reset password",
 		"title": "Reset Password"
+	},
+	"rooms": {
+		"header": "Players"
 	}
 }
