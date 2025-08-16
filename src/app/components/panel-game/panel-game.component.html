@@ -3,7 +3,7 @@
     <p>{{gameInfo.name}} - <a class="pi pi-book" [routerLink]="['game-description', gameInfo.id]"></a></p>
   </ng-template>
 
-  <p><b>Nº jogadores</b>: {{countPlayersRange}}</p>
+  <p><b>{{'panel-game.number-of-players' | translate}}</b>: {{countPlayersRange}}</p>
 
-  <p><b>Nº cartas</b>: {{gameInfo.countCards}}</p>
+  <p><b>{{'panel-game.number-of-cards' | translate}}</b>: {{gameInfo.countCards}}</p>
 </p-panel>

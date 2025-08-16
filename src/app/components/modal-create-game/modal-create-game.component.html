@@ -1,5 +1,5 @@
 <p-dialog
-  header="Criar novo jogo"
+  header="{{ 'modal-create-game.header' | translate }}"
   [(visible)]="showModal"
   (onHide)="close()"
   [modal]="true"
@@ -8,17 +8,17 @@
 >
   <form class="form" [formGroup]="form" (submit)="createGame()">
     <div>
-      <label for="gameName" class="label">Nome do jogo</label>
+      <label for="gameName" class="label">{{'modal-create-game.game-name' | translate}}</label>
       <input
         id="gameName"
         pInputText
-        placeholder="Digite o nome do jogo"
+        placeholder="{{'modal-create-game.game-name-placeholder' | translate}}"Digite o nome do jogo
         formControlName="gameName"
       />
     </div>
 
     <div>
-      <div>Modo de jogo</div>
+      <div>{{'modal-create-game.game-mode' | translate}}</div>
 
       <div class="gamemode-groups">
         @for (gameMode of modes; track $index) {
@@ -35,6 +35,6 @@
       </div>
     </div>
 
-    <p-button type="submit" label="CRIAR" />
+    <p-button type="submit" label="{{'modal-create-game.submit-button' | translate}}" />
   </form>
 </p-dialog>

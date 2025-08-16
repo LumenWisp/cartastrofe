@@ -1,0 +1,97 @@
+{
+	"app-main": {
+		"menu-items": {
+			"create-room": "Create Room",
+			"logout": "Logout",
+			"my-games": "My Games",
+			"my-layouts": "My Layouts"
+		}
+	},
+	"forget-password": {
+		"email": "Email",
+		"login-prompt": "Back to login",
+		"message": "Inform your email to reset password",
+		"resend": "Resend",
+		"send": "Send",
+		"title": "Forgot Password"
+	},
+	"game-mode": {
+		"free": "Free",
+		"structured": "Structured"
+	},
+	"homepage": {
+		"card": {
+			"card-back-title": "Cartastrofe",
+			"card-desc-1": "Design,",
+			"card-desc-2": "Build,",
+			"card-desc-3": "Play!"
+		},
+		"feature-cards": {
+			"card-1": {
+				"desc": "See your card updates in real time with our live preview editor.",
+				"title": "Instant Preview"
+			},
+			"card-2": {
+				"desc": "Build complete card games visually using intuitive drag-and-drop logic blocks — no programming required.",
+				"title": "No-Code Game Logic"
+			},
+			"card-3": {
+				"desc": "Effortlessly arrange elements with a smooth drag-and-drop interface.",
+				"title": "Drag & Drop"
+			}
+		},
+		"footer": "2025 Cartastrofe. All rights reserved.",
+		"hero-button": "Start Building",
+		"hero-desc": "Cartastrofe is your modern, intuitive card game builder and player. Create, customize, play and share stunning card games — no coding skills needed!",
+		"hero-title": "Design Cards. Build Games. Unleash Creativity.",
+		"login": "Login"
+	},
+	"login": {
+		"email": "Email",
+		"forgot-password": "Forgot password?",
+		"login-message": "Login",
+		"password-label": "Password",
+		"register-prompt": "Don't have an account? Sign up",
+		"submit-button": "Login",
+		"title": "Welcome!"
+	},
+	"modal-create-game": {
+		"game-mode": "Game Mode",
+		"game-name": "Game Name",
+		"game-name-placeholder": "Enter game name",
+		"header": "Create Game",
+		"submit-button": "CREATE"
+	},
+	"modal-create-room": {
+		"create-room": "Create room",
+		"game-name": "Game",
+		"game-name-placeholder": "Select game",
+		"submit-button": "CREATE"
+	},
+	"my-games": {
+		"create-game": "Create game"
+	},
+	"panel-game": {
+		"number-of-cards": "Nº cards",
+		"number-of-players": "Nº players"
+	},
+	"register": {
+		"email": "Email",
+		"login-prompt": "Already have an account? Sign-in",
+		"name-label": "Name",
+		"password": "Password",
+		"register-message": "Sign-up",
+		"submit-button": "Sign-up",
+		"title": "Welcome!"
+	},
+	"reset-password": {
+		"login-prompt": "Back to login",
+		"message": "Choose your new password",
+		"new-password-label": "New password",
+		"submit-button": "Reset password",
+		"title": "Reset Password"
+	},
+	"rooms": {
+		"header": "Players"
+	}
+}

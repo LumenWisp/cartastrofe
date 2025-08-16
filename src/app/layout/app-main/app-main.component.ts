@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { ModalCreateRoomComponent } from '../../components/modal-create-room/modal-create-room.component';
 import { UserService } from '../../services/user-service.service';
+import { TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-app-main',
@@ -13,36 +15,47 @@ import { UserService } from '../../services/user-service.service';
   styleUrl: './app-main.component.css',
 })
 export class AppMainComponent {
-  showCreateRoomDialog: boolean = false;
+  showCreateRoomDialog = false;
+  menuItems: MenuItem[] = [];
 
-  menuItems: MenuItem[] = [
-    {
-      label: 'Meus jogos',
-      icon: 'pi pi-wrench',
-      routerLink: '/my-games',
-    },
-    {
-      label: 'Meus layouts',
-      icon: 'pi pi-hashtag',
-      routerLink: '/my-layouts',
-    },
-    {
-      label: 'Criar sala',
-      icon: 'pi pi-plus',
-      command: () => {
-        this.showCreateRoomDialog = true;
-      },
-    },
-    {
-      label: 'Logout',
-      icon: 'pi pi-sign-out',
-      command: () => {
-        // FAZER LOGOUT CORRETAMENTE
-         this.userService.logout();
-        this.router.navigate(['login']);
-      },
-    },
-  ];
+  translateService = inject(TranslateService);
 
   constructor(private router: Router, private userService: UserService) {}
+
+  ngOnInit() {
+    forkJoin({
+      myGames: this.translateService.get('app-main.menu-items.my-games'),
+      myLayouts: this.translateService.get('app-main.menu-items.my-layouts'),
+      createRoom: this.translateService.get('app-main.menu-items.create-room'),
+      logout: this.translateService.get('app-main.menu-items.logout'),
+    }).subscribe(translations => {
+      this.menuItems = [
+        {
+          label: translations.myGames,
+          icon: 'pi pi-wrench',
+          routerLink: '/my-games',
+        },
+        {
+          label: translations.myLayouts,
+          icon: 'pi pi-hashtag',
+          routerLink: '/my-layouts',
+        },
+        {
+          label: translations.createRoom,
+          icon: 'pi pi-plus',
+          command: () => {
+            this.showCreateRoomDialog = true;
+          },
+        },
+        {
+          label: translations.logout,
+          icon: 'pi pi-sign-out',
+          command: () => {
+            this.userService.logout();
+            this.router.navigate(['login']);
+          },
+        },
+      ];
+    });
+  }
 }
