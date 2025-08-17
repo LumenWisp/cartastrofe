@@ -18,7 +18,7 @@
         class="card" 
         [class.flipped]="card.flipped" 
         (dblclick)="flipCard(card.id!)" 
-        (cdkDragEnd)="drop($event)"
+        (cdkDragEnded)="drop($event)"
         cdkDrag
       >
         <div class="card-inner">
