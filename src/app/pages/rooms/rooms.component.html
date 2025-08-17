@@ -15,15 +15,16 @@
 <div class="grid">
     @for (card of cards(); track $index) {
       <div 
-        class="card" 
+        class="card"
         [class.flipped]="card.flipped" 
         (dblclick)="flipCard(card.id!)" 
         (cdkDragEnded)="drop($event)"
         cdkDrag
+        [attr.card-id]="card.id"
       >
         <div class="card-inner">
-          <div class="face front">{{ card.label }}</div>
-          <div class="face back"></div>
+          <div class="face front" [attr.card-id]="card.id">{{ card.label }}</div>
+          <div class="face back" [attr.card-id]="card.id"></div>
         </div>
       </div>
     }

@@ -53,7 +53,15 @@ export class RoomsComponent {
 
   // Evento disparado quando uma carta é solta sobre outra
   drop(event: CdkDragEnd<CardModel[]>) {
-    
+    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
+    const element = document.elementFromPoint(x, y);
+    const targetCardId = element?.getAttribute('card-id');
+    const draggedCardId = event.source.element.nativeElement.getAttribute('card-id')
+
+    if (element?.classList.contains('face') && element !== event.source.element.nativeElement) {
+      console.log('targetCardId = ', targetCardId);
+      console.log('draggedCardId = ', draggedCardId);
+    }
   }
 
 }
