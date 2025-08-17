@@ -10,3 +10,21 @@
     }
   </p-panel>
 </div>
+
+
+<div class="grid">
+    @for (card of cards(); track $index) {
+      <div 
+        class="card" 
+        [class.flipped]="card.flipped" 
+        (dblclick)="flipCard(card.id!)" 
+        (cdkDragEnd)="drop($event)"
+        cdkDrag
+      >
+        <div class="card-inner">
+          <div class="face front">{{ card.label }}</div>
+          <div class="face back"></div>
+        </div>
+      </div>
+    }
+</div>
