@@ -1,27 +1,45 @@
+<p-drawer [(visible)]="menuVisible" header="Card Layout">
+  <p-menu [model]="menuItems"></p-menu>
+</p-drawer>
+
 <div class="layout">
-  <!-- Menu Lateral -->
-  <div class="menu-lateral">
-    <p-menu [model]="menuItems"></p-menu>
+  <p-button
+    class="lateral-menu-btn"
+    label="Menu"
+    icon="pi pi-arrow-right"
+    iconPos="right"
+    (click)="menuVisible = true"
+  />
+  <p-button
+    class="save-btn"
+    label="Salvar"
+    icon="pi pi-save"
+    iconPos="right"
+    (click)="saveCardLayout()"
+  />
+
+  <div
+    class="card-layout"
+    [ngStyle]="{
+      width: CARD_LAYOUT_WIDTH + 'px',
+      height: CARD_LAYOUT_HEIGHT + 'px',
+    }"
+  >
+    @for (cardField of cardFields; track cardField) {
+      <app-card-layout-field
+        [cardLayoutField]="cardField"
+        [cardLayoutDimensions]="DIMENSIONS"
+        dragBoundary=".card-layout"
+        (openCardLayoutField)="openCardField(cardField)"
+      />
+    }
   </div>
 
-  <!-- Área Central -->
-  <div class="area-central">
-    <div class="carta-molde" #containerRef>
-      <!-- Aqui os blocos serão adicionados -->
-       @for (cardField of cardFields; track cardField) {
-
-        @if (cardField.type === 'TEXT') {
-          <textarea rows="5" cols="40" pTextarea [autoResize]="true" [readonly]="true" cdkDrag cdkDragBoundary=".carta-molde" class="textarea" #fieldRefs></textarea>
-        }
-
-        @else if (cardField.type === 'IMAGE') {
-          <div class="campo" cdkDrag cdkDragBoundary=".carta-molde" #fieldRefs>
-            eu sou um campo de imagem
-          </div>
-        }  
-       }
-    </div>
-  </div>
-
-  <p-button label="Salvar Template" (click)="saveCardLayout()" />
+  @if (cardFieldSelected) {
+    <app-card-layout-field-info
+      class="card-layout-info-menu"
+      [cardLayoutField]="cardFieldSelected"
+      [cardLayoutDimensions]="DIMENSIONS"
+    />
+  }
 </div>

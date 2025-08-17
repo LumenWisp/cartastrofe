@@ -8,3 +8,10 @@ export interface CardLayoutFieldModel {
   width: number;
   height: number;
 }
+
+export type CardLayoutFieldDimensions = {
+  minWidth: number;
+  maxWidth: number;
+  minHeight: number;
+  maxHeight: number;
+}

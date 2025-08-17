@@ -1,34 +1,34 @@
-import { Component, ViewChild, ViewChildren, ElementRef, QueryList } from '@angular/core';
-import { CdkDrag } from '@angular/cdk/drag-drop';
-
+// angular
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+// primeng
+import { DrawerModule } from 'primeng/drawer';
 import { MenuModule } from 'primeng/menu';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
-
+import { InputNumberModule } from 'primeng/inputnumber';
+import { SelectModule } from 'primeng/select';
+// enum
 import { CardFieldTypesEnum } from '../../../enum/card-field-types.enum';
-
+// types
 import { CardLayoutFieldModel } from '../../../types/card-layout-field';
-import { CardLayoutModel } from '../../../types/card-layout';
-
+// services
 import { CardLayoutService } from '../../../services/card-layout.service';
 import { UserService } from '../../../services/user-service.service';
+// components
+import { CardLayoutFieldComponent } from '../../../components/card-layout-field/card-layout-field.component';
+import { CardLayoutFieldInfoComponent } from '../../../components/card-layout-field-info/card-layout-field-info.component';
 
 @Component({
   selector: 'app-create-layout',
-  imports: [CdkDrag, MenuModule, TextareaModule, ButtonModule],
+  imports: [MenuModule, TextareaModule, ButtonModule, DrawerModule, InputNumberModule, FormsModule, SelectModule, CommonModule, CardLayoutFieldComponent, CardLayoutFieldInfoComponent],
   templateUrl: './create-layout.component.html',
   styleUrl: './create-layout.component.css',
 })
 export class CreateLayoutComponent {
-
-  @ViewChildren('fieldRefs') fieldRefs!: QueryList<ElementRef>;
-  @ViewChild('containerRef') containerRef!: ElementRef;
-  constructor(
-    private cardLayoutService: CardLayoutService,
-    private userService: UserService
-  ) {}
-
-  // Configuração do menu lateral
+  // configuração do menu lateral
+  menuVisible = false;
   menuItems = [
     {
       label: 'Adicionar campos',
@@ -48,60 +48,42 @@ export class CreateLayoutComponent {
   ];
 
   cardFields: CardLayoutFieldModel[] = [];
+  cardFieldSelected: CardLayoutFieldModel | null = null
 
-  addField(type: CardFieldTypesEnum.TEXT | CardFieldTypesEnum.IMAGE) {
+  MIN_CARD_FIELD_WIDTH = 40;
+  MIN_CARD_FIELD_HEIGHT = 40;
+  CARD_LAYOUT_WIDTH = 200;
+  CARD_LAYOUT_HEIGHT = 300;
+
+  DIMENSIONS = {
+    minWidth: this.MIN_CARD_FIELD_WIDTH,
+    minHeight: this.MIN_CARD_FIELD_HEIGHT,
+    maxWidth: this.CARD_LAYOUT_WIDTH,
+    maxHeight: this.CARD_LAYOUT_HEIGHT,
+  }
+
+  constructor(
+    private cardLayoutService: CardLayoutService,
+    private userService: UserService
+  ) {}
+
+  addField(type: CardFieldTypesEnum) {
     const newField: CardLayoutFieldModel = {
       type,
       x: 0,
       y: 0,
-      width: 0,
-      height: 0,
+      width: this.MIN_CARD_FIELD_WIDTH,
+      height: this.MIN_CARD_FIELD_HEIGHT,
     };
 
     this.cardFields.push(newField);
   }
 
+  openCardField(cardField: CardLayoutFieldModel) {
+    this.cardFieldSelected = cardField;
+  }
+
   async saveCardLayout() {
-    try {
-
-      const updatedFields = this.cardFields.map((field, index) => {
-      const element = this.fieldRefs.toArray()[index].nativeElement as HTMLElement;
-      const containerRect = this.containerRef.nativeElement.getBoundingClientRect();
-      const elementRect = element.getBoundingClientRect();
-
-      // Pega o transform considerando o deslocamente do drag and drop
-      const style = window.getComputedStyle(element);
-      const matrix = new WebKitCSSMatrix(style.transform);
-
-      // Calcula X e Y baseado no translocamente do drag and drop
-      const x = Math.round((elementRect.left - containerRect.left + matrix.m41) * 100) / 100;
-      const y = Math.round((elementRect.top - containerRect.top + matrix.m42) * 100) / 100;
-
-      const width = Math.round(elementRect.width * 100) / 100;
-      const height = Math.round(elementRect.height * 100) / 100;
-
-        return {
-          ...field,
-          x, 
-          y, 
-          width,
-          height,
-        };
-      });
-
-      const cardLayout: CardLayoutModel = {
-        userId: this.userService.getUserLogged()!.userID,
-        name: 'NOME DE EXEMPLO',
-        cardFields: updatedFields,
-      };
-
-      await this.cardLayoutService.saveCardLayout(cardLayout);
-
-      // Limpar a tela
-      this.cardFields = [];
-
-    } catch (error) {
-      console.error('Erro no saveCardLayout: ', error);
-    }
+    console.log(this.cardFields)
   }
 }

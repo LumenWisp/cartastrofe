@@ -39,4 +39,15 @@ export class UtilsService {
     }
     return Promise.resolve(`${this.formatDate(new Date(), 'yyyyMMdd')}-${key}`);
   }
+
+  /**
+   * Limita um valor para que fique dentro de um intervalo específico.
+   * @param value - O valor que será verificado e ajustado.
+   * @param min - O valor mínimo permitido.
+   * @param max - O valor máximo permitido.
+   * @returns O valor ajustado, garantindo que `min <= value <= max` .
+   */
+  checkRange(value: number, min: number, max: number) {
+    return Math.min(Math.max(value, min), max)
+  }
 }
