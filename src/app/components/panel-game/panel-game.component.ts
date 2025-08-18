@@ -1,6 +1,5 @@
 // angular
 import { Component, Input, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 // primeng
 import { PanelModule } from 'primeng/panel';
@@ -11,10 +10,12 @@ import { ButtonModule } from 'primeng/button';
 import { GameModes } from '../../enum/game-mode';
 // types
 import { GameInfo } from '../../types/game-info';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-panel-game',
-  imports: [PanelModule, AvatarGroupModule, AvatarModule, CommonModule, ButtonModule, RouterLink],
+  imports: [PanelModule, AvatarGroupModule, AvatarModule, CommonModule, ButtonModule, RouterLink, TranslatePipe],
   templateUrl: './panel-game.component.html',
   styleUrl: './panel-game.component.css',
 })

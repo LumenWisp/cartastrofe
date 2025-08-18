@@ -1,5 +1,5 @@
 <p-dialog
-  header="Criar novo jogo"
+  header="{{ 'modal-create-game.header' | translate }}"
   [(visible)]="showModal"
   (onHide)="close()"
   [modal]="true"
@@ -14,7 +14,7 @@
         [fluid]="true"
         formControlName="name"
       />
-      <label for="name">Nome do jogo</label>
+      <label for="name">{{'modal-create-game.game-name' | translate}}</label>
     </p-floatlabel>
 
     <p-floatlabel variant="on" class="floatlabel">
@@ -29,7 +29,7 @@
     </p-floatlabel>
 
     <div class="inline-input">
-      <span>Modo de jogo</span>
+      <span>{{'modal-create-game.game-mode' | translate}}</span>
 
       <p-selectbutton
         [options]="modes"
@@ -78,6 +78,6 @@
       </div>
     </div>
 
-    <p-button type="submit" label="CRIAR" />
+    <p-button type="submit" label="{{'modal-create-game.submit-button' | translate}}" />
   </form>
 </p-dialog>

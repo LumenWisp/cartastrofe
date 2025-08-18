@@ -8,10 +8,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 // shared
 import { FormManager } from '../../shared/form-manager';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forget-password',
-  imports: [FloatLabelModule, InputTextModule, ButtonModule, ReactiveFormsModule, RouterLink],
+  imports: [FloatLabelModule, InputTextModule, ButtonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './forget-password.component.html',
   styleUrls: ['./forget-password.component.css', '../../shared/auth.css'],
 })

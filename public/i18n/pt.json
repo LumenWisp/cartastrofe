@@ -1,0 +1,97 @@
+{
+	"app-main": {
+		"menu-items": {
+			"create-room": "Criar Sala",
+			"logout": "Sair",
+			"my-games": "Meus Jogos",
+			"my-layouts": "Meus Layouts"
+		}
+	},
+	"forget-password": {
+		"email": "Email",
+		"login-prompt": "Voltar ao login",
+		"message": "Informe seu email para redefinir a senha",
+		"resend": "Reenviar",
+		"send": "Enviar",
+		"title": "Esqueci a Senha"
+	},
+	"game-mode": {
+		"free": "Livre",
+		"structured": "Estruturado"
+	},
+	"homepage": {
+		"card": {
+			"card-back-title": "Cartastrofe",
+			"card-desc-1": "Crie,",
+			"card-desc-2": "Construa,",
+			"card-desc-3": "Jogue!"
+		},
+		"feature-cards": {
+			"card-1": {
+				"desc": "Veja as atualizações da sua carta com nosso editor em tempo real.",
+				"title": "Visualização instantânea"
+			},
+			"card-2": {
+				"desc": "Crie jogos de cartas completos visualmente usando blocos lógicos intuitivos de arrastar e soltar — sem necessidade de programação.",
+				"title": "Lógica de jogo sem código"
+			},
+			"card-3": {
+				"desc": "Organize elementos sem esforço com uma interface amigável de arrastar e soltar.",
+				"title": "Drag & Drop"
+			}
+		},
+		"footer": "2025 Cartastrofe. Todos os direitos reservados.",
+		"hero-button": "Comece a construir",
+		"hero-desc": "Cartastrofe é o seu criador e jogador de jogos de cartas moderno e intuitivo. Crie, personalize, jogue e compartilhe jogos de cartas incríveis — sem precisar de habilidades de programação!",
+		"hero-title": "Crie cartas. Crie jogos. Liberte a criatividade.",
+		"login": "Entrar"
+	},
+	"login": {
+		"email": "Email",
+		"forgot-password": "Esqueceu a senha?",
+		"login-message": "Faça o login",
+		"password-label": "Senha",
+		"register-prompt": "Não tem conta? Cadastre-se",
+		"submit-button": "Entrar",
+		"title": "Bem-vindo!"
+	},
+	"modal-create-game": {
+		"game-mode": "Modo de Jogo",
+		"game-name": "Nome do Jogo",
+		"game-name-placeholder": "Digite o nome do jogo",
+		"header": "Criar Jogo",
+		"submit-button": "CRIAR"
+	},
+	"modal-create-room": {
+		"create-room": "Criar sala",
+		"game-name": "Jogo",
+		"game-name-placeholder": "Selecione o jogo",
+		"submit-button": "CRIAR"
+	},
+	"my-games": {
+		"create-game": "Criar jogo"
+	},
+	"panel-game": {
+		"number-of-cards": "Nº cartas",
+		"number-of-players": "Nº jogadores"
+	},
+	"register": {
+		"email": "Email",
+		"login-prompt": "Já tem conta? Faça o login",
+		"name-label": "Nome",
+		"password": "Senha",
+		"register-message": "Faça o cadastro",
+		"submit-button": "Cadastrar",
+		"title": "Bem-vindo!"
+	},
+	"reset-password": {
+		"login-prompt": "Voltar ao login",
+		"message": "Digite sua nova senha",
+		"new-password-label": "Nova senha",
+		"submit-button": "Resetar senha",
+		"title": "Resetar Senha"
+	},
+	"rooms": {
+		"header": "Jogadores"
+	}
+}

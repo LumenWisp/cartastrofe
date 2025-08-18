@@ -13,7 +13,7 @@
   <app-placeholder-grid>
     <button class="btn-create-game" pButton (click)="showModal()">
       <span class="pi pi-plus" pButtonIcon></span>
-      <span pButtonLabel>Criar jogo</span>
+      <span pButtonLabel>{{'my-games.create-game' | translate}}</span>
     </button>
 
     @for (gameInfo of filteredGames(); track gameInfo.id) {

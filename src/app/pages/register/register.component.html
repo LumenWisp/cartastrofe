@@ -1,9 +1,9 @@
-<h1>Bem-vindo</h1>
-<span class="message">Faça o cadastro</span>
+<h1>{{'register.title' | translate }}</h1>
+<span class="message">{{'register.register-message' | translate }}</span>
 
 <form class="form" [formGroup]="form" (ngSubmit)="submit()">
   <p-floatlabel variant="on">
-    <label for="name">Nome</label>
+    <label for="name">{{'register.name-label' | translate }}</label>
     <input id="name" pInputText [fluid]="true" formControlName="name" />
   </p-floatlabel>
   @if (checkError('name')) {
@@ -11,7 +11,7 @@
   }
 
   <p-floatlabel variant="on">
-    <label for="email">Email</label>
+    <label for="email">{{'register.email' | translate }}</label>
     <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
   @if (checkError('email')) {
@@ -20,14 +20,14 @@
 
   <p-floatlabel variant="on">
     <p-password inputId="password" [toggleMask]="true" [feedback]="false" [fluid]="true" formControlName="password" />
-    <label for="password">Senha</label>
+    <label for="password">{{'register.password' | translate }}</label>
   </p-floatlabel>
   @if (checkError('password')) {
     <span class="form-error">{{ getErrorMessage('password', 'Campo inválido') }}</span>
   }
   <span class="message">A senha deve ter pelo menos 6 caracteres</span>
 
-  <p-button type="submit" class="button-submit" label="Cadastrar" />
+  <p-button type="submit" class="button-submit" label="{{'register.submit-button' | translate }}" />
 
-  <a class="other-auth-link" routerLink="/login">Já tem conta?</a>
+  <a class="other-auth-link" routerLink="/login">{{'register.login-prompt' | translate }}</a>
 </form>

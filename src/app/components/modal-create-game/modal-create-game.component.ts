@@ -1,5 +1,5 @@
 // angular
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 // primeng
 import { DialogModule } from 'primeng/dialog';
@@ -14,6 +14,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { GameModes } from '../../enum/game-mode';
 // services
 import { GameInfoService } from '../../services/game-info.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-modal-create-game',
@@ -28,6 +30,7 @@ import { GameInfoService } from '../../services/game-info.service';
     TooltipModule,
     TextareaModule,
     InputNumberModule,
+    TranslatePipe
   ],
   templateUrl: './modal-create-game.component.html',
   styleUrl: './modal-create-game.component.css',
@@ -37,8 +40,29 @@ export class ModalCreateGameComponent {
   @Output() showModalChange = new EventEmitter<boolean>();
   @Output() gameCreated = new EventEmitter<void>();
 
+  translateService = inject(TranslateService);
+
   private readonly MIN_PLAYERS = 2;
   private readonly MAX_PLAYERS = 99;
+  
+  modes: { label: string; value: GameModes }[] = [];
+
+  constructor(
+    private gameInfoService: GameInfoService
+  ){ }
+
+  ngOnInit(){
+
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {  
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModes.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModes.FREE },
+      ];
+    })
+  }
 
   form = new FormGroup({
     name: new FormControl('', {
@@ -71,14 +95,6 @@ export class ModalCreateGameComponent {
     }),
   });
 
-  modes = [
-    { label: 'Estruturado', value: GameModes.STRUCTURED, description: 'Jogo com regras' },
-    { label: 'Livre', value: GameModes.FREE, description: 'Jogo sem regras' },
-  ];
-
-  constructor(
-    private gameInfoService: GameInfoService
-  ) {}
 
   close() {
     this.showModalChange.emit(false);

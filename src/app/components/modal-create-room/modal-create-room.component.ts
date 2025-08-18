@@ -8,11 +8,12 @@ import { GameInfoService } from '../../services/game-info.service';
 import { GameInfo } from '../../types/game-info';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-modal-create-room',
   standalone: true,
-  imports: [DialogModule, ButtonModule, InputTextModule, DropdownModule, RouterModule],
+  imports: [DialogModule, ButtonModule, InputTextModule, DropdownModule, RouterModule, TranslatePipe],
   templateUrl: './modal-create-room.component.html',
   styleUrl: './modal-create-room.component.css'
 })

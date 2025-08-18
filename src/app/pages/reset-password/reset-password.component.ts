@@ -1,6 +1,7 @@
 // angular
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 // primeng
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { PasswordModule } from 'primeng/password';
@@ -11,7 +12,7 @@ import { FormManager } from '../../shared/form-manager';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [FloatLabelModule, PasswordModule, ButtonModule, ReactiveFormsModule, RouterLink],
+  imports: [FloatLabelModule, PasswordModule, ButtonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css', '../../shared/auth.css'],
 })

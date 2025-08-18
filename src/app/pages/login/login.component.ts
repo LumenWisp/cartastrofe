@@ -3,6 +3,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { FirebaseError } from '@angular/fire/app';
+import { TranslatePipe } from '@ngx-translate/core';
 // primeng
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
@@ -22,6 +23,7 @@ import { FormManager } from '../../shared/form-manager';
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
+    TranslatePipe
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../shared/auth.css'],

@@ -1,7 +1,8 @@
 // angular
-import { Component, computed, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 // primeng
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -19,6 +20,7 @@ import { GameInfoService } from '../../services/game-info.service';
 import { GameInfo } from '../../types/game-info';
 // enums
 import { GameModes } from '../../enum/game-mode';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-my-games',
@@ -31,6 +33,7 @@ import { GameModes } from '../../enum/game-mode';
     ButtonModule,
     PanelModule,
     CommonModule,
+    TranslatePipe,
     PlaceholderGridComponent,
     FormsModule,
     SelectButtonModule,
@@ -40,11 +43,23 @@ import { GameModes } from '../../enum/game-mode';
 })
 export class MyGamesComponent {
   showCreateGameModal = false;
+  modes: { label: string; value: GameModes }[] = [];
+  translateService = inject(TranslateService);
 
-  modes = [
-    { label: 'Estruturado', value: GameModes.STRUCTURED },
-    { label: 'Livre', value: GameModes.FREE },
-  ];
+  ngOnInit() {
+    this.loadGames();
+
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {  
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModes.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModes.FREE },
+      ];
+    });
+  }
+
 
   games: WritableSignal<GameInfo[]> = signal([]);
   search = signal('');
@@ -67,10 +82,6 @@ export class MyGamesComponent {
   });
 
   constructor(private gameInfoService: GameInfoService) {}
-
-  ngOnInit() {
-    this.loadGames();
-  }
 
   resetFilter() {
     this.search.set('');
