@@ -3,8 +3,8 @@
 
 <span class="form-control-error" [class.visible]="form.invalid && form.touched">
   @if (loginForm.submitted) {
-    Email ou senha inválidos
-  } 
+    {{ 'login.errors.invalid-credentials' | translate }}
+  }
 </span>
 
 <form class="form" [formGroup]="form" (submit)="submit()" #loginForm="ngForm">
@@ -18,9 +18,9 @@
   </p-floatlabel>
   <span class="form-control-error" [class.visible]="email.invalid && email.touched"> 
     @if (email.hasError('required')) {
-      Email é obrigatório
+      {{ 'login.errors.email-required' | translate }}
     } @else if (email.hasError('email')) {
-      Email não é válido
+      {{ 'login.errors.email-invalid' | translate }}
     }
   </span>
 
@@ -37,7 +37,7 @@
     <label for="password">{{'login.password-label' | translate }}</label>
   </p-floatlabel>
   <span class="form-control-error" [class.visible]="password.invalid && password.touched">
-    Senha é obrigatória
+    {{ 'login.errors.password-required' | translate }}
   </span>
 
   <!--Forgot Password-->

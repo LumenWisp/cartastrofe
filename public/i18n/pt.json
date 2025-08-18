@@ -46,15 +46,21 @@
 		"hero-title": "Crie cartas. Crie jogos. Liberte a criatividade.",
 		"login": "Entrar"
 	},
-	"login": {
-		"email": "Email",
-		"forgot-password": "Esqueceu a senha?",
-		"login-message": "Faça o login",
-		"password-label": "Senha",
-		"register-prompt": "Não tem conta? Cadastre-se",
-		"submit-button": "Entrar",
-		"title": "Bem-vindo!"
-	},
+		"login": {
+			"email": "Email",
+			"forgot-password": "Esqueceu a senha?",
+			"login-message": "Faça o login",
+			"password-label": "Senha",
+			"register-prompt": "Não tem conta? Cadastre-se",
+			"submit-button": "Entrar",
+			"title": "Bem-vindo!",
+			"errors": {
+				"invalid-credentials": "Email ou senha inválidos",
+				"email-required": "Email é obrigatório",
+				"email-invalid": "Email não é válido",
+				"password-required": "Senha é obrigatória"
+			}
+		},
 	"modal-create-game": {
 		"game-mode": "Modo de Jogo",
 		"game-name": "Nome do Jogo",
