@@ -18,7 +18,8 @@
         class="card"
         [class.flipped]="card.flipped" 
         (dblclick)="flipCard(card.id!)" 
-        (cdkDragEnded)="drop($event)"
+        (cdkDragEnded)="onDrop($event)"
+        (cdkDragStarted)="onDragStart($event)"
         cdkDrag
         [attr.card-id]="card.id"
       >

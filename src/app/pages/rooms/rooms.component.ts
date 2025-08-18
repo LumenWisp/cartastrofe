@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
 
-import { CdkDrag, CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModel } from '../../types/card';
 import { PileModel } from '../../types/pile';
 
@@ -33,9 +33,9 @@ export class RoomsComponent {
 
   // Criando as cartas
   cards = signal<CardModel[]>([
-    { id: 'c1', label: 'A', flipped: false },
-    { id: 'c2', label: 'K', flipped: true },
-    { id: 'c3', label: 'Q', flipped: false },
+    { id: 'A', label: 'A', flipped: false },
+    { id: 'K', label: 'K', flipped: true },
+    { id: 'Q', label: 'Q', flipped: false },
   ]);
 
   // Criando as pilhas
@@ -51,17 +51,26 @@ export class RoomsComponent {
     );
   }
 
-  // Evento disparado quando uma carta é solta sobre outra
-  drop(event: CdkDragEnd<CardModel[]>) {
-    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
-    const element = document.elementFromPoint(x, y);
-    const targetCardId = element?.getAttribute('card-id');
-    const draggedCardId = event.source.element.nativeElement.getAttribute('card-id')
+  // Aumentar o zindex da carta sendo arrastada
+  onDragStart(event: CdkDragStart<CardModel[]>) {
+    event.source.element.nativeElement.classList.add("dragging");
+  }
 
-    if (element?.classList.contains('face') && element !== event.source.element.nativeElement) {
+  // Evento disparado quando se solta uma carta sendo arrastada
+  onDrop(event: CdkDragEnd<CardModel[]>) {
+    event.source.element.nativeElement.classList.remove("dragging");
+    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
+    event.source.element.nativeElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
+    const element = document.elementFromPoint(x, y); // Pegar o alvo
+    event.source.element.nativeElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+    const targetCardId = element?.getAttribute('card-id'); // Id da carta alvo
+    const draggedCardId = event.source.element.nativeElement.getAttribute('card-id') // Id da carta arrastada
+
+    if (element?.classList.contains('face') && targetCardId !== draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
       console.log('targetCardId = ', targetCardId);
       console.log('draggedCardId = ', draggedCardId);
     }
+    
   }
 
 }
