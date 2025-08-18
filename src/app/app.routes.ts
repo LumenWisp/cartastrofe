@@ -12,6 +12,7 @@ import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
+import { GameComponent } from './components/game/game.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
 
@@ -50,6 +51,11 @@ export const routes: Routes = [
         component: GameDescriptionComponent,
         title: 'Game Description',
       },
+      {
+        path: 'my-games/game-edit/:gameId',
+        component: GameComponent,
+        title: 'Edit game'
+      }
     ],
   },
   {

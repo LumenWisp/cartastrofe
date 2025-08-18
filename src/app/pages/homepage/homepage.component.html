@@ -2,7 +2,7 @@
     <header>
         <img src="assets/cartastrofeLogoText.svg" alt="Cartastrofe Logo" class="logo" height="48" />
         <nav class="desktop-nav">
-            <a class="link" routerLink="/login">{{ 'homepage.login' | translate }}</a>
+            <a routerLink="/login">{{ 'homepage.login' | translate }}</a>
         </nav>
         <button id="lang-toggle" class="desktop-lang" (click)="changeLanguage()">{{ currentLanguage }}</button>
         <button id="hamburger-btn" aria-label="Open menu" (click)="openSidebar()">
@@ -17,7 +17,7 @@
         <div class="sidebar-content">
         <button id="close-sidebar" aria-label="Close menu" (click)="closeSidebar()">&times;</button>
         <nav class="sidebar-nav">
-            <a class="link" routerLink="/login">{{ 'homepage.login' | translate}}</a>
+            <a routerLink="/login">{{ 'homepage.login' | translate}}</a>
         </nav>
         <button id="sidebar-lang-toggle" (click)="changeLanguage()">{{ currentLanguage }}</button>
         </div>

@@ -1,10 +1,13 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { map, startWith } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class UserService {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
@@ -12,42 +15,53 @@ export class UserService {
 
   private currentUserData: UserEntity | null = null;
 
-  constructor() {
+  readonly user$ = user(this.auth);
+  readonly currentUser$ = this.user$.pipe(
+    map(user => {
+      return user
+        ? {
+            email: user.email!,
+            userID: user.uid
+          }
+        : null;
+    }),
+    startWith(undefined)
+  );
 
-    onAuthStateChanged(this.auth, async (user) => {
-      if (user) {
-        const docSnap = await getDoc(doc(this.firestore, 'user', user.uid));
-        if (docSnap.exists()) {
-          this.currentUserData = docSnap.data() as UserEntity;
-        }
-      } else {
-        this.currentUserData = null;
-      }
-    });
-  }
+  constructor() {}
 
   getUserLogged(): UserEntity | null {
     return this.currentUserData;
   }
 
-  async register(user: UserEntity): Promise<void> {
-    const cred = await createUserWithEmailAndPassword(this.auth, user.email, user.password);
-    const uid = cred.user.uid;
+  /**
+   * Registra um novo usuário no Firebase Auth e salva os dados no Firestore.
+   * @param name O nome do usuário.
+   * @param email O email do usuário.
+   * @param password A senha do usuário.
+   */
+  async register(name: string, email: string, password: string): Promise<void> {
+    const { user } = await createUserWithEmailAndPassword(this.auth, email, password);
+    const uid = user.uid;
 
     const userData: UserEntity = {
       userID: uid,
-      name: user.name,
-      email: user.email,
-      password: ''
+      name,
+      email,
     };
 
-    await setDoc(doc(this.firestore, 'user', uid), userData);
+    await setDoc(doc(this.firestore, this.path, uid), userData);
   }
 
-  async login(email: string, password: string): Promise<UserEntity | null> {
+  /**
+   * Faz login de um usuário com email e senha.
+   * @param email O email do usuário.
+   * @param password A senha do usuário.
+   */
+  async login(email: string, password: string): Promise<void> {
     // Autentica o usuário com Firebase Auth
-    const cred = await signInWithEmailAndPassword(this.auth, email, password);
-    const uid = cred.user.uid;
+    const { user } = await signInWithEmailAndPassword(this.auth, email, password);
+    const uid = user.uid;
 
     // Busca os dados do Firestore com o UID
     const docSnap = await getDoc(doc(this.firestore, this.path, uid));
@@ -60,11 +74,8 @@ export class UserService {
 
       if (!docRef.empty) {
         this.currentUserData = docRef.docs[0].data() as UserEntity;
-        return this.currentUserData;
       }
     }
-
-    return null;
   }
 
   async logout(): Promise<void> {

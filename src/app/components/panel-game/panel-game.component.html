@@ -1,9 +1,18 @@
-<p-panel>
+<p-panel class="panel">
   <ng-template #header>
-    <p>{{gameInfo.name}} - <a class="pi pi-book" [routerLink]="['game-description', gameInfo.id]"></a></p>
+    <div class="gap-items">
+      <span class="pi" [ngClass]="ngIconGamemode"></span>
+      {{ gameInfo.name }}
+    </div>
   </ng-template>
 
-  <p><b>{{'panel-game.number-of-players' | translate}}</b>: {{countPlayersRange}}</p>
+  <ng-template #icons>
+    <div class="gap-items">
+      <p-button icon="pi pi-book" severity="secondary" [rounded]="true" [routerLink]="['game-description', gameInfo.id]" />
+      <p-button icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['game-edit', gameInfo.id]" />
+    </div>
+  </ng-template>
 
-  <p><b>{{'panel-game.number-of-cards' | translate}}</b>: {{gameInfo.countCards}}</p>
+  <p><strong>{{'panel-game.number-of-players' | translate}}</strong> {{ gameInfo.countPlayersMin }} - {{ gameInfo.countPlayersMax }}</p>
+  <p><strong>{{'panel-game.number-of-cards' | translate}}</strong> {{ gameInfo.countCards }}</p>
 </p-panel>

@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+// angular
+import { Component, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+// primeng
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+// shared
+import { FormManager } from '../../shared/form-manager';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -12,15 +16,32 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './forget-password.component.html',
   styleUrls: ['./forget-password.component.css', '../../shared/auth.css'],
 })
-export class ForgetPasswordComponent {
-  forgetForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-  });
-
+export class ForgetPasswordComponent extends FormManager implements OnDestroy {
   resetRequested = false;
 
-  onSubmit() {
-    if (this.forgetForm.valid) {
+  constructor() {
+    const form = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+    });
+
+    const errorMessages = {
+      email: {
+        required: 'Email é obrigatório',
+        email: 'Email inválido',
+      },
+    };
+
+    super(form, errorMessages);
+  }
+
+  ngOnDestroy() {
+    this.cleanUp();
+  }
+
+  async submit() {
+    this.checkFields();
+
+    if (this.form.valid) {
       this.resetRequested = true;
       console.log('Solicitação de redefinição enviada');
       // Aqui você pode chamar o serviço de envio de email

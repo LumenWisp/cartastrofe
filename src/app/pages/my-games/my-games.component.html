@@ -1,23 +1,25 @@
 <div class="page">
-  <p-iconfield>
-    <p-inputicon class="pi pi-search" />
-    <input class="search-input" type="text" pInputText placeholder="Search" [fluid]="true" />
-  </p-iconfield>
+  <div class="top-bar">
+    <p-iconfield class="search-field">
+      <p-inputicon class="pi pi-search" />
+      <input type="text" pInputText placeholder="Search" [fluid]="true" [(ngModel)]="search" />
+    </p-iconfield>
 
-  <div class="panels-container" #panels>
-    <button pButton (click)="showDialog()">
+    <p-selectbutton [options]="modes" [(ngModel)]="gameMode" />
+
+    <p-button icon="pi pi-trash" (onClick)="resetFilter()" />
+  </div>
+
+  <app-placeholder-grid>
+    <button class="btn-create-game" pButton (click)="showModal()">
       <span class="pi pi-plus" pButtonIcon></span>
-      <span class="create-game-label" pButtonLabel>{{'my-games.create-game' | translate}}</span>
+      <span pButtonLabel>{{'my-games.create-game' | translate}}</span>
     </button>
 
-     @for (gameInfo of games; track $index) {
+    @for (gameInfo of filteredGames(); track gameInfo.id) {
       <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
     }
-
-    <!--@for (gameInfo of remainingGameInfoSpace(); track $index) {
-      <div class="placeholder-panel-game"></div>
-    }-->
-  </div>
+  </app-placeholder-grid>
 </div>
 
-<app-modal-create-game [(showModal)]="showCreateGameModal" (loadGame)="loadGames()" />
+<app-modal-create-game [(showModal)]="showCreateGameModal" (gameCreated)="loadGames()" />

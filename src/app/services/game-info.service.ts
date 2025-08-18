@@ -1,11 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { GameInfo } from '../types/game-info';
+import { BehaviorSubject, filter, Observable, retry, switchMap, take } from 'rxjs';
+import { GameInfo, GameInfoData } from '../types/game-info';
 import { UserService } from './user-service.service';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { collection, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
-
 
 @Injectable({
   providedIn: 'root',
@@ -15,24 +14,34 @@ export class GameInfoService {
   pathGameInfo = FirestoreTablesEnum.GAME_INFO
 
   constructor(
+    private userService: UserService,
     private utilsService: UtilsService
   ) {}
 
   /**
    * Pega os gameInfos do usuário logado.
    */
-  async getGameInfos(userId: string) {
-    const refCollection = collection(this.firestore, this.pathGameInfo);
-    const queryRef = query(refCollection, where('userId', '==', userId));
+  getGameInfos() {
+    return this.userService.currentUser$.pipe(
+      take(1),
+      switchMap(async (user) => {
+        if (!user) return [];
 
-    const snapshot = await getDocs(queryRef)
-    const results: GameInfo[] = []
+        const userId = user.userID;
 
-    snapshot.forEach((item) => {
-      results.push(item.data() as GameInfo)
-    })
+        const refCollection = collection(this.firestore, this.pathGameInfo);
+        const queryRef = query(refCollection, where('userId', '==', userId));
 
-    return results;
+        const snapshot = await getDocs(queryRef)
+        const results: GameInfo[] = []
+
+        snapshot.forEach((item) => {
+          results.push(item.data() as GameInfo)
+        })
+
+        return results;
+      })
+    );
   }
 
   /**
@@ -46,29 +55,30 @@ export class GameInfoService {
   /**
    * Retorna o total de gameInfos do usuário logado.
    */
-  get totalGameInfos(): number {
-    return 10; // para manter algumas funcionalidades operando normalmente, mas deve ser removida posteriormente
+  getTotalGameInfos(): number {
+    return 0;
   }
 
   /**
    * Adiciona um gameInfo aos gameInfos do usuário logado.
    * @param gameInfoData informações do jogo
    */
-  async addGameInfo(gameInfo: GameInfo) {
+  async addGameInfo(gameInfo: GameInfoData) {
+    console.log(gameInfo)
 
-    const id = await this.utilsService.generateKey()
+    // const id = await this.utilsService.generateKey()
 
-    const gameInfoObject = {
-        id: id,
-        name: gameInfo.name,
-        description: gameInfo.description,
-        title: gameInfo.title,
-        countPlayersMin: gameInfo.countPlayersMin,
-        countPlayersMax: gameInfo.countPlayersMax,
-        countCards: gameInfo.countCards,
-        userId: gameInfo.userId
-        }
+    // const gameInfoObject = {
+    //     id: id,
+    //     name: gameInfo.name,
+    //     description: gameInfo.description,
+    //     title: gameInfo.title,
+    //     countPlayersMin: gameInfo.countPlayersMin,
+    //     countPlayersMax: gameInfo.countPlayersMax,
+    //     countCards: gameInfo.countCards,
+    //     userId: gameInfo.userId
+    //     }
 
-    await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
+    // await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
   }
 }

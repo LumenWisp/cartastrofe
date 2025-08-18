@@ -1,0 +1,10 @@
+.forget-password-link {
+  display: block;
+  margin-top: 5px;
+}
+
+.login-error-message {
+  display: block;
+  margin-top: 5px;
+  text-align: center;
+}

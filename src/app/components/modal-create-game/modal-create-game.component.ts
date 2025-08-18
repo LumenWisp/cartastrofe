@@ -1,19 +1,18 @@
+// angular
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+// primeng
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { TooltipModule } from 'primeng/tooltip';
+import { TextareaModule } from 'primeng/textarea';
+import { InputNumberModule } from 'primeng/inputnumber';
+// enums
 import { GameModes } from '../../enum/game-mode';
-import { GameInfo } from '../../types/game-info';
-import { UserService } from '../../services/user-service.service';
-import { UserEntity } from '../../types/user';
+// services
 import { GameInfoService } from '../../services/game-info.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
@@ -25,9 +24,12 @@ import { forkJoin } from 'rxjs';
     DialogModule,
     ButtonModule,
     InputTextModule,
-    RadioButtonModule,
     ReactiveFormsModule,
-    FormsModule,
+    FloatLabelModule,
+    SelectButtonModule,
+    TooltipModule,
+    TextareaModule,
+    InputNumberModule,
     TranslatePipe
   ],
   templateUrl: './modal-create-game.component.html',
@@ -36,21 +38,20 @@ import { forkJoin } from 'rxjs';
 export class ModalCreateGameComponent {
   @Input() showModal = false;
   @Output() showModalChange = new EventEmitter<boolean>();
-  @Output() loadGame = new EventEmitter<void>();
+  @Output() gameCreated = new EventEmitter<void>();
 
   translateService = inject(TranslateService);
 
-  user: UserEntity | null = null;
+  private readonly MIN_PLAYERS = 2;
+  private readonly MAX_PLAYERS = 99;
   
   modes: { label: string; value: GameModes }[] = [];
 
   constructor(
-    private userService: UserService,
     private gameInfoService: GameInfoService
   ){ }
 
   ngOnInit(){
-    this.user = this.userService.getUserLogged();
 
     forkJoin({
       gameModeStructured: this.translateService.get('game-mode.structured'),
@@ -64,8 +65,34 @@ export class ModalCreateGameComponent {
   }
 
   form = new FormGroup({
-    gameName: new FormControl('', [Validators.required]),
-    gameMode: new FormControl(GameModes.STRUCTURED, [Validators.required]),
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    gameMode: new FormControl(GameModes.STRUCTURED, {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    description: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    countPlayersMin: new FormControl(this.MIN_PLAYERS, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.min(this.MIN_PLAYERS),
+        Validators.max(this.MAX_PLAYERS)
+      ]
+    }),
+    countPlayersMax: new FormControl(this.MAX_PLAYERS, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.min(this.MIN_PLAYERS),
+        Validators.max(this.MAX_PLAYERS)
+      ]
+    }),
   });
 
 
@@ -74,28 +101,15 @@ export class ModalCreateGameComponent {
   }
 
   async createGame() {
-
-    if(this.form.valid){
-      
-      const gameName = this.form.get('gameName')?.value;
-
-      if(gameName && this.user){
-
-        const gameInfo: GameInfo = {
-        id: '',
-        name: gameName,
-        description: 'parelelepipedo',
-        title: 'onichan',
-        countPlayersMin: 2,
-        countPlayersMax: 11,
-        countCards: 25,
-        userId: this.user?.userID
-        }
-        await this.gameInfoService.addGameInfo(gameInfo);
-      }
-
+    if (!this.form.valid) {
+      console.log('Formulário inválido');
+      return;
     }
-    this.showModalChange.emit()
-    this.loadGame.emit()
+
+    await this.gameInfoService.addGameInfo(this.form.getRawValue());
+
+    this.form.reset();
+    this.showModalChange.emit(false);
+    this.gameCreated.emit();
   }
 }

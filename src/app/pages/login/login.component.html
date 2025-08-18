@@ -1,20 +1,36 @@
 <h1>{{ 'login.title' | translate }}</h1>
 <span class="message">{{ 'login.login-message' | translate }}</span>
 
-<form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
+<form class="form" [formGroup]="form" (submit)="submit()">
   <p-floatlabel variant="on">
     <label for="email">{{'login.email' | translate }}</label>
-    <input id="email" pInputText fluid="true" formControlName="email" />
+    <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
+  @if (checkError('email')) {
+    <span class="form-error">{{ getErrorMessage('email', 'Campo inválido') }}</span>
+  }
 
   <p-floatlabel variant="on">
-    <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" />
+    <p-password
+      inputId="password"
+      [toggleMask]="true"
+      [feedback]="false"
+      [fluid]="true"
+      formControlName="password"
+    />
     <label for="password">{{'login.password-label' | translate }}</label>
   </p-floatlabel>
+  @if (checkError('password')) {
+    <span class="form-error">{{ getErrorMessage('password', 'Campo inválido') }}</span>
+  }
+  <span class="message">A senha deve ter pelo menos 6 caracteres</span>
+  <a class="forget-password-link" routerLink="/forget-password">{{'login.forgot-password' | translate }}</a>
 
-  <a class="link" routerLink="/forget-password">{{'login.forgot-password' | translate }}</a>
+  @if (checkFormError()) {
+    <span class="form-error login-error-message">{{ getFormErrorMessage('Formulário inválido') }}</span>
+  }
 
   <p-button type="submit" class="button-submit" label="{{'login.submit-button' | translate }}" />
 
-  <a class="other-auth-link link" routerLink="/register">{{'login.register-prompt' | translate }}</a>
+  <a class="other-auth-link" routerLink="/register">{{'login.register-prompt' | translate }}</a>
 </form>

@@ -1,29 +1,29 @@
-.link {
-  color: var(--form-link-color);
-}
-
 .button-submit {
-  --p-button-primary-background: var(--form-primary-color);
-  --p-button-primary-border-color: var(--form-primary-color);
-  --p-button-primary-hover-background: var(--form-primary-color-hover);
-  --p-button-primary-hover-border-color: var(--form-primary-color-hover);
-  --p-button-primary-active-background: var(--form-primary-color-active);
-  --p-button-primary-active-border-color: var(--form-primary-color-active);
-  margin-inline: auto;
+  display: block;
+  margin: 20px auto;
+  width: fit-content;
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  row-gap: 20px;
   max-width: 400px;
   margin: 40px auto 0;
 }
 
+p-floatlabel {
+  margin-top: 20px;
+}
+
+.form-error {
+  color: red;
+  font-size: 0.8rem;
+}
+
 .message {
-  color: var(--form-message-color);
+  display: block;
+  color: #545454;
 }
 
 .other-auth-link {
-  margin: 20px auto 0;
+  display: block;
+  text-align: center;
 }
