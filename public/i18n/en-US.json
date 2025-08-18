@@ -75,15 +75,25 @@
 		"number-of-cards": "Nº cards",
 		"number-of-players": "Nº players"
 	},
-	"register": {
-		"email": "Email",
-		"login-prompt": "Already have an account? Sign-in",
-		"name-label": "Name",
-		"password": "Password",
-		"register-message": "Sign-up",
-		"submit-button": "Sign-up",
-		"title": "Welcome!"
-	},
+		"register": {
+			"email": "Email",
+			"login-prompt": "Already have an account? Sign-in",
+			"name-label": "Name",
+			"password": "Password",
+			"confirm-password": "Confirm password",
+			"register-message": "Sign-up",
+			"submit-button": "Sign-up",
+			"title": "Welcome!",
+				"errors": {
+					"name-required": "Name is required",
+					"email-required": "Email is required",
+					"email-invalid": "Email is not valid",
+					"password-required": "Password is required",
+					"password-pattern": "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+					"confirm-password-required": "Please confirm your password",
+					"form-invalid": "Please fill out all fields correctly"
+				}
+		},
 	"reset-password": {
 		"login-prompt": "Back to login",
 		"message": "Choose your new password",
