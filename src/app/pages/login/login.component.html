@@ -20,10 +20,6 @@
     />
     <label for="password">{{'login.password-label' | translate }}</label>
   </p-floatlabel>
-  @if (checkError('password')) {
-    <span class="form-error">{{ getErrorMessage('password', 'Campo inválido') }}</span>
-  }
-  <span class="message">A senha deve ter pelo menos 6 caracteres</span>
   <a class="forget-password-link" routerLink="/forget-password">{{'login.forgot-password' | translate }}</a>
 
   @if (checkFormError()) {
