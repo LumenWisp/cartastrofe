@@ -34,9 +34,14 @@ export class RegisterComponent extends FormManager implements OnDestroy {
     const form = new FormGroup({
       name: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]:;"\'<>,.?/~`]).{8,}$')
+      ]),
+      confirmPassword: new FormControl('', [Validators.required]),
     });
 
+    // Add custom error message for strong password pattern
     const errorMessages = {
       name: {
         required: 'Nome é obrigatório',
@@ -49,6 +54,7 @@ export class RegisterComponent extends FormManager implements OnDestroy {
       password: {
         required: 'Senha é obrigatória',
         minlength: 'Senha deve ter pelo menos 6 caracteres',
+        pattern: 'A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.',
       },
     };
 
@@ -62,8 +68,16 @@ export class RegisterComponent extends FormManager implements OnDestroy {
   async submit() {
     this.checkFields();
 
+    this.form.markAllAsTouched();
+
     if (!this.form.valid) {
       console.log('Formulário inválido');
+      return;
+    }
+
+    if (!this.checkPasswordsMatch(this.form.value.password, this.form.value.confirmPassword)) {
+      console.log('Senhas não correspondem')
+      this.setError('confirmPassword', 'passwordMismatch');
       return;
     }
 
@@ -87,5 +101,9 @@ export class RegisterComponent extends FormManager implements OnDestroy {
         console.error('Erro desconhecido ao registrar usuário:', error);
       }
     }
+  }
+
+  checkPasswordsMatch(password: string, confirmPassword: string): boolean {
+    return password === confirmPassword;
   }
 }

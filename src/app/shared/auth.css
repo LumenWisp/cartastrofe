@@ -18,6 +18,16 @@ p-floatlabel {
   font-size: 0.8rem;
 }
 
+.form-control-error {
+  color: red;
+  font-size: 0.75rem; /* 12px */
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+}
+
 .message {
   display: block;
   color: #545454;

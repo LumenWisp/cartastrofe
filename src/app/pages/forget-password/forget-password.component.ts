@@ -1,5 +1,5 @@
 // angular
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 // primeng
@@ -9,6 +9,7 @@ import { ButtonModule } from 'primeng/button';
 // shared
 import { FormManager } from '../../shared/form-manager';
 import { TranslatePipe } from '@ngx-translate/core';
+import { UserService } from '../../services/user-service.service';
 
 @Component({
   selector: 'app-forget-password',
@@ -19,11 +20,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class ForgetPasswordComponent extends FormManager implements OnDestroy {
   resetRequested = false;
 
+  authService = inject(UserService);
+
   constructor() {
     const form = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
     });
-
     const errorMessages = {
       email: {
         required: 'Email é obrigatório',
@@ -44,9 +46,19 @@ export class ForgetPasswordComponent extends FormManager implements OnDestroy {
     if (this.form.valid) {
       this.resetRequested = true;
       console.log('Solicitação de redefinição enviada');
-      // Aqui você pode chamar o serviço de envio de email
+      this.forgotPassword();
     } else {
       console.log('Formulário inválido');
+    }
+  }
+
+  async forgotPassword() {
+    const { email } = this.form.value;
+
+    try {
+      await this.authService.forgotPassword(email);
+    } catch (error) {
+      console.error('Erro ao solicitar redefinição de senha:', error);
     }
   }
 }

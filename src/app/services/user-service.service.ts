@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
@@ -76,6 +76,10 @@ export class UserService {
         this.currentUserData = docRef.docs[0].data() as UserEntity;
       }
     }
+  }
+
+  forgotPassword(email: string): Promise<void> {
+    return sendPasswordResetEmail(this.auth, email);
   }
 
   async logout(): Promise<void> {

@@ -31,8 +31,20 @@ import { FormManager } from '../../shared/form-manager';
 export class LoginComponent extends FormManager implements OnDestroy {
   constructor(private router: Router, private userService: UserService) {
     const form = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      form: new FormControl('', { nonNullable: true }),
+      email: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required, 
+          Validators.email
+        ]
+      }),
+      password: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required
+        ]
+      })
     })
 
     const errorMessages = {
@@ -59,6 +71,8 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
   async submit() {
     this.checkFields();
+
+    this.form.markAllAsTouched();
 
     if (!this.form.valid) {
       console.log('Formulário inválido');
