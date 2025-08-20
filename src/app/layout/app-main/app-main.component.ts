@@ -27,6 +27,11 @@ export class AppMainComponent {
       routerLink: '/my-layouts',
     },
     {
+      label: 'Minhas cartas',
+      icon: 'pi pi-id-card',
+      routerLink: '/my-cards',
+    },
+    {
       label: 'Criar sala',
       icon: 'pi pi-plus',
       command: () => {

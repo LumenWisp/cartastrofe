@@ -1,26 +1,24 @@
 import { Component, ElementRef, HostListener, ViewChild, OnInit } from '@angular/core';
-import { CardTemplateComponent } from "../../components/card-template/card-template.component";
+import { CardTemplateComponent } from "../../../../components/card-template/card-template.component";
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { InputIconModule } from 'primeng/inputicon';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CardLayoutService } from '../../services/card-layout.service';
-import { UserService } from '../../services/user-service.service';
-import { CommonModule } from '@angular/common';
-import { CardLayoutModel } from '../../types/card-layout';
+
+import { CardLayoutService } from '../../../../services/card-layout.service';
+import { UserService } from '../../../../services/user-service.service';
+import { CardLayoutModel } from '../../../../types/card-layout';
+
 
 @Component({
-  selector: 'app-my-layouts',
-  imports: [CardTemplateComponent, CardModule, ButtonModule, InputIconModule, CommonModule],
-  templateUrl: './my-layouts.component.html',
-  styleUrl: './my-layouts.component.css'
+  selector: 'app-choose-layout',
+  imports: [ButtonModule, CardModule, CardTemplateComponent, CommonModule],
+  templateUrl: './choose-layout.component.html',
+  styleUrl: './choose-layout.component.css'
 })
-export class MyLayoutsComponent implements OnInit {
+export class ChooseLayoutComponent implements OnInit {
 
-  /** pega o elemento no template que tenha como referência local 'panels'
-   * ElementRef<HTMLDivElement>: Um wrapper do Angular que contém o elemento do DOM real (nativeElement).
-do tipo HTMLDivElement, que é o elemento HTML do tipo <div>.
-  */
   @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
   cardLayouts: CardLayoutModel[] = [];
 
@@ -47,9 +45,19 @@ do tipo HTMLDivElement, que é o elemento HTML do tipo <div>.
     return new Array(count).fill(null);
   }
 
-  goToCreateLayoutPage() {
-    this.router.navigate(['create-layout'], {
-      relativeTo: this.route
-    });
+  layoutSelected: number | null = null;
+  selectCardLayout(index: number) {
+    if (this.layoutSelected === index){
+      this.layoutSelected = null;
+    }
+    else {
+      this.layoutSelected = index;
+    }
+  }
+
+  goToCreateCardPage() {
+    if(this.layoutSelected !== null){
+      this.router.navigate(['/my-cards/create-card', this.layoutSelected]);
+    }
   }
 }

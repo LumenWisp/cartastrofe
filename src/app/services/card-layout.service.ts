@@ -6,6 +6,8 @@ import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 import {
   collection,
   doc,
+  docData,
+  getDoc,
   Firestore,
   getDocs,
   query,
@@ -60,10 +62,21 @@ export class CardLayoutService {
 
     await setDoc(newCardLayoutRef, CardLayoutObject);
 
-
     const idUser = cardLayout.userId;
     await this.addCardLayoutToUser(newCardLayoutRef.id, idUser);
+  }
 
+
+  async getCardLayoutById(id: string): Promise<CardLayoutModel | null> {
+    const cardLayoutRef = doc(this.firestore, `${this.cardLayoutpath}/${id}`);
+    const snapshot = await getDoc(cardLayoutRef);
+
+    if (snapshot.exists()) {
+      return snapshot.data() as CardLayoutModel;
+    } else {
+      console.error('Card layout not found');
+      return null;
+    }
   }
 
   /**

@@ -1,0 +1,11 @@
+<div class="page">
+  <div class="panels-container" #panels>
+    @for (cardLayout of cardLayouts; track $index) {
+      <app-card-template [class.selecionado]="layoutSelected === $index" (click)="selectCardLayout($index)"></app-card-template>
+    }
+  </div>
+
+  <button class="confirm-box" [disabled]="layoutSelected === null" (click)="goToCreateCardPage()">
+    <span class="confirm" pButtonIcon>Confirmar</span>
+  </button>
+</div>

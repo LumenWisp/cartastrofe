@@ -13,8 +13,11 @@ import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
 import { GameComponent } from './components/game/game.component';
+import { MyCardsComponent } from './pages/my-cards/my-cards.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
+import { CreateCardComponent } from './pages/my-cards/create-card/create-card.component';
+import { ChooseLayoutComponent } from './pages/my-cards/create-card/choose-layout/choose-layout.component';
 
 export const routes: Routes = [
   {
@@ -40,6 +43,21 @@ export const routes: Routes = [
         path: 'rooms',
         component: RoomsComponent,
         title: 'Rooms',
+      },
+      {
+        path: 'my-cards',
+        component: MyCardsComponent,
+        title: 'My Cards',
+      },
+      {
+        path: 'my-cards/create-card/choose-layout',
+        component: ChooseLayoutComponent,
+        title: 'Choose a Layout',
+      },
+      {
+        path: 'my-cards/create-card/:layoutId',
+        component: CreateCardComponent,
+        title: 'Create Card',
       },
       {
         path: 'my-layouts/create-layout',

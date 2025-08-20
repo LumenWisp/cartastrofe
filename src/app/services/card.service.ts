@@ -1,20 +1,45 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Card } from '../types/card';
+import { CardModel } from '../types/card';
+import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+
+import {
+  collection,
+  doc,
+  Firestore,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+  arrayUnion,
+} from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  private cardsSubject = new BehaviorSubject<Card[]>([]);
-  cards$: Observable<Card[]> = this.cardsSubject.asObservable();
+  private cardsSubject = new BehaviorSubject<CardModel[]>([]);
+  cards$: Observable<CardModel[]> = this.cardsSubject.asObservable();
+  private firestore = inject(Firestore);
   private cardIDGenerator = 1;
 
-  constructor() {}
+  cardpath = FirestoreTablesEnum.CARD;
+  userpath = FirestoreTablesEnum.USER;
 
   // Retorna a lista atual
-  getCards() {
+  async getCards(userId: string) {
+    const refCollection = collection(this.firestore, this.cardpath);
+    const queryRef = query(refCollection, where('userId', '==', userId));
+    
+    const snapshot = await getDocs(queryRef);
+    const cards: CardModel[] = [];
 
+    snapshot.forEach((item) => {
+      cards.push(item.data() as CardModel);
+    });
+
+    return cards;
   }
 
   getCardNextID() {
@@ -22,8 +47,8 @@ export class CardService {
   }
 
   // Adiciona um novo Card
-  addCard(card: Card): void {
-
+  addCard(card: CardModel): void {
+    
   }
 
   // Remove Card por ID
@@ -32,7 +57,7 @@ export class CardService {
   }
 
   // Atualiza Card por ID
-  updateCardByID(id: number, updated: Card) {
+  updateCardByID(id: number, updated: CardModel) {
 
   }
 

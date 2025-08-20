@@ -1,0 +1,15 @@
+<div class="cardlayout">
+  <div class="area-central" *ngIf="layout">
+    
+    <!--<div *ngFor="let cardField of layout.cardFields">
+      <div class="campo" [ngClass]="cardField.type" #fieldRefs>
+        @if (cardField.type === 'TEXT') {
+          <textarea rows="5" cols="40" pTextarea [autoResize]="true" [readonly]="true" cdkDrag cdkDragBoundary=".carta-molde" class="textarea"></textarea>
+        } @else if (cardField.type === 'IMAGE') {
+          <input type="image" src="" alt="">
+        }
+      </div>
+    </div>-->
+  </div>
+  <p-button label="Salvar Carta" (click)="saveCard()" /> 
+</div>

@@ -1,0 +1,45 @@
+.page {
+  padding: 1rem 2rem;
+}
+
+.panels-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 90%), 1fr));
+  gap: 4rem;
+  margin-top: 20px;
+}
+
+.confirm-box {
+  width: 40%;
+  height: 50px;
+  background-color: #c8c8c8;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin: 100px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.confirm-box:hover {
+  background-color: #a9a9a9;
+}
+
+.confirm-box :disabled {
+  background-color: #e0e0e0;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+app-card-template {
+  cursor: pointer;
+}
+
+app-card-template:active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+app-card-template.selecionado {
+  box-shadow: 0 4px 12px rgba(6, 110, 221, 0.2);
+  opacity: 0.6;
+}
