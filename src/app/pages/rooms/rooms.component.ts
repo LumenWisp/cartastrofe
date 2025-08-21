@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
@@ -31,33 +31,49 @@ export class RoomsComponent {
     }
   }
 
+  isDragging: boolean = false;
+
   // Criando as cartas
   cards = signal<CardModel[]>([
     { id: 'A', label: 'A', flipped: false },
-    { id: 'K', label: 'K', flipped: true },
+    { id: 'K', label: 'K', flipped: false },
     { id: 'Q', label: 'Q', flipped: false },
   ]);
 
   // Criando as pilhas
-  piles = signal<PileModel[]>([
-    { id: 'p1', cards: this.cards() }
-  ]);
+  piles: CardModel[] = [];
 
 
   // Inverte o boolean "flipped"
   flipCard(id: string) {
+    if (this.isDragging) return; // ignora se foi um drag
     this.cards.update(cards =>
       cards.map(c => c.id === id ? { ...c, flipped: !c.flipped } : c)
     );
   }
 
+  // Retorna o pileId de uma carta ou undefined
+  checkCardHasPile(cardId: string) {
+  return this.cards().find(c => c.id === cardId)?.pileId;
+  }
+
+  // Remove o pileId de uma carta
+  removePileIdFromCard(cardId: string) {
+    this.cards.update(cards => cards.map(c => c.id === cardId ? { ...c, pileId: ''} : c))
+  }
+
+
   // Aumentar o zindex da carta sendo arrastada
   onDragStart(event: CdkDragStart<CardModel[]>) {
+    this.isDragging = true
     event.source.element.nativeElement.classList.add("dragging");
+    const cardId = event.source.element.nativeElement.getAttribute('card-id');
+    this.removePileIdFromCard(cardId!);
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
   onDrop(event: CdkDragEnd<CardModel[]>) {
+    this.isDragging = false
     event.source.element.nativeElement.classList.remove("dragging");
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     event.source.element.nativeElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
@@ -66,9 +82,33 @@ export class RoomsComponent {
     const targetCardId = element?.getAttribute('card-id'); // Id da carta alvo
     const draggedCardId = event.source.element.nativeElement.getAttribute('card-id') // Id da carta arrastada
 
-    if (element?.classList.contains('face') && targetCardId !== draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
-      console.log('targetCardId = ', targetCardId);
-      console.log('draggedCardId = ', draggedCardId);
+    if (element?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
+      const pileTargetCardId = this.checkCardHasPile(targetCardId);
+
+      if (pileTargetCardId) {
+        this.cards.update(cards =>
+          cards.map(c =>
+            c.id === draggedCardId ? { ...c, pileId: pileTargetCardId } : c
+          )
+        );
+      }
+
+      else {
+        this.cards.update(cards =>
+          cards.map(c =>
+            c.id === targetCardId ? { ...c, pileId: targetCardId } : c
+          )
+        );
+
+        this.cards.update(cards =>
+          cards.map(c =>
+            c.id === draggedCardId ? { ...c, pileId: targetCardId } : c
+          )
+        );
+      }
+
+      console.log(this.cards())
+     
     }
     
   }

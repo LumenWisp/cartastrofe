@@ -11,4 +11,5 @@ export interface CardModel {
     // Modo livre
     label?: string,
     flipped?: boolean,
+    pileId?: string
 }
