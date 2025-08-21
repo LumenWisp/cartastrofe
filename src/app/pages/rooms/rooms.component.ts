@@ -7,7 +7,6 @@ import { UserService } from '../../services/user-service.service';
 
 import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModel } from '../../types/card';
-import { PileModel } from '../../types/pile';
 
 
 @Component({
