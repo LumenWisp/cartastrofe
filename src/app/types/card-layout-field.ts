@@ -7,6 +7,7 @@ export interface CardLayoutFieldModel {
   y: number; // Distância do topo do campo até o topo do layout
   width: number;
   height: number;
+  property: string;
 }
 
 export type CardLayoutFieldDimensions = {

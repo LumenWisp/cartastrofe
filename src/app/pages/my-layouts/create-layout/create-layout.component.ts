@@ -9,6 +9,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
+import { Toast } from 'primeng/toast';
 // enum
 import { CardFieldTypesEnum } from '../../../enum/card-field-types.enum';
 // types
@@ -16,13 +17,14 @@ import { CardLayoutFieldModel } from '../../../types/card-layout-field';
 // services
 import { CardLayoutService } from '../../../services/card-layout.service';
 import { UserService } from '../../../services/user-service.service';
+import { ToastService } from '../../../services/toast.service';
 // components
 import { CardLayoutFieldComponent } from '../../../components/card-layout-field/card-layout-field.component';
 import { CardLayoutFieldInfoComponent } from '../../../components/card-layout-field-info/card-layout-field-info.component';
 
 @Component({
   selector: 'app-create-layout',
-  imports: [MenuModule, TextareaModule, ButtonModule, DrawerModule, InputNumberModule, FormsModule, SelectModule, CommonModule, CardLayoutFieldComponent, CardLayoutFieldInfoComponent],
+  imports: [MenuModule, TextareaModule, ButtonModule, DrawerModule, InputNumberModule, FormsModule, SelectModule, CommonModule, CardLayoutFieldComponent, CardLayoutFieldInfoComponent, Toast],
   templateUrl: './create-layout.component.html',
   styleUrl: './create-layout.component.css',
 })
@@ -64,7 +66,8 @@ export class CreateLayoutComponent {
 
   constructor(
     private cardLayoutService: CardLayoutService,
-    private userService: UserService
+    private userService: UserService,
+    private toastService: ToastService,
   ) {}
 
   addField(type: CardFieldTypesEnum) {
@@ -74,16 +77,43 @@ export class CreateLayoutComponent {
       y: 0,
       width: this.MIN_CARD_FIELD_WIDTH,
       height: this.MIN_CARD_FIELD_HEIGHT,
+      property: ''
     };
 
     this.cardFields.push(newField);
   }
 
-  openCardField(cardField: CardLayoutFieldModel) {
+  openCardFieldInfo(cardField: CardLayoutFieldModel) {
     this.cardFieldSelected = cardField;
   }
 
+  closeCardFieldInfo() {
+    this.cardFieldSelected = null;
+  }
+
   async saveCardLayout() {
-    console.log(this.cardFields)
+    const cardLayoutProperties = this.cardFields.map(cardField => cardField.property);
+
+    const isAnyPropertyEmpty = cardLayoutProperties.some(property => property.trim() === '');
+    const isPropertiesUnique = new Set(cardLayoutProperties).size === cardLayoutProperties.length;
+
+    if (cardLayoutProperties.length === 0) {
+      this.toastService.showErrorToast('Layout de carta', 'Sem campos adicionados!');
+      return;
+    }
+
+    if (isAnyPropertyEmpty) {
+      this.toastService.showErrorToast('Layout de carta', 'Existem propriedades vazias!');
+      return;
+    }
+
+    if (!isPropertiesUnique) {
+      this.toastService.showErrorToast('Layout de carta', 'Existem propriedades com o mesmo nome!');
+      return;
+    }
+
+    this.toastService.showSuccessToast('Layout de carta', 'Layout de carta criado com sucesso!');
+
+    this.cardLayoutService.saveCardLayout(this.cardFields)
   }
 }

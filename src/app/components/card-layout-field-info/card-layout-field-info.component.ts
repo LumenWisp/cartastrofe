@@ -1,10 +1,12 @@
 // angular
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // primeng
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 // enum
 import { CardFieldTypesEnum } from '../../enum/card-field-types.enum';
 // types
@@ -13,7 +15,7 @@ import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-card-layout-field-info',
-  imports: [InputNumberModule, FormsModule, SelectModule, CommonModule],
+  imports: [InputNumberModule, FormsModule, SelectModule, CommonModule, ButtonModule, InputTextModule],
   templateUrl: './card-layout-field-info.component.html',
   styleUrl: './card-layout-field-info.component.css'
 })
@@ -21,9 +23,15 @@ export class CardLayoutFieldInfoComponent {
   @Input({ required: true }) cardLayoutField!: CardLayoutFieldModel;
   @Input({ required: true }) cardLayoutDimensions!: CardLayoutFieldDimensions;
 
+  @Output() cardLayoutFieldInfoClosed = new EventEmitter<void>();
+
+  optionsCardType = Object.values(CardFieldTypesEnum).map(value => ({ label: value, value }));
+
   constructor(private utils: UtilsService) {}
 
-  optionsCardType = Object.values(CardFieldTypesEnum).map(value => ({ label: value, value }))
+  infoClosed() {
+    this.cardLayoutFieldInfoClosed.emit();
+  }
 
   checkX() {
     this.cardLayoutField.x = this.utils.checkRange(

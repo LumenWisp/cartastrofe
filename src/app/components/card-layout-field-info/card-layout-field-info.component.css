@@ -8,11 +8,7 @@
   z-index: 1;
 
   & .card-field-info-label {
+    display: block;
     text-transform: capitalize;
-    margin-right: 10px;
-  }
-
-  & .input-number {
-    width: 100px;
   }
 }

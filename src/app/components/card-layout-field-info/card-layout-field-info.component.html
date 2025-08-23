@@ -1,4 +1,6 @@
 <div class="card-field-info">
+  <p-button icon="pi pi-times" (click)="infoClosed()" />
+
   <div>
     <label class="card-field-info-label" for="type">Type</label>
 
@@ -63,6 +65,16 @@
       [(ngModel)]="cardLayoutField.height"
       [showButtons]="true"
       (onInput)="checkHeight()"
+    />
+  </div>
+
+  <div>
+    <label class="card-field-info-label" for="value">Property</label>
+    <input
+      type="text"
+      pInputText
+      [fluid]="true"
+      [(ngModel)]="cardLayoutField.property"
     />
   </div>
 </div>

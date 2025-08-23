@@ -30,7 +30,7 @@
         [cardLayoutField]="cardField"
         [cardLayoutDimensions]="DIMENSIONS"
         dragBoundary=".card-layout"
-        (openCardLayoutField)="openCardField(cardField)"
+        (openCardLayoutField)="openCardFieldInfo(cardField)"
       />
     }
   </div>
@@ -40,6 +40,9 @@
       class="card-layout-info-menu"
       [cardLayoutField]="cardFieldSelected"
       [cardLayoutDimensions]="DIMENSIONS"
+      (cardLayoutFieldInfoClosed)="closeCardFieldInfo()"
     />
   }
 </div>
+
+<p-toast position="bottom-center" />

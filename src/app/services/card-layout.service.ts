@@ -14,6 +14,7 @@ import {
   where,
   arrayUnion,
 } from '@angular/fire/firestore';
+import { CardLayoutFieldModel } from '../types/card-layout-field';
 
 @Injectable({
   providedIn: 'root',
@@ -49,8 +50,15 @@ export class CardLayoutService {
    * Salva um cardLayout com id gerado pelo firebase
    */
 
-  async saveCardLayout(cardLayout: CardLayoutModel) {
+  async saveCardLayout(cardFields: CardLayoutFieldModel[]) {
     const cardLayoutsRef = collection(this.firestore, this.cardLayoutpath);
+
+    const cardLayout: CardLayoutModel = {
+      cardFields,
+      name: '21',
+      userId: 'NEkPe1V5PDccYzJFyNWSrrUKukS2',
+    }
+
     const newCardLayoutRef = doc(cardLayoutsRef);
 
     const CardLayoutObject: CardLayoutModel = {
