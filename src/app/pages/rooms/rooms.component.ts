@@ -6,7 +6,7 @@ import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
 
 import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
-import { CardModel } from '../../types/card';
+import { CardGame } from '../../types/card';
 
 
 @Component({
@@ -33,14 +33,14 @@ export class RoomsComponent {
   isDragging: boolean = false;
 
   // Criando as cartas
-  cards = signal<CardModel[]>([
+  cards = signal<CardGame[]>([
     { id: 'A', label: 'A', flipped: false },
     { id: 'K', label: 'K', flipped: false },
     { id: 'Q', label: 'Q', flipped: false },
   ]);
 
   // Criando as pilhas
-  piles: CardModel[] = [];
+  piles: CardGame[] = [];
 
 
   // Inverte o boolean "flipped"
@@ -63,7 +63,7 @@ export class RoomsComponent {
 
 
   // Aumentar o zindex da carta sendo arrastada
-  onDragStart(event: CdkDragStart<CardModel[]>) {
+  onDragStart(event: CdkDragStart<CardGame[]>) {
     this.isDragging = true
     event.source.element.nativeElement.classList.add("dragging");
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
@@ -71,7 +71,7 @@ export class RoomsComponent {
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
-  onDrop(event: CdkDragEnd<CardModel[]>) {
+  onDrop(event: CdkDragEnd<CardGame[]>) {
     this.isDragging = false
     event.source.element.nativeElement.classList.remove("dragging");
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
@@ -107,9 +107,9 @@ export class RoomsComponent {
       }
 
       console.log(this.cards())
-     
+
     }
-    
+
   }
 
 }

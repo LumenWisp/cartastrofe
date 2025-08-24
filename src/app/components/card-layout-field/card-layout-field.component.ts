@@ -20,6 +20,8 @@ export class CardLayoutFieldComponent implements OnDestroy {
   @Input({ required: true }) cardLayoutField!: CardLayoutFieldModel;
   @Input({ required: true }) cardLayoutDimensions!: CardLayoutFieldDimensions;
   @Input() dragBoundary = '';
+  @Input() value = '';
+
   @Output() openCardLayoutField = new EventEmitter<void>()
 
   /* relacionados ao drag */
