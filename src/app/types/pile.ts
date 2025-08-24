@@ -1,6 +1,6 @@
-import { CardModel } from "./card";
+import { CardGame } from "./card";
 
 export interface PileModel {
     id: string;
-    cards: CardModel[]
+    cards: CardGame[]
 }

@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { CardModel } from '../types/card';
+import { CardGame } from '../types/card';
 import { PileModel } from '../types/pile';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { PileModel } from '../types/pile';
 })
 export class FreeModeService {
 
-  cards = signal<CardModel[]>([
+  cards = signal<CardGame[]>([
   { id: 'A', label: 'A', flipped: false },
   { id: 'B', label: 'B', flipped: false },
   { id: 'C', label: 'C', flipped: false },
@@ -18,11 +18,11 @@ export class FreeModeService {
 
   piles: PileModel[] = [];
 
-  addCard(card: CardModel) {
+  addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
   }
 
-  addCards(newCards: CardModel[]) {
+  addCards(newCards: CardGame[]) {
     this.cards.update(cards => [...cards, ...newCards]);
   }
 
@@ -76,7 +76,7 @@ export class FreeModeService {
 
 
   // Remove uma carta de uma pilha
-  removeCardFromPile(pileId: string, card: CardModel) {
+  removeCardFromPile(pileId: string, card: CardGame) {
 
     // Remove o id da pilha da carta
     this.cards.update(cards =>

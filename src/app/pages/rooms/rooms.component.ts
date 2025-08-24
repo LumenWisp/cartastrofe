@@ -35,7 +35,7 @@ export class RoomsComponent {
   isDragging: boolean = false;
 
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
-  onDragStart(event: CdkDragStart<CardModel[]>) {
+  onDragStart(event: CdkDragStart<CardGame[]>) {
     this.isDragging = true
     event.source.element.nativeElement.classList.add("dragging");
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
@@ -69,22 +69,22 @@ export class RoomsComponent {
 
       // Caso contrário, cria-se uma pilha da carta alvo com seu id e a carta arrastada faz parte dela automaticamente
       else {
-        this.cards.update(cards =>
-          cards.map(c =>
-            c.id === targetCardId ? { ...c, pileId: targetCardId } : c
-          )
-        );
 
-        this.cards.update(cards =>
-          cards.map(c =>
-            c.id === draggedCardId ? { ...c, pileId: targetCardId } : c
-          )
-        );
+        // nova pilha com o id da carta alvo
+        this.freeModeService.createPile(targetCardId)
+
+        // Adiciona a carta alvo à sua própria pilha
+        this.freeModeService.addCardToPile(targetCardId, targetCardId)
+
+        // Adiciona a carta à pilha para onde foi arrastada
+        this.freeModeService.addCardToPile(targetCardId, draggedCardId)
+
       }
 
-      console.log(this.cards())
-
     }
+
+    console.log(this.freeModeService.piles)
+    console.log(this.freeModeService.cards())
 
   }
 
