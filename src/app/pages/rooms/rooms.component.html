@@ -19,8 +19,9 @@
         [class.flipped]="card.flipped" 
         (dblclick)="freeModeService.flipCard(card.id!)" 
         (cdkDragEnded)="onDrop($event)"
-        (cdkDragStarted)="onDragStart($event)"
+        (cdkDragStarted)="onDragStart($event)"      
         cdkDrag
+        [cdkDragFreeDragPosition]="card.freeDragPos"
         [attr.card-id]="card.id"
         [style.z-index]="card.zIndex"
       >

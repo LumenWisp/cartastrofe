@@ -14,6 +14,7 @@ export interface CardGame {
     flipped?: boolean,
     pileId?: string,
     zIndex: number,
+    freeDragPos: {x: number, y: number},
 }
 
 export interface CardModel {

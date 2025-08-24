@@ -8,12 +8,12 @@ import { PileModel } from '../types/pile';
 export class FreeModeService {
 
   cards = signal<CardGame[]>([
-  { id: 'A', label: 'A', flipped: false, zIndex: 1 },
-  { id: 'B', label: 'B', flipped: false, zIndex: 1 },
-  { id: 'C', label: 'C', flipped: false, zIndex: 1 },
-  { id: 'D', label: 'D', flipped: false, zIndex: 1 },
-  { id: 'E', label: 'E', flipped: false, zIndex: 1 },
-  { id: 'F', label: 'F', flipped: false, zIndex: 1 },
+  { id: 'A', label: 'A', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
+  { id: 'B', label: 'B', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
+  { id: 'C', label: 'C', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
+  { id: 'D', label: 'D', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
+  { id: 'E', label: 'E', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
+  { id: 'F', label: 'F', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
 ]);
 
   piles: PileModel[] = [];
@@ -25,6 +25,12 @@ export class FreeModeService {
   addCards(newCards: CardGame[]) {
     this.cards.update(cards => [...cards, ...newCards]);
   }
+
+  updateCard(card: CardGame) {
+  this.cards.update(cards =>
+    cards.map(c => c.id === card.id ? { ...card } : c)
+  );
+}
 
   removeCard(cardId: string) {
     this.cards.update(cards => cards.filter(c => c.id !== cardId));

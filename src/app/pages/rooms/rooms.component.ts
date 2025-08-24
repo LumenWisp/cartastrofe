@@ -49,15 +49,15 @@ export class RoomsComponent {
   onDrop(event: CdkDragEnd<CardGame[]>) {
     this.isDragging = false
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
-    event.source.element.nativeElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
-    const element = document.elementFromPoint(x, y); // Pegar o alvo
-    event.source.element.nativeElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
-    const targetCardId = element?.getAttribute('card-id'); // Id da carta alvo
-    const draggedCardId = event.source.element.nativeElement.getAttribute('card-id') // Id da carta arrastada
+    const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
+    draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
+    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
+    draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+    const targetCardId = targetElement?.getAttribute('card-id'); // Id da carta alvo
+    const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
 
-    if (element?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
+    if (targetElement?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
       const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
-
 
       // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
       if (pileTargetCardId) {
@@ -79,11 +79,23 @@ export class RoomsComponent {
         this.freeModeService.addCardToPile(targetCardId, draggedCardId)
 
       }
+      const targetCard = this.freeModeService.getCardById(targetCardId);
+      const draggedCard = this.freeModeService.getCardById(draggedCardId!);
+      if (targetCard && draggedCard) {
+        draggedCard.freeDragPos = { ...targetCard.freeDragPos };
+        this.freeModeService.updateCard(draggedCard);
+      }
 
     }
 
     else {
       this.freeModeService.updateZindex(draggedCardId!, 1)
+
+      // Caso a carta seja arrastada para um local vazio, atualizar seu x e y
+      const { x, y } = event.source.getFreeDragPosition();
+      const draggedCard = this.freeModeService.getCardById(draggedCardId!);
+      draggedCard!.freeDragPos = { x, y };
+      this.freeModeService.updateCard(draggedCard!)
     }
 
     console.log(this.freeModeService.piles)
