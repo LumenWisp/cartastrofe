@@ -13,11 +13,11 @@
 
 
 <div class="grid">
-    @for (card of cards(); track $index) {
+    @for (card of freeModeService.cards(); track $index) {
       <div 
         class="card"
         [class.flipped]="card.flipped" 
-        (dblclick)="flipCard(card.id!)" 
+        (dblclick)="freeModeService.flipCard(card.id!)" 
         (cdkDragEnded)="onDrop($event)"
         (cdkDragStarted)="onDragStart($event)"
         cdkDrag

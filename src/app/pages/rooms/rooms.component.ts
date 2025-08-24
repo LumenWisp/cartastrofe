@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
+import { FreeModeService } from '../../services/free-mode.service';
 
 import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModel } from '../../types/card';
@@ -11,7 +12,7 @@ import { CardModel } from '../../types/card';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag ],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css'
 })
@@ -20,7 +21,8 @@ export class RoomsComponent {
   users: UserEntity[] = [];
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    public freeModeService: FreeModeService
   ){}
 
   async ngOnInit(){
@@ -32,42 +34,15 @@ export class RoomsComponent {
 
   isDragging: boolean = false;
 
-  // Criando as cartas
-  cards = signal<CardModel[]>([
-    { id: 'A', label: 'A', flipped: false },
-    { id: 'K', label: 'K', flipped: false },
-    { id: 'Q', label: 'Q', flipped: false },
-  ]);
-
-  // Criando as pilhas
-  piles: CardModel[] = [];
-
-
-  // Inverte o boolean "flipped"
-  flipCard(id: string) {
-    if (this.isDragging) return; // ignora se foi um drag
-    this.cards.update(cards =>
-      cards.map(c => c.id === id ? { ...c, flipped: !c.flipped } : c)
-    );
-  }
-
-  // Retorna o pileId de uma carta ou undefined
-  checkCardHasPile(cardId: string) {
-  return this.cards().find(c => c.id === cardId)?.pileId;
-  }
-
-  // Remove o pileId de uma carta
-  removePileIdFromCard(cardId: string) {
-    this.cards.update(cards => cards.map(c => c.id === cardId ? { ...c, pileId: ''} : c))
-  }
-
-
-  // Aumentar o zindex da carta sendo arrastada
+  // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardModel[]>) {
     this.isDragging = true
     event.source.element.nativeElement.classList.add("dragging");
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
-    this.removePileIdFromCard(cardId!);
+    const card = this.freeModeService.getCardById(cardId!)
+    if (card?.pileId) {
+      this.freeModeService.removeCardFromPile(card?.pileId, card!);
+    }
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
@@ -82,33 +57,34 @@ export class RoomsComponent {
     const draggedCardId = event.source.element.nativeElement.getAttribute('card-id') // Id da carta arrastada
 
     if (element?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
-      const pileTargetCardId = this.checkCardHasPile(targetCardId);
+      const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
 
+       
+      // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
       if (pileTargetCardId) {
-        this.cards.update(cards =>
-          cards.map(c =>
-            c.id === draggedCardId ? { ...c, pileId: pileTargetCardId } : c
-          )
-        );
+
+        // Adiciona a carta à pilha para onde foi arrastada
+        this.freeModeService.addCardToPile(pileTargetCardId, draggedCardId)
       }
 
+      // Caso contrário, cria-se uma pilha da carta alvo com seu id e a carta arrastada faz parte dela automaticamente
       else {
-        this.cards.update(cards =>
-          cards.map(c =>
-            c.id === targetCardId ? { ...c, pileId: targetCardId } : c
-          )
-        );
 
-        this.cards.update(cards =>
-          cards.map(c =>
-            c.id === draggedCardId ? { ...c, pileId: targetCardId } : c
-          )
-        );
+        // nova pilha com o id da carta alvo
+        this.freeModeService.createPile(targetCardId)
+
+        // Adiciona a carta alvo à sua própria pilha
+        this.freeModeService.addCardToPile(targetCardId, targetCardId)
+
+        // Adiciona a carta à pilha para onde foi arrastada
+        this.freeModeService.addCardToPile(targetCardId, draggedCardId)
+
       }
-
-      console.log(this.cards())
      
     }
+
+    console.log(this.freeModeService.piles)
+    console.log(this.freeModeService.cards())
     
   }
 
