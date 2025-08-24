@@ -12,7 +12,8 @@ export interface CardGame {
     // Modo livre
     label?: string,
     flipped?: boolean,
-    pileId?: string
+    pileId?: string,
+    zIndex: number,
 }
 
 export interface CardModel {

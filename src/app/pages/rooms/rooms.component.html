@@ -22,6 +22,7 @@
         (cdkDragStarted)="onDragStart($event)"
         cdkDrag
         [attr.card-id]="card.id"
+        [style.z-index]="card.zIndex"
       >
         <div class="card-inner">
           <div class="face front" [attr.card-id]="card.id">{{ card.label }}</div>

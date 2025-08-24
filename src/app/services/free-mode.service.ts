@@ -8,12 +8,12 @@ import { PileModel } from '../types/pile';
 export class FreeModeService {
 
   cards = signal<CardGame[]>([
-  { id: 'A', label: 'A', flipped: false },
-  { id: 'B', label: 'B', flipped: false },
-  { id: 'C', label: 'C', flipped: false },
-  { id: 'D', label: 'D', flipped: false },
-  { id: 'E', label: 'E', flipped: false },
-  { id: 'F', label: 'F', flipped: false },
+  { id: 'A', label: 'A', flipped: false, zIndex: 1 },
+  { id: 'B', label: 'B', flipped: false, zIndex: 1 },
+  { id: 'C', label: 'C', flipped: false, zIndex: 1 },
+  { id: 'D', label: 'D', flipped: false, zIndex: 1 },
+  { id: 'E', label: 'E', flipped: false, zIndex: 1 },
+  { id: 'F', label: 'F', flipped: false, zIndex: 1 },
 ]);
 
   piles: PileModel[] = [];
@@ -48,6 +48,16 @@ export class FreeModeService {
     );
   }
 
+  // Atualiza o zindex de uma carta
+  updateZindex(cardId: string, zIndex: number) {
+  this.cards.update(cards =>
+    cards.map(c =>
+      c.id === cardId ? { ...c, zIndex } : c
+    )
+  );
+}
+
+
   // Retorna o id da pilha em que a carta está, se tiver
   checkCardHasPile(cardId: string) {
     return this.cards().find(c => c.id === cardId)?.pileId;
@@ -69,6 +79,9 @@ export class FreeModeService {
     const pile = this.piles.find(p => p.id === pileId);
     if (pile) {
       pile.cards.push(updatedCard!);
+
+      const newZIndex = pile.cards.length;
+      this.updateZindex(cardId, newZIndex);
     } else {
       console.error('Pilha não encontrada');
     }

@@ -37,8 +37,8 @@ export class RoomsComponent {
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardGame[]>) {
     this.isDragging = true
-    event.source.element.nativeElement.classList.add("dragging");
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
+    this.freeModeService.updateZindex(cardId!, 99999)
     const card = this.freeModeService.getCardById(cardId!)
     if (card?.pileId) {
       this.freeModeService.removeCardFromPile(card?.pileId, card!);
@@ -48,7 +48,6 @@ export class RoomsComponent {
   // Evento disparado quando se solta uma carta sendo arrastada
   onDrop(event: CdkDragEnd<CardGame[]>) {
     this.isDragging = false
-    event.source.element.nativeElement.classList.remove("dragging");
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     event.source.element.nativeElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
     const element = document.elementFromPoint(x, y); // Pegar o alvo
@@ -81,6 +80,10 @@ export class RoomsComponent {
 
       }
 
+    }
+
+    else {
+      this.freeModeService.updateZindex(draggedCardId!, 1)
     }
 
     console.log(this.freeModeService.piles)
