@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
@@ -79,6 +79,7 @@ export class RoomsComponent {
         this.freeModeService.addCardToPile(targetCardId, draggedCardId)
 
       }
+      // Atualiza o X e Y da carta arrastada
       const targetCard = this.freeModeService.getCardById(targetCardId);
       const draggedCard = this.freeModeService.getCardById(draggedCardId!);
       if (targetCard && draggedCard) {
