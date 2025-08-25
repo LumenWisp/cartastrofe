@@ -1,21 +1,30 @@
 .form {
   display: flex;
   flex-direction: column;
+  align-items: center;
   row-gap: 20px;
 }
 
-.label {
-  display: block;
-}
-
-.gamemode-groups {
-  display: flex;
-  align-items: center;
-  column-gap: 20px;
-}
-
-.gamemode-group {
+.inline-input {
   display: flex;
   align-items: center;
   column-gap: 10px;
+}
+
+.stacked-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.floatlabel {
+  width: 100%;
+}
+
+#description {
+  height: 100px;
+}
+
+#countPlayersMin, #countPlayersMax {
+  width: 50px;
 }

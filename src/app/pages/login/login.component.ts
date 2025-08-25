@@ -1,16 +1,18 @@
-import { Component } from '@angular/core';
+// angular
+import { Component, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { FirebaseError } from '@angular/fire/app';
+import { TranslatePipe } from '@ngx-translate/core';
+// primeng
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+// services
 import { UserService } from '../../services/user-service.service';
+// shared
+import { FormManager } from '../../shared/form-manager';
 
 @Component({
   selector: 'app-login',
@@ -21,33 +23,76 @@ import { UserService } from '../../services/user-service.service';
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
+    TranslatePipe
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../shared/auth.css'],
 })
-export class LoginComponent {
-  loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(6)]),
-  });
+export class LoginComponent extends FormManager implements OnDestroy {
+  constructor(private router: Router, private userService: UserService) {
+    const form = new FormGroup({
+      form: new FormControl('', { nonNullable: true }),
+      email: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required, 
+          Validators.email
+        ]
+      }),
+      password: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required
+        ]
+      })
+    })
 
-  constructor(private router: Router, private userService: UserService) {}
+    const errorMessages = {
+      email: {
+        required: 'Email é obrigatório',
+        email: 'Email inválido',
+      },
+      password: {
+        required: 'Senha é obrigatória',
+        minlength: 'Senha deve ter pelo menos 6 caracteres',
+      },
+    }
 
-  async onSubmit() {
-    if (this.loginForm.valid) {
-      const email = this.loginForm.get('email')?.value
-      const password = this.loginForm.get('password')?.value
+    const formErrorMessages = {
+      'auth/invalid-credential': 'Email ou senha inválidos'
+    }
 
-      if(email && password){
-        try{
-          await this.userService.login(email, password);
-          this.router.navigate(['/my-games']);
+    super(form, errorMessages, formErrorMessages);
+  }
+
+  ngOnDestroy() {
+    this.cleanUp();
+  }
+
+  async submit() {
+    this.checkFields();
+
+    this.form.markAllAsTouched();
+
+    if (!this.form.valid) {
+      console.log('Formulário inválido');
+      return;
+    }
+
+    const { email, password } = this.form.value;
+
+    try{
+      await this.userService.login(email, password);
+      this.router.navigate(['/my-games']);
+    } catch (error){
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/invalid-credential') {
+          this.setFormError('auth/invalid-credential');
         }
-        catch(err){
-          console.log("email ou senha inválidos", err)
-        }
+
+        console.error('Erro ao registrar usuário:', error.code);
+      } else {
+        console.log('Email ou senha inválidos');
       }
     }
   }

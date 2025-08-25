@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FreeModeService } from '../../services/free-mode.service';
 
 import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
@@ -14,7 +15,7 @@ import { Popover, PopoverModule } from 'primeng/popover';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag, PopoverModule],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag, PopoverModule, TranslatePipe],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css'
 })

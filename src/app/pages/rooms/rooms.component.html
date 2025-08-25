@@ -2,7 +2,7 @@
 
     <p-button routerLink="/my-games" label="Sair" />
 
-  <p-panel header="Jogadores">
+  <p-panel header="{{'rooms.header' | translate}}">
     @for (user of users; track $index) {
     <div class="menu-item">
       {{ user.name }}

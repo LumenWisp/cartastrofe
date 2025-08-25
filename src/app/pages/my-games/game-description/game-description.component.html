@@ -1,20 +1,58 @@
-<div class="top-content">
-  <a class="back-link" routerLink="/my-games">
-    <span class="pi pi-arrow-left back-icon"></span>
-  </a>
+<div class="banner">
+  <img class="game-banner" src="/images/fire-cards-banner.png" alt="banner">
 
-  <span class="game-name">{{gameInfo?.name}}</span>
-
-  <img class="game-banner" src="/images/yu-gi-oh-banner-2.jpg" alt="banner">
+  <div class="overlay">
+    <span class="overlay-text">{{ gameInfo?.name }}</span>
+  </div>
 </div>
 
-<div class="content">
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis voluptates dicta corrupti deleniti cumque aspernatur laborum similique. Laborum est quaerat quis hic totam, numquam vitae molestiae odio qui ut consequatur?
-    Amet expedita perspiciatis nisi enim voluptate cumque eaque rem, fugit laudantium illo fugiat quas animi non accusantium veniam inventore quos sit, facilis recusandae reprehenderit maxime nesciunt. Quae corrupti eum sed.
-    Placeat, non aut quos repudiandae molestiae blanditiis qui! Voluptatum, ipsum! Quis unde blanditiis quaerat. Eaque, fuga perspiciatis suscipit doloremque ad facere debitis eligendi repellat vel praesentium laboriosam quidem dolor aut.
-    Quidem eveniet repellendus officia sint cupiditate voluptatibus rem fugit perferendis quas molestias et, voluptates repellat! Dignissimos blanditiis totam dolorem autem, reprehenderit dolor inventore libero! Deleniti voluptas nobis aperiam quia tempora?
-    Magnam assumenda, omnis necessitatibus eligendi aut perspiciatis rem ullam dolor ut distinctio ex fugit architecto alias sit eius delectus natus itaque. Laborum cupiditate laboriosam quaerat animi quidem soluta sit maiores.
-    Voluptates culpa, aliquid esse repellat neque exercitationem tenetur, architecto minima est ipsam ullam quia. Hic doloribus officiis minus aut aliquid, quod ullam nobis accusamus sint ducimus eius dolore? Ipsum, tempore?
-  </p>
+<div class="content-wrapper">
+  <div class="buttons">
+    <p-button label="Voltar" icon="pi pi-arrow-left" severity="secondary" [rounded]="true" routerLink="/my-games" />
+    <p-button label="Criar" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit', gameInfo?.id]" />
+  </div>
+
+  <div class="content">
+    <div class="info">
+      <span>
+        <strong>
+          <span class="info-icon pi pi-desktop"></span>
+          Nome do jogo:
+        </strong>
+        {{ gameInfo?.name }}
+      </span>
+      <span>
+        <strong>
+          <span class="info-icon pi" [ngClass]="ngIconGamemode"></span>
+          Modo de jogo:
+        </strong>
+        {{ gameInfo?.gameMode }}
+      </span>
+      <span>
+        <strong>
+          <span class="info-icon pi pi-address-book"></span>
+          Contagem de cartas:
+        </strong>
+        {{ gameInfo?.countCards }}
+      </span>
+      <span>
+        <strong>
+          <span class="info-icon pi pi-user-minus"></span>
+          Jogadores mínimos:
+        </strong>
+        {{ gameInfo?.countPlayersMin }}
+      </span>
+      <span>
+        <strong>
+          <span class="info-icon pi pi-user-plus"></span>
+          Jogadores máximos:
+        </strong>
+        {{ gameInfo?.countPlayersMax }}
+      </span>
+    </div>
+
+    <p>
+      {{ gameInfo?.description }}
+    </p>
+  </div>
 </div>
