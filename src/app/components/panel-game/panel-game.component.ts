@@ -7,7 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { ButtonModule } from 'primeng/button';
 // enums
-import { GameModes } from '../../enum/game-mode';
+import { GameModesEnum } from '../../enum/game-modes.enum';
 // types
 import { GameInfo } from '../../types/game-info';
 import { RouterLink } from '@angular/router';
@@ -28,8 +28,8 @@ export class PanelGameComponent implements OnInit {
 
   ngOnInit() {
     this.ngIconGamemode = {
-      'pi-shield': this.gameInfo.gameMode === GameModes.STRUCTURED,
-      'pi-compass': this.gameInfo.gameMode === GameModes.FREE,
+      'pi-shield': this.gameInfo.gameMode === GameModesEnum.STRUCTURED,
+      'pi-compass': this.gameInfo.gameMode === GameModesEnum.FREE,
     }
   }
 }

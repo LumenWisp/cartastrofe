@@ -1,9 +1,9 @@
-import { GameModes } from '../enum/game-mode';
+import { GameModesEnum } from '../enum/game-modes.enum';
 
 export interface GameInfoData {
   name: string;
   description: string;
-  gameMode: GameModes;
+  gameMode: GameModesEnum;
   countPlayersMin: number;
   countPlayersMax: number;
 }

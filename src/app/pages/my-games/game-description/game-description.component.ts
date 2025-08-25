@@ -12,7 +12,7 @@ import { GameInfoService } from '../../../services/game-info.service';
 // types
 import { GameInfo } from '../../../types/game-info';
 // enums
-import { GameModes } from '../../../enum/game-mode';
+import { GameModesEnum } from '../../../enum/game-modes.enum';
 
 @Component({
   selector: 'app-game-description',
@@ -45,14 +45,14 @@ export class GameDescriptionComponent implements OnInit {
       countPlayersMin: 2,
       countPlayersMax: 4,
       countCards: 0,
-      gameMode: GameModes.STRUCTURED,
+      gameMode: GameModesEnum.STRUCTURED,
       title: '???',
       userId: 'user1',
     }
 
     this.ngIconGamemode = {
-      'pi-shield': this.gameInfo.gameMode === GameModes.STRUCTURED,
-      'pi-compass': this.gameInfo.gameMode === GameModes.FREE,
+      'pi-shield': this.gameInfo.gameMode === GameModesEnum.STRUCTURED,
+      'pi-compass': this.gameInfo.gameMode === GameModesEnum.FREE,
     }
   }
 }

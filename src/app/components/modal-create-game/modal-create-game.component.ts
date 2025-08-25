@@ -11,7 +11,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 // enums
-import { GameModes } from '../../enum/game-mode';
+import { GameModesEnum } from '../../enum/game-modes.enum';
 // services
 import { GameInfoService } from '../../services/game-info.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -44,8 +44,8 @@ export class ModalCreateGameComponent {
 
   private readonly MIN_PLAYERS = 2;
   private readonly MAX_PLAYERS = 99;
-  
-  modes: { label: string; value: GameModes }[] = [];
+
+  modes: { label: string; value: GameModesEnum }[] = [];
 
   constructor(
     private gameInfoService: GameInfoService
@@ -56,10 +56,10 @@ export class ModalCreateGameComponent {
     forkJoin({
       gameModeStructured: this.translateService.get('game-mode.structured'),
       gameModeFree: this.translateService.get('game-mode.free')
-    }).subscribe(translations => {  
+    }).subscribe(translations => {
       this.modes = [
-        { label: translations.gameModeStructured, value: GameModes.STRUCTURED },
-        { label: translations.gameModeFree, value: GameModes.FREE },
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
       ];
     })
   }
@@ -69,7 +69,7 @@ export class ModalCreateGameComponent {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    gameMode: new FormControl(GameModes.STRUCTURED, {
+    gameMode: new FormControl(GameModesEnum.STRUCTURED, {
       nonNullable: true,
       validators: [Validators.required]
     }),

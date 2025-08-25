@@ -57,6 +57,8 @@ export class UserService {
       userID: uid,
       name,
       email,
+      cardLayoutsIds: [],
+      password,
     };
 
     await setDoc(doc(this.firestore, this.path, uid), userData);

@@ -19,7 +19,7 @@ import { GameInfoService } from '../../services/game-info.service';
 // types
 import { GameInfo } from '../../types/game-info';
 // enums
-import { GameModes } from '../../enum/game-mode';
+import { GameModesEnum } from '../../enum/game-modes.enum';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -43,7 +43,7 @@ import { forkJoin } from 'rxjs';
 })
 export class MyGamesComponent {
   showCreateGameModal = false;
-  modes: { label: string; value: GameModes }[] = [];
+  modes: { label: string; value: GameModesEnum }[] = [];
   translateService = inject(TranslateService);
 
   ngOnInit() {
@@ -52,10 +52,10 @@ export class MyGamesComponent {
     forkJoin({
       gameModeStructured: this.translateService.get('game-mode.structured'),
       gameModeFree: this.translateService.get('game-mode.free')
-    }).subscribe(translations => {  
+    }).subscribe(translations => {
       this.modes = [
-        { label: translations.gameModeStructured, value: GameModes.STRUCTURED },
-        { label: translations.gameModeFree, value: GameModes.FREE },
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
       ];
     });
   }
@@ -63,7 +63,7 @@ export class MyGamesComponent {
 
   games: WritableSignal<GameInfo[]> = signal([]);
   search = signal('');
-  gameMode = signal<GameModes | null>(null);
+  gameMode = signal<GameModesEnum | null>(null);
 
   filteredGames = computed(() => {
     let games = this.games();
@@ -101,7 +101,7 @@ export class MyGamesComponent {
             countPlayersMin: 2,
             countPlayersMax: 4,
             countCards: 0,
-            gameMode: GameModes.STRUCTURED,
+            gameMode: GameModesEnum.STRUCTURED,
             title: '???',
             userId: 'user1',
           },
@@ -112,7 +112,7 @@ export class MyGamesComponent {
             countPlayersMin: 3,
             countPlayersMax: 7,
             countCards: 6,
-            gameMode: GameModes.FREE,
+            gameMode: GameModesEnum.FREE,
             title: '???',
             userId: 'user1',
           },
