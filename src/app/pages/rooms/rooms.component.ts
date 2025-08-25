@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
@@ -9,16 +9,20 @@ import { FreeModeService } from '../../services/free-mode.service';
 import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CardGame } from '../../types/card';
 
+import { Popover, PopoverModule } from 'primeng/popover';
+
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag, PopoverModule],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css'
 })
 export class RoomsComponent {
 
+  @ViewChild('popover') popover!: Popover;
   users: UserEntity[] = [];
+  selectedCard: CardGame | null = null;
 
   constructor(
     private userService: UserService,
@@ -34,9 +38,30 @@ export class RoomsComponent {
 
   isDragging: boolean = false;
 
+  // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
+  showOptions(event: MouseEvent, card: CardGame, popover: Popover) {
+    event.preventDefault();
+    if (this.isDragging) return;
+    this.selectedCard = card;
+    if (this.freeModeService.isPartOfPile(card.id!)) {
+      popover.show(event);
+    }
+  }
+
+  // Popover de embaralhar
+  onShuffleClick(pop: Popover) {
+    if (this.selectedCard?.pileId) {
+      this.freeModeService.shufflePile(this.selectedCard.pileId);
+    }
+    pop.hide(); // fecha após embaralhar
+  }
+
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardGame[]>) {
     this.isDragging = true
+    if (this.popover) {
+    this.popover.hide(); // fecha o popover quando arrastar outra carta
+  }
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
     this.freeModeService.updateZindex(cardId!, 99999)
     const card = this.freeModeService.getCardById(cardId!)
@@ -47,7 +72,7 @@ export class RoomsComponent {
 
   // Evento disparado quando se solta uma carta sendo arrastada
   onDrop(event: CdkDragEnd<CardGame[]>) {
-    this.isDragging = false
+    setTimeout(() => this.isDragging = false, 100);
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
@@ -98,9 +123,6 @@ export class RoomsComponent {
       draggedCard!.freeDragPos = { x, y };
       this.freeModeService.updateCard(draggedCard!)
     }
-
-    console.log(this.freeModeService.piles)
-    console.log(this.freeModeService.cards())
 
   }
 

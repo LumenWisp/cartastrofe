@@ -26,6 +26,7 @@ export class FreeModeService {
     this.cards.update(cards => [...cards, ...newCards]);
   }
 
+  // Atualiza o signal cards
   updateCard(card: CardGame) {
   this.cards.update(cards =>
     cards.map(c => c.id === card.id ? { ...card } : c)
@@ -63,10 +64,16 @@ export class FreeModeService {
   );
 }
 
-
   // Retorna o id da pilha em que a carta está, se tiver
   checkCardHasPile(cardId: string) {
     return this.cards().find(c => c.id === cardId)?.pileId;
+  }
+
+  // Retorna true se a carta está em uma pilha de mais de 1 carta
+  isPartOfPile(cardId: string) {
+    const pileId = this.getPileIdFromCardId(cardId)
+    const pile = this.piles.find(pile => pile.id === pileId)
+    return !!(pile && pile.cards.length > 1);
   }
 
   // Adiciona uma carta para uma pilha !!SE PASSE O ID E NÃO A CARTA EM SI!! pois vamos pegar a carta pelo getCardById
@@ -125,5 +132,27 @@ export class FreeModeService {
   getPileIdFromCardId(cardId: string) {
     const card = this.getCardById(cardId);
     return card?.pileId;
+  }
+
+  // Embaralha uma pilha
+  shufflePile(pileId: string) {
+    const pile = this.piles.find(p => p.id === pileId);
+    if (!pile) return;
+
+    this.fisherYatesAlgorithm(pile.cards);
+
+    // Atualiza o zIndex das cartas da pilha "nova"
+    pile.cards.forEach((card, index) => {
+      this.updateZindex(card.id!, index + 1);
+  });
+  }
+
+  // Algoritmo para embaralhar aleatoriamente
+  fisherYatesAlgorithm(list: CardGame[]) {
+    for (let i = list.length - 1; i > 0; i--) {
+    const random = Math.floor(Math.random() * (i + 1));
+    [list[i], list[random]] = [list[random], list[i]];
+  }
+  return list;
   }
 }
