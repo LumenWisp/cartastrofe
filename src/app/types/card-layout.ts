@@ -1,5 +1,10 @@
-export interface CardLayout {
-  id: number;
+import { CardLayoutFieldModel } from './card-layout-field';
+
+export interface CardLayoutModel {
+  id?: string;
+  userId: string;
   name: string;
-  userId: number;
+  //createdAt: Date;
+  cardFields: CardLayoutFieldModel[];
 }
+

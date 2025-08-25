@@ -15,6 +15,7 @@ export class UserService {
 
   private currentUserData: UserEntity | null = null;
 
+
   readonly user$ = user(this.auth);
   readonly currentUser$ = this.user$.pipe(
     map(user => {
@@ -31,7 +32,15 @@ export class UserService {
   constructor() {}
 
   getUserLogged(): UserEntity | null {
-    return this.currentUserData;
+    if (this.currentUserData) return this.currentUserData;
+
+    const raw = localStorage.getItem('user');
+    if (raw) {
+      this.currentUserData = JSON.parse(raw);
+      return this.currentUserData;
+    }
+
+    return null;
   }
 
   /**
@@ -66,11 +75,16 @@ export class UserService {
     // Busca os dados do Firestore com o UID
     const docSnap = await getDoc(doc(this.firestore, this.path, uid));
 
-    if(docSnap.exists()){
+    if (docSnap.exists()) {
       const refCollection = collection(this.firestore, this.path);
-      const queryRef = query(refCollection, where('email', '==', email), where('password', '==', password), limit(1));
+      const queryRef = query(
+        refCollection,
+        where('email', '==', email),
+        where('password', '==', password),
+        limit(1)
+      );
 
-      const docRef = await getDocs(queryRef)
+      const docRef = await getDocs(queryRef);
 
       if (!docRef.empty) {
         this.currentUserData = docRef.docs[0].data() as UserEntity;
@@ -85,5 +99,6 @@ export class UserService {
   async logout(): Promise<void> {
     await signOut(this.auth);
     this.currentUserData = null;
+    localStorage.removeItem('user');
   }
 }

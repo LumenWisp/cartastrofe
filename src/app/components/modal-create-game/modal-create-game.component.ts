@@ -95,7 +95,6 @@ export class ModalCreateGameComponent {
     }),
   });
 
-
   close() {
     this.showModalChange.emit(false);
   }

@@ -1,0 +1,14 @@
+.card-field-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 200px;
+  padding: 10px;
+  border: 1px solid #000000;
+  z-index: 1;
+
+  & .card-field-info-label {
+    display: block;
+    text-transform: capitalize;
+  }
+}
