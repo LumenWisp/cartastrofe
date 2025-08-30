@@ -28,10 +28,10 @@ export class FreeModeService {
 
   // Atualiza o signal cards
   updateCard(card: CardGame) {
-  this.cards.update(cards =>
-    cards.map(c => c.id === card.id ? { ...card } : c)
-  );
-}
+    this.cards.update(cards =>
+      cards.map(c => c.id === card.id ? { ...card } : c)
+    );
+  }
 
   removeCard(cardId: string) {
     this.cards.update(cards => cards.filter(c => c.id !== cardId));
@@ -57,12 +57,12 @@ export class FreeModeService {
 
   // Atualiza o zindex de uma carta
   updateZindex(cardId: string, zIndex: number) {
-  this.cards.update(cards =>
-    cards.map(c =>
-      c.id === cardId ? { ...c, zIndex } : c
-    )
-  );
-}
+    this.cards.update(cards =>
+      cards.map(c =>
+        c.id === cardId ? { ...c, zIndex } : c
+      )
+    );
+  }
 
   // Retorna o id da pilha em que a carta está, se tiver
   checkCardHasPile(cardId: string) {
@@ -132,6 +132,12 @@ export class FreeModeService {
   getPileIdFromCardId(cardId: string) {
     const card = this.getCardById(cardId);
     return card?.pileId;
+  }
+
+  getNumberOfCardsFromPileId(pileId: string) {
+    const pile = this.piles.find(p => p.id === pileId)
+    if (!pile?.cards) return;
+    return pile?.cards.length;
   }
 
   // Embaralha uma pilha

@@ -26,6 +26,9 @@
         [attr.card-id]="card.id"
         [style.z-index]="card.zIndex"
       >
+      @if (freeModeService.isPartOfPile(card.id!)) {
+        <div class="square-number-cards">{{ freeModeService.getNumberOfCardsFromPileId(card.pileId!) }}</div>
+      }
         <div class="card-inner">
           <div class="face front" [attr.card-id]="card.id">{{ card.label }}</div>
           <div class="face back" [attr.card-id]="card.id"></div>
