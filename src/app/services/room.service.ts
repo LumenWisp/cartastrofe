@@ -61,7 +61,7 @@ export class RoomService {
       }
 
       //Gera o novo link de entrada para a sala
-      const linkCode: string = await this.generateLinkCode();
+      const linkCode: string = await this.utilsService.generateLinkCode(20);
 
       //Gera o novo estado da sala
       const roomState: RoomState = {
@@ -72,6 +72,7 @@ export class RoomService {
 
       const updatedRoom: Room = {
         ...avaiableRoom,
+        avaiable: false,
         state: roomState
       }
 
@@ -102,10 +103,5 @@ export class RoomService {
       console.error(' Firestore Error:', error);
       throw error;
     }
-  }
-
-  private async generateLinkCode(): Promise<string> {
-    const linkCode = await this.utilsService.generateKey(20);
-    return linkCode;
   }
 }

@@ -9,6 +9,8 @@
       <p-dropdown 
         id="gameName"
         [options]="gameOptions"
+        [(ngModel)]="selectedGame"
+        appendTo="body"
         placeholder="Selecione o jogo">
       </p-dropdown>
     </div>
@@ -22,6 +24,6 @@
       </p-dropdown>
     </div> -->
 
-    <button type="button" class="create-room-button" (click)="close()" routerLink="/rooms">CRIAR</button>
+    <button type="button" class="create-room-button" (click)="createRoom(selectedGame);close()">CRIAR</button>
   </div>
 </p-dialog>
