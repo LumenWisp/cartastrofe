@@ -71,7 +71,7 @@ export class ModalCreateRoomComponent {
         console.log("Não há salas disponiveis");
       }
       else{
-        if(room.state) this.goToGameRoom(room.state.roomLink);
+        if(room.state) this.goToGameRoom(room.roomLink);
       }
     } catch (error) {
       console.error('Erro ao criar sala', error);
@@ -79,11 +79,7 @@ export class ModalCreateRoomComponent {
     }
   }
 
-  private goToGameRoom(linkCode: string) {
-    const queryParams: any = {
-      linkCode: linkCode
-    };
-    
-    this.router.navigate(['/rooms'], { queryParams });
+  private goToGameRoom(roomLink: string) {
+    this.router.navigate(['/rooms', roomLink]);
   }
 }

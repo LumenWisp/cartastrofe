@@ -30,7 +30,7 @@ export class RoomService {
 
   constructor(
     private utilsService: UtilsService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
   async updateRoom(item: Partial<Room>) {
@@ -61,24 +61,58 @@ export class RoomService {
       }
 
       //Gera o novo link de entrada para a sala
-      const linkCode: string = await this.utilsService.generateLinkCode(20);
+      const roomLink: string = await this.utilsService.generateLinkCode(20);
 
       //Gera o novo estado da sala
       const roomState: RoomState = {
         isGameOcurring: false,
         gameId: gameId,
-        roomLink: linkCode,
       }
 
       const updatedRoom: Room = {
         ...avaiableRoom,
         avaiable: false,
+        roomLink: roomLink,
         state: roomState
       }
 
       await this.updateRoom(updatedRoom);
       return updatedRoom;
 
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async getRoomByRoomLink(roomLink: string): Promise<Room | null> {
+    const refCollection = collection(this.firestore, this.path);
+
+    let queryRef = query(refCollection, where('roomLink', '==', roomLink));
+
+    try {
+      const snapshot = await getDocs(queryRef);
+      const rooms: Room[] = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+      })) as Room[];
+      return rooms[0];
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async getRoomById(id: string): Promise<Room | null> {
+    const refCollection = collection(this.firestore, this.path);
+
+    let queryRef = query(refCollection, where('id', '==', id));
+
+    try {
+      const snapshot = await getDocs(queryRef);
+      const rooms: Room[] = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+      })) as Room[];
+      return rooms[0];
     } catch (error) {
       console.error(' Firestore Error:', error);
       throw error;
