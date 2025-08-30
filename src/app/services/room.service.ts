@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { Observable } from 'rxjs';
 import { Auth, User } from '@angular/fire/auth';
 import {
   collection,
@@ -17,6 +18,7 @@ import {
   startAfter,
   updateDoc,
   where,
+  collectionData,
 } from '@angular/fire/firestore';
 import { Room, RoomState } from '../types/room';
 import { UtilsService } from './utils.service';
@@ -83,6 +85,11 @@ export class RoomService {
       };
 
       await this.updateRoom(updatedRoom);
+
+      //Adicionando o usuário que criou a sala como administrador
+      const user = this.userService.getUserLogged();
+      await this.createPlayer(updatedRoom.id, user!, RoomRolesEnum.ADMIN);
+
       return updatedRoom;
     } catch (error) {
       console.error(' Firestore Error:', error);
@@ -127,12 +134,12 @@ export class RoomService {
   private async getAvaiableRoom(): Promise<Room | null> {
     const refCollection = collection(this.firestore, this.path);
 
-    let queryRef = query(refCollection, where('avaiable', '==', true));
-
-    //Adicionado limite pois só precisa de 1 sala disponivel
-    queryRef = query(queryRef, limit(1));
-
     try {
+      let queryRef = query(refCollection, where('avaiable', '==', true));
+
+      //Adicionado limite pois só precisa de 1 sala disponivel
+      queryRef = query(queryRef, limit(1));
+
       const snapshot = await getDocs(queryRef);
       const rooms: Room[] = snapshot.docs.map((doc) => ({
         ...doc.data(),
@@ -146,7 +153,8 @@ export class RoomService {
 
   //==================== MÉTODOS PARA JOGADORES
 
-  async getPlayers(roomId: string): Promise<PlayerEntity[] | null> {
+  // Observa a colleção de jogadores esperando uma mudança para atualizar para todos
+  listenPlayers(roomId: string): Observable<PlayerEntity[]> {
     const refCollection = collection(
       this.firestore,
       this.path,
@@ -155,11 +163,7 @@ export class RoomService {
     );
 
     try {
-      const snapshot = await getDocs(refCollection);
-      const users: PlayerEntity[] = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-      })) as PlayerEntity[];
-      return users;
+      return collectionData(refCollection) as Observable<PlayerEntity[]>;
     } catch (error) {
       console.error(' Firestore Error:', error);
       throw error;
@@ -228,13 +232,42 @@ export class RoomService {
       this.firestore,
       this.path,
       roomId,
-      'players',
-      playerId
+      'players'
     );
 
     try {
-      const playerRef = doc(refCollection);
+      console.log(`Retirando jogador com ID ${playerId} da sala`)
+      const playerRef = doc(refCollection, playerId);
       await deleteDoc(playerRef);
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async getCurrentPlayer(roomId: string): Promise<PlayerEntity> {
+    const user = this.userService.getUserLogged();
+
+    if (!user) {
+      throw new Error('Usuário não encontrado.');
+    }
+
+    const refCollection = collection(
+      this.firestore,
+      this.path,
+      roomId,
+      'players'
+    );
+
+    try {
+      let queryRef = query(refCollection, where('userID', '==', user.userID));
+
+      const snapshot = await getDocs(queryRef);
+      const result: PlayerEntity[] = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+      })) as PlayerEntity[];
+
+      return result[0];
     } catch (error) {
       console.error(' Firestore Error:', error);
       throw error;
