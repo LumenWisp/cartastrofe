@@ -1,12 +1,15 @@
 import { Component, signal, computed } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
+import { Subscription } from 'rxjs';
 
 import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModel } from '../../types/card';
+import { Room } from '../../types/room';
+import { RoomService } from '../../services/room.service';
 
 
 @Component({
@@ -18,16 +21,47 @@ import { CardModel } from '../../types/card';
 export class RoomsComponent {
 
   users: UserEntity[] = [];
+  room!: Room;
+
+  // Subscrições
+  private routeSubscription?: Subscription;
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private roomService: RoomService,
   ){}
 
   async ngOnInit(){
+    this.checkRouteParams();
     const userCreator = this.userService.getUserLogged()
     if(userCreator){
       this.users.push(userCreator);
     }
+  }
+
+  ngOnDestroy() {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Verifica parâmetros da rota e carrega a room
+   */
+  private checkRouteParams() {
+    this.routeSubscription = this.route.params.subscribe(async (params) => {
+      console.log("roomLink: ", params['roomLink']);
+      if (params['roomLink']) {
+        const room = await this.roomService.getRoomByRoomLink(params['roomLink']);
+        if(room){
+          this.room = room;
+        }
+        else{
+          console.log("Não foi encontrada nenhuma sala que possua o link: ", params['roomLink']);
+        }
+      }
+    });
   }
 
   isDragging: boolean = false;
