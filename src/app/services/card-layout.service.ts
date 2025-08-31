@@ -66,9 +66,12 @@ export class CardLayoutService {
 
     if (user === null) throw new Error('Usuário não está logado');
 
-    const docRef = doc(this.firestore, this.cardLayoutpath, id)
-    const docSnapshot = await getDoc(docRef);
-    const cardLayoutModel: CardLayoutModel = docSnapshot.data() as CardLayoutModel;
+    const refCollection = collection(this.firestore, this.cardLayoutpath);
+    const queryRef = query(refCollection, where('userId', '==', user.userID), where('id', '==', id));
+    const docSnapshot = await getDocs(queryRef);
+    const cardLayoutModel: CardLayoutModel = docSnapshot.docs[0].data() as CardLayoutModel;
+
+    console.log(cardLayoutModel)
 
     return cardLayoutModel;
   }
@@ -84,14 +87,19 @@ export class CardLayoutService {
 
     if (user === null) throw new Error('Usuário não está logado');
 
-    const docRef = doc(this.firestore, this.cardLayoutpath, id)
+    const refCollection = collection(this.firestore, this.cardLayoutpath);
+    const queryRef = query(refCollection, where('userId', '==', user.userID), where('id', '==', id));
+    const docSnapshot = await getDocs(queryRef);
+
+    const docSnap = docSnapshot.docs[0];
+    const docRef = docSnap.ref;
+
     await setDoc(docRef, cardLayout, { merge: true });
 
     const idUser = user.userID;
     await this.addCardLayoutToUser(docRef.id, idUser);
 
-    const docSnapshot = await getDoc(docRef);
-    const cardLayoutModel: CardLayoutModel = docSnapshot.data() as CardLayoutModel;
+    const cardLayoutModel: CardLayoutModel = docSnap.data() as CardLayoutModel;
 
     return cardLayoutModel;
   }
