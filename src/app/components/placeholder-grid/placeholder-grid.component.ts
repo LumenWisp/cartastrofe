@@ -1,5 +1,5 @@
 // angular
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-placeholder-grid',
@@ -7,7 +7,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
   styleUrl: './placeholder-grid.component.css',
 })
 export class PlaceholderGridComponent implements AfterViewInit {
-
+  @Input() minColumnSize = 300;
   @ViewChild('grid') grid!: ElementRef<HTMLDivElement>;
   placeholders: null[] = [];
   private mutationObserver!: MutationObserver;

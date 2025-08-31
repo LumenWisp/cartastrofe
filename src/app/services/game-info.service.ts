@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, retry, switchMap, take } from 'rxjs';
 import { GameInfo, GameInfoData } from '../types/game-info';
 import { UserService } from './user-service.service';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
@@ -21,40 +20,24 @@ export class GameInfoService {
   /**
    * Pega os gameInfos do usuário logado.
    */
-  getGameInfos() {
-    return this.userService.currentUser$.pipe(
-      take(1),
-      switchMap(async (user) => {
-        if (!user) return [];
+  async getGameInfos() {
+    const user = this.userService.currentUser()
 
-        const userId = user.userID;
+    if (user === undefined) return []
 
-        const refCollection = collection(this.firestore, this.pathGameInfo);
-        const queryRef = query(refCollection, where('userId', '==', userId));
-        const snapshot = await getDocs(queryRef)
-        const results: GameInfo[] = [];
-        snapshot.forEach((item) => {
-          results.push(item.data() as GameInfo)
-        })
+    if (user === null) throw new Error('Usuário não está logado');
 
-        return results;
-      })
-    );
-  }
+    const userId = user.userID;
 
-  /**
-   * Pega o gameInfo cujo `id === gameId`.
-   * @param gameId id do gameInfo
-   */
-  getGameInfoById(gameId: number) {
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+    const queryRef = query(refCollection, where('userId', '==', userId));
+    const snapshot = await getDocs(queryRef)
+    const results: GameInfo[] = [];
+    snapshot.forEach((item) => {
+      results.push(item.data() as GameInfo)
+    })
 
-  }
-
-  /**
-   * Retorna o total de gameInfos do usuário logado.
-   */
-  getTotalGameInfos(): number {
-    return 0;
+    return results;
   }
 
   /**
@@ -62,21 +45,23 @@ export class GameInfoService {
    * @param gameInfoData informações do jogo
    */
   async addGameInfo(gameInfo: GameInfoData) {
-    console.log(gameInfo)
+    const user = this.userService.currentUser()
 
-    // const id = await this.utilsService.generateKey()
+    if (!user) throw new Error('Usuário não está logado');
 
-    // const gameInfoObject = {
-    //     id: id,
-    //     name: gameInfo.name,
-    //     description: gameInfo.description,
-    //     title: gameInfo.title,
-    //     countPlayersMin: gameInfo.countPlayersMin,
-    //     countPlayersMax: gameInfo.countPlayersMax,
-    //     countCards: gameInfo.countCards,
-    //     userId: gameInfo.userId
-    //     }
+    const userId = user.userID;
 
-    // await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
+    const id = await this.utilsService.generateKey()
+
+    const gameInfoObject: GameInfo = {
+      ...gameInfo,
+      id,
+      userId,
+      countCards: 0,
+    }
+
+    await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
+
+    return gameInfoObject;
   }
 }

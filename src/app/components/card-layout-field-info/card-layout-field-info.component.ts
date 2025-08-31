@@ -10,7 +10,8 @@ import { InputTextModule } from 'primeng/inputtext';
 // enum
 import { CardFieldTypesEnum } from '../../enum/card-field-types.enum';
 // types
-import { CardLayoutFieldDimensions, CardLayoutFieldModel } from '../../types/card-layout-field';
+import { CardFieldDimensions, CardLayoutField } from '../../types/card-layout-field';
+// services
 import { UtilsService } from '../../services/utils.service';
 
 @Component({
@@ -20,8 +21,8 @@ import { UtilsService } from '../../services/utils.service';
   styleUrl: './card-layout-field-info.component.css'
 })
 export class CardLayoutFieldInfoComponent {
-  @Input({ required: true }) cardLayoutField!: CardLayoutFieldModel;
-  @Input({ required: true }) cardLayoutDimensions!: CardLayoutFieldDimensions;
+  @Input({ required: true }) cardLayoutField!: CardLayoutField;
+  @Input({ required: true }) cardLayoutDimensions!: CardFieldDimensions;
 
   @Output() cardLayoutFieldInfoClosed = new EventEmitter<void>();
 

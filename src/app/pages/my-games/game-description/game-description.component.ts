@@ -46,7 +46,6 @@ export class GameDescriptionComponent implements OnInit {
       countPlayersMax: 4,
       countCards: 0,
       gameMode: GameModesEnum.STRUCTURED,
-      title: '???',
       userId: 'user1',
     }
 

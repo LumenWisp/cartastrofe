@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { CardLayoutModel } from '../types/card-layout';
+import { CardLayout, CardLayoutModel } from '../types/card-layout';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 
@@ -13,26 +13,39 @@ import {
   updateDoc,
   where,
   arrayUnion,
+  addDoc,
+  getDoc,
 } from '@angular/fire/firestore';
-import { CardLayoutFieldModel } from '../types/card-layout-field';
+import { UserService } from './user-service.service';
+import { CardLayoutField } from '../types/card-layout-field';
+import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CardLayoutService {
-
-  private cardLayoutsSubject = new BehaviorSubject<CardLayoutModel[]>([]);
-  readonly cardLayouts$: Observable<CardLayoutModel[]> =
-    this.cardLayoutsSubject.asObservable();
   private firestore = inject(Firestore);
 
   cardLayoutpath = FirestoreTablesEnum.CARD_LAYOUT;
   userpath = FirestoreTablesEnum.USER;
 
+  constructor(
+    private userService: UserService,
+    private utilsService: UtilsService,
+  ) {}
+
   /**
    * Pega os cardLayouts do usuário logado.
    */
-  async fetchCardLayouts(userId: string) {
+  async getCardLayouts() {
+    const user = this.userService.currentUser()
+
+    if (user === undefined) return []
+
+    if (user === null) throw new Error('Usuário não está logado');
+
+    const userId = user.userID;
+
     const refCollection = collection(this.firestore, this.cardLayoutpath);
     const queryRef = query(refCollection, where('userId', '==', userId));
 
@@ -46,31 +59,63 @@ export class CardLayoutService {
     return cardLayouts;
   }
 
+  async getCardLayoutById(id: string) {
+    const user = this.userService.currentUser()
+
+    if (user === undefined) return null
+
+    if (user === null) throw new Error('Usuário não está logado');
+
+    const docRef = doc(this.firestore, this.cardLayoutpath, id)
+    const docSnapshot = await getDoc(docRef);
+    const cardLayoutModel: CardLayoutModel = docSnapshot.data() as CardLayoutModel;
+
+    return cardLayoutModel;
+  }
+
   /**
    * Salva um cardLayout com id gerado pelo firebase
    */
 
-  async saveCardLayout(cardFields: CardLayoutFieldModel[]) {
+  async saveCardLayout(id: string, cardLayout: CardLayout) {
+    const user = this.userService.currentUser()
+
+    if (user === undefined) return null
+
+    if (user === null) throw new Error('Usuário não está logado');
+
+    const docRef = doc(this.firestore, this.cardLayoutpath, id)
+    await setDoc(docRef, cardLayout, { merge: true });
+
+    const idUser = user.userID;
+    await this.addCardLayoutToUser(docRef.id, idUser);
+
+    const docSnapshot = await getDoc(docRef);
+    const cardLayoutModel: CardLayoutModel = docSnapshot.data() as CardLayoutModel;
+
+    return cardLayoutModel;
+  }
+
+  async createCardLayout(cardLayoutName: string) {
+    const user = this.userService.currentUser()
+
+    if (!user) throw new Error('Usuário não está logado');
+
+    const userId = user.userID;
+
     const cardLayoutsRef = collection(this.firestore, this.cardLayoutpath);
 
-    const cardLayout: CardLayoutModel = {
-      cardFields,
-      name: '21',
-      userId: 'NEkPe1V5PDccYzJFyNWSrrUKukS2',
+    const id = await this.utilsService.generateKey()
+
+
+    const data: CardLayoutModel = {
+      id,
+      cardFields: [],
+      name: cardLayoutName,
+      userId,
     }
 
-    const newCardLayoutRef = doc(cardLayoutsRef);
-
-    const CardLayoutObject: CardLayoutModel = {
-      ...cardLayout,
-      id: newCardLayoutRef.id,
-    };
-
-    await setDoc(newCardLayoutRef, CardLayoutObject);
-
-
-    const idUser = cardLayout.userId;
-    await this.addCardLayoutToUser(newCardLayoutRef.id, idUser);
+    await addDoc(cardLayoutsRef, data)
 
   }
 

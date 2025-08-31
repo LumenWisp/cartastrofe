@@ -1,10 +1,16 @@
-import { CardLayoutFieldModel } from './card-layout-field';
+import { CardGameField, CardLayoutField } from './card-layout-field';
 
-export interface CardLayoutModel {
-  id?: string;
+export interface CardLayoutModel extends CardLayout {
+  id: string;
   userId: string;
-  name: string;
-  //createdAt: Date;
-  cardFields: CardLayoutFieldModel[];
 }
 
+export interface CardLayout {
+  name: string;
+  cardFields: CardLayoutField[];
+}
+
+export interface CardGameLayout {
+  name: string;
+  cardFields: CardGameField[];
+}

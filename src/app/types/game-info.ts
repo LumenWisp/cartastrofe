@@ -10,7 +10,6 @@ export interface GameInfoData {
 
 export interface GameInfo extends GameInfoData {
   id: string;
-  title: string;
   countCards: number;
   userId: string;
 }
