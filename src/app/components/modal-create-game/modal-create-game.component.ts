@@ -1,20 +1,21 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+// angular
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+// primeng
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { TooltipModule } from 'primeng/tooltip';
+import { TextareaModule } from 'primeng/textarea';
+import { InputNumberModule } from 'primeng/inputnumber';
+// enums
 import { GameModesEnum } from '../../enum/game-modes.enum';
-import { GameInfo } from '../../types/game-info';
-import { UserService } from '../../services/user-service.service';
-import { UserEntity } from '../../types/user';
+// services
 import { GameInfoService } from '../../services/game-info.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-modal-create-game',
@@ -23,9 +24,13 @@ import { GameInfoService } from '../../services/game-info.service';
     DialogModule,
     ButtonModule,
     InputTextModule,
-    RadioButtonModule,
     ReactiveFormsModule,
-    FormsModule,
+    FloatLabelModule,
+    SelectButtonModule,
+    TooltipModule,
+    TextareaModule,
+    InputNumberModule,
+    TranslatePipe
   ],
   templateUrl: './modal-create-game.component.html',
   styleUrl: './modal-create-game.component.css',
@@ -33,55 +38,77 @@ import { GameInfoService } from '../../services/game-info.service';
 export class ModalCreateGameComponent {
   @Input() showModal = false;
   @Output() showModalChange = new EventEmitter<boolean>();
-  @Output() loadGame = new EventEmitter<void>();
+  @Output() gameCreated = new EventEmitter<void>();
 
-  user: UserEntity | null = null;
+  translateService = inject(TranslateService);
+
+  private readonly MIN_PLAYERS = 2;
+  private readonly MAX_PLAYERS = 99;
+
+  modes: { label: string; value: GameModesEnum }[] = [];
 
   constructor(
-    private userService: UserService,
     private gameInfoService: GameInfoService
   ){ }
 
   ngOnInit(){
-    this.user = this.userService.getUserLogged();
+
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
+      ];
+    })
   }
 
   form = new FormGroup({
-    gameName: new FormControl('', [Validators.required]),
-    gameMode: new FormControl(GameModesEnum.STRUCTURED, [Validators.required]),
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    gameMode: new FormControl(GameModesEnum.STRUCTURED, {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    description: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    countPlayersMin: new FormControl(this.MIN_PLAYERS, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.min(this.MIN_PLAYERS),
+        Validators.max(this.MAX_PLAYERS)
+      ]
+    }),
+    countPlayersMax: new FormControl(this.MAX_PLAYERS, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.min(this.MIN_PLAYERS),
+        Validators.max(this.MAX_PLAYERS)
+      ]
+    }),
   });
-
-  modes = [
-    { label: 'Estruturado', value: GameModesEnum.STRUCTURED },
-    { label: 'Livre', value: GameModesEnum.FREE },
-  ];
 
   close() {
     this.showModalChange.emit(false);
   }
 
   async createGame() {
-
-    if(this.form.valid){
-      
-      const gameName = this.form.get('gameName')?.value;
-
-      if(gameName && this.user){
-
-        const gameInfo: GameInfo = {
-        id: '',
-        name: gameName,
-        description: 'parelelepipedo',
-        title: 'onichan',
-        countPlayersMin: 2,
-        countPlayersMax: 11,
-        countCards: 25,
-        userId: this.user?.userID
-        }
-        await this.gameInfoService.addGameInfo(gameInfo);
-      }
+    if (!this.form.valid) {
+      console.log('Formulário inválido');
+      return;
     }
-    this.showModalChange.emit()
-    this.loadGame.emit()
+
+    await this.gameInfoService.addGameInfo(this.form.getRawValue());
+
+    this.form.reset();
+    this.showModalChange.emit(false);
+    this.gameCreated.emit();
   }
 }

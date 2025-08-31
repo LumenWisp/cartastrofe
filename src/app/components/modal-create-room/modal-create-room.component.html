@@ -1,17 +1,17 @@
 <p-dialog [(visible)]="display" [modal]="true" [closable]="false" [style]="{width: '400px'}">
   <button class="create-room-close-button" (click)="close()">×</button>
 
-  <h2 class="create-room-title">Criar sala</h2>
+  <h2 class="create-room-title">{{'modal-create-room.create-room' | translate}}</h2>
 
   <div class="create-room-form-container">
     <div class="create-room-form-group">
-      <label for="gameName">Jogo</label>
+      <label for="gameName">{{'modal-create-room.game-name' | translate}}</label>
       <p-dropdown 
         id="gameName"
         [options]="gameOptions"
         [(ngModel)]="selectedGame"
         appendTo="body"
-        placeholder="Selecione o jogo">
+        placeholder="{{'modal-create-room.game-name-placeholder' | translate}}">
       </p-dropdown>
     </div>
 
@@ -24,6 +24,6 @@
       </p-dropdown>
     </div> -->
 
-    <button type="button" class="create-room-button" (click)="createRoom(selectedGame);close()">CRIAR</button>
+    <button type="button" class="create-room-button" (click)="createRoom(selectedGame);close()" routerLink="/rooms">{{'modal-create-room.submit-button' | translate}}</button>
   </div>
 </p-dialog>

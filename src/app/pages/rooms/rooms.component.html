@@ -2,7 +2,7 @@
 
     <p-button routerLink="/my-games" label="Sair" />
 
-  <p-panel header="Jogadores">
+  <p-panel header="{{'rooms.header' | translate}}">
     @for (player of players; track $index) {
     <div class="menu-item">
       {{ player.name }}
@@ -13,20 +13,35 @@
 
 
 <div class="grid">
-    @for (card of cards(); track $index) {
+    @for (card of freeModeService.cards(); track $index) {
       <div 
         class="card"
         [class.flipped]="card.flipped" 
-        (dblclick)="flipCard(card.id!)" 
+        (dblclick)="freeModeService.flipCard(card.id!)"
+        (contextmenu)="showOptions($event, card, popover)"
         (cdkDragEnded)="onDrop($event)"
-        (cdkDragStarted)="onDragStart($event)"
+        (cdkDragStarted)="onDragStart($event)"      
         cdkDrag
+        [cdkDragFreeDragPosition]="card.freeDragPos"
         [attr.card-id]="card.id"
+        [style.z-index]="card.zIndex"
       >
         <div class="card-inner">
           <div class="face front" [attr.card-id]="card.id">{{ card.label }}</div>
           <div class="face back" [attr.card-id]="card.id"></div>
         </div>
-      </div>
+      </div>      
     }
 </div>
+
+<p-popover #popover [dismissable]="true">
+  @if(selectedCard && freeModeService.isPartOfPile(selectedCard.id!)) {
+    <ng-container>
+    <p-button
+      label="Embaralhar"
+      icon="pi pi-refresh"
+      (click)="onShuffleClick(popover)"
+    ></p-button>
+  </ng-container>
+  }  
+</p-popover>

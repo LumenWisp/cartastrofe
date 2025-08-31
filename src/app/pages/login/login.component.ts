@@ -1,21 +1,18 @@
-import { Component } from '@angular/core';
+// angular
+import { Component, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink, ActivatedRoute, RouterModule } from '@angular/router';
+import { FirebaseError } from '@angular/fire/app';
+import { TranslatePipe } from '@ngx-translate/core';
+// primeng
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  Router,
-  RouterLink,
-  ActivatedRoute,
-  RouterModule,
-} from '@angular/router';
+// services
 import { UserService } from '../../services/user-service.service';
+// shared
+import { FormManager } from '../../shared/form-manager';
 
 @Component({
   selector: 'app-login',
@@ -26,29 +23,57 @@ import { UserService } from '../../services/user-service.service';
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
+    TranslatePipe
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../shared/auth.css'],
 })
-export class LoginComponent {
-  loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(6),
-    ]),
-  });
+export class LoginComponent extends FormManager implements OnDestroy {
 
   roomLink: string = '';
 
-  constructor(
-    private router: Router,
-    private userService: UserService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {
+    const form = new FormGroup({
+      form: new FormControl('', { nonNullable: true }),
+      email: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required, 
+          Validators.email
+        ]
+      }),
+      password: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required
+        ]
+      })
+    })
+
+    const errorMessages = {
+      email: {
+        required: 'Email é obrigatório',
+        email: 'Email inválido',
+      },
+      password: {
+        required: 'Senha é obrigatória',
+        minlength: 'Senha deve ter pelo menos 6 caracteres',
+      },
+    }
+
+    const formErrorMessages = {
+      'auth/invalid-credential': 'Email ou senha inválidos'
+    }
+
+    super(form, errorMessages, formErrorMessages);
+  }
 
   ngOnInit() {
     this.checkRouteParams();
+  }
+
+  ngOnDestroy() {
+    this.cleanUp();
   }
 
   private async checkRouteParams() {
@@ -59,22 +84,35 @@ export class LoginComponent {
     }
   }
 
-  async onSubmit() {
-    if (this.loginForm.valid) {
-      const email = this.loginForm.get('email')?.value
-      const password = this.loginForm.get('password')?.value
+  async submit() {
+    this.checkFields();
 
-      if(email && password){
-        try{
-          await this.userService.login(email, password);
-          if (this.roomLink) {
-            this.router.navigate(['/rooms', this.roomLink]);
-          } else {
-            this.router.navigate(['/my-games']);
-          }
-        } catch (err) {
-          console.log('email ou senha inválidos', err);
+    this.form.markAllAsTouched();
+
+    if (!this.form.valid) {
+      console.log('Formulário inválido');
+      return;
+    }
+
+    const { email, password } = this.form.value;
+
+    try{
+      await this.userService.login(email, password);
+      if (this.roomLink) {
+        this.router.navigate(['/rooms', this.roomLink]);
+      } 
+      else {
+        this.router.navigate(['/my-games']);
+      }
+    } catch (error){
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/invalid-credential') {
+          this.setFormError('auth/invalid-credential');
         }
+
+        console.error('Erro ao registrar usuário:', error.code);
+      } else {
+        console.log('Email ou senha inválidos');
       }
     }
   }

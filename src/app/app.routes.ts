@@ -15,6 +15,7 @@ import { GameDescriptionComponent } from './pages/my-games/game-description/game
 import { GameComponent } from './components/game/game.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
+import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,11 @@ export const routes: Routes = [
         path: 'my-games',
         component: MyGamesComponent,
         title: 'My Games',
+      },
+      {
+        path: 'my-games/create-card',
+        component: CreateCardComponent,
+        title: 'Create Card',
       },
       {
         path: 'my-layouts',

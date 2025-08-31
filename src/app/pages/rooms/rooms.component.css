@@ -30,9 +30,10 @@
 /*
 CSS PROVISORIO DAS CARTITAS
 */
-.grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.grid { position: relative; display: block; gap: 16px; flex-wrap: wrap; }
 
 .card {
+  position: absolute;
   width: 110px;
   display: flex;
   flex-direction: column;
@@ -69,10 +70,6 @@ CSS PROVISORIO DAS CARTITAS
 
 .front { background: #fff; }
 .back  { background: #d64545; transform: rotateY(180deg); }
-
-.dragging {
-  z-index: 9999;
-}
 
 .remove-pointer-events {
   pointer-events: none;

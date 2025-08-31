@@ -1,16 +1,26 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+// angular
+import { Component, computed, inject, signal, WritableSignal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+// primeng
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { ButtonModule } from 'primeng/button';
-import { GameInfoService } from '../../services/game-info.service';
 import { PanelModule } from 'primeng/panel';
-import { CommonModule } from '@angular/common';
-import { UserEntity } from '../../types/user';
-import { UserService } from '../../services/user-service.service';
-import { GameInfo } from '../../types/game-info';
+import { SelectButtonModule } from 'primeng/selectbutton';
+// components
+import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { PanelGameComponent } from '../../components/panel-game/panel-game.component';
+import { PlaceholderGridComponent } from "../../components/placeholder-grid/placeholder-grid.component";
+// services
+import { GameInfoService } from '../../services/game-info.service';
+// types
+import { GameInfo } from '../../types/game-info';
+// enums
+import { GameModesEnum } from '../../enum/game-modes.enum';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-my-games',
@@ -23,46 +33,98 @@ import { PanelGameComponent } from '../../components/panel-game/panel-game.compo
     ButtonModule,
     PanelModule,
     CommonModule,
-  ],
+    TranslatePipe,
+    PlaceholderGridComponent,
+    FormsModule,
+    SelectButtonModule,
+],
   templateUrl: './my-games.component.html',
   styleUrl: './my-games.component.css',
 })
 export class MyGamesComponent {
-  showCreateGameModal: boolean = false;
+  showCreateGameModal = false;
+  modes: { label: string; value: GameModesEnum }[] = [];
+  translateService = inject(TranslateService);
 
-  user: UserEntity | null = null;
-  games: GameInfo[] = []
+  ngOnInit() {
+    this.loadGames();
 
-  @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
-
-  constructor(
-    private gameInfoService: GameInfoService,
-    private userService: UserService
-  ) {}
-
-  async ngOnInit(){
-    this.user = this.userService.getUserLogged();
-    await this.loadGames()
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
+      ];
+    });
   }
 
-  @HostListener('window:resize')
-  remainingGameInfoSpace() {
-    if (!this.panelsEl) return [];
 
-    const style = getComputedStyle(this.panelsEl.nativeElement);
-    const styleColumns = style.getPropertyValue('grid-template-columns');
-    const columns = styleColumns.split(' ').length;
-    const occupiedColumns = this.gameInfoService.totalGameInfos + 1;
-    const remainder = occupiedColumns % columns;
-    const count = remainder === 0 ? columns : columns - remainder;
-    return new Array(count).fill(null);
+  games: WritableSignal<GameInfo[]> = signal([]);
+  search = signal('');
+  gameMode = signal<GameModesEnum | null>(null);
+
+  filteredGames = computed(() => {
+    let games = this.games();
+
+    if (this.search()) {
+      games = games.filter(game => {
+        return game.name.toLowerCase().includes(this.search().toLowerCase());
+      });
+    }
+
+    if (this.gameMode()) {
+      games = games.filter(game => game.gameMode === this.gameMode());
+    }
+
+    return games;
+  });
+
+  constructor(private gameInfoService: GameInfoService) {}
+
+  resetFilter() {
+    this.search.set('');
+    this.gameMode.set(null);
   }
 
-  async loadGames(){
-    if(this.user) this.games = await this.gameInfoService.getGameInfos(this.user?.userID)
+  loadGames() {
+    this.gameInfoService.getGameInfos().subscribe({
+      next: (games) => {
+        // dados mockados para testes
+        // this.games.set(games);
+        this.games.set([
+          {
+            id: '1',
+            name: 'Game 1',
+            description: 'Description for Game 1',
+            countPlayersMin: 2,
+            countPlayersMax: 4,
+            countCards: 0,
+            gameMode: GameModesEnum.STRUCTURED,
+            title: '???',
+            userId: 'user1',
+          },
+          {
+            id: '2',
+            name: 'Game 2',
+            description: 'Description for Game 2',
+            countPlayersMin: 3,
+            countPlayersMax: 7,
+            countCards: 6,
+            gameMode: GameModesEnum.FREE,
+            title: '???',
+            userId: 'user1',
+          },
+        ]);
+      },
+      error: (error) => {
+        console.error('Error loading games:', error);
+      }
+    });
   }
 
-  showDialog() {
+  showModal() {
     this.showCreateGameModal = true;
   }
 }

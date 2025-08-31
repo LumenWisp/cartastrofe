@@ -10,6 +10,10 @@ export interface CardLayoutFieldModel {
   property: string;
 }
 
+export interface CardLayoutFieldValue extends CardLayoutFieldModel {
+  value: string;
+}
+
 export type CardLayoutFieldDimensions = {
   minWidth: number;
   maxWidth: number;
