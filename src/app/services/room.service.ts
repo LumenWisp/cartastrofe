@@ -19,6 +19,7 @@ import {
   updateDoc,
   where,
   collectionData,
+  deleteField,
 } from '@angular/fire/firestore';
 import { Room, RoomState } from '../types/room';
 import { UtilsService } from './utils.service';
@@ -41,18 +42,18 @@ export class RoomService {
 
   //==================== MÉTODOS PARA ROOM
 
-  async updateRoom(item: Partial<Room>) {
-    if (!item.id) {
+  async updateRoom(id: string, item: Partial<Room>): Promise<void> {
+    if (!id) {
       throw new Error('ID da sala é obrigatório.');
     }
 
-    const ref = doc(this.firestore, this.path, item.id);
+    const ref = doc(this.firestore, this.path, id);
 
     const updatedData = {
       ...item,
     };
 
-    await updateDoc(ref, updatedData);
+    await setDoc(ref, updatedData, { merge: true });
   }
 
   async createRoom(gameId: string): Promise<Room | null> {
@@ -84,7 +85,7 @@ export class RoomService {
         state: roomState,
       };
 
-      await this.updateRoom(updatedRoom);
+      await this.updateRoom(updatedRoom.id, updatedRoom);
 
       //Adicionando o usuário que criou a sala como administrador
       const user = this.userService.getUserLogged();
@@ -100,7 +101,11 @@ export class RoomService {
   async getRoomByRoomLink(roomLink: string): Promise<Room | null> {
     const refCollection = collection(this.firestore, this.path);
 
-    let queryRef = query(refCollection, where('roomLink', '==', roomLink));
+    let queryRef = query(
+      refCollection,
+      where('roomLink', '==', roomLink),
+      where('avaiable', '==', false)
+    );
 
     try {
       const snapshot = await getDocs(queryRef);
@@ -149,6 +154,24 @@ export class RoomService {
       console.error(' Firestore Error:', error);
       throw error;
     }
+  }
+
+  // Reseta a sala para o estado em que fica quando está disponivel
+  async resetRoom(id: string): Promise<void> {
+    if (!id) {
+      throw new Error('ID da sala é obrigatório.');
+    }
+
+    const ref = doc(this.firestore, this.path, id);
+
+    const updatedData = {
+      avaiable: true,
+      name: '',
+      roomLink: '',
+      state: deleteField(),
+    };
+
+    await updateDoc(ref, updatedData);
   }
 
   //==================== MÉTODOS PARA JOGADORES
@@ -236,7 +259,7 @@ export class RoomService {
     );
 
     try {
-      console.log(`Retirando jogador com ID ${playerId} da sala`)
+      console.log(`Retirando jogador com ID ${playerId} da sala`);
       const playerRef = doc(refCollection, playerId);
       await deleteDoc(playerRef);
     } catch (error) {
@@ -266,6 +289,12 @@ export class RoomService {
       const result: PlayerEntity[] = snapshot.docs.map((doc) => ({
         ...doc.data(),
       })) as PlayerEntity[];
+
+      // Verificando se é um convidado que veio da página de login
+      if(!result[0]){
+        const player: PlayerEntity = await this.createPlayer(roomId, user, RoomRolesEnum.NORMAL);
+        return player;
+      }
 
       return result[0];
     } catch (error) {

@@ -6,10 +6,6 @@ export interface Room {
     name: string;
     roomLink: string; // link da sala no momento atual, sempre muda ao criar uma nova sala
 
-    // usuários
-    users: User[];
-    userAdmin: User; // Também deve estar incluso no atributo users
-
     // atributo para controlar o estado atual da sala
     // TODO adicionar todos os campos necessários para controlar o estado da sala
     state?: RoomState;

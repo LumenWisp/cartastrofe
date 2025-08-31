@@ -1,7 +1,7 @@
 import { Component, signal, computed } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
 import { Subscription } from 'rxjs';
@@ -24,7 +24,6 @@ import { PlayerEntity } from '../../types/player';
   styleUrl: './rooms.component.css',
 })
 export class RoomsComponent {
-  users: UserEntity[] = [];
   room!: Room;
   players: PlayerEntity[] = [];
   currentPlayer!: PlayerEntity;
@@ -33,28 +32,58 @@ export class RoomsComponent {
   private playerSubscription?: Subscription;
 
   constructor(
-    private userService: UserService,
     private route: ActivatedRoute,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private router: Router,
+    private userService: UserService,
   ) {}
 
   async ngOnInit() {
-    const userCreator = this.userService.getUserLogged();
-    if (userCreator) {
-      this.users.push(userCreator);
-    }
+    await this.checkRouteParams();
+  }
 
+  async ngOnDestroy() {
+    // Verificar se o usuário não é um convidado que foi redirecionado para o login
+    if (this.currentPlayer) {
+      //Retirada do usuário da subcoleção após sua saída da sala
+      await this.roomService.removePlayer(
+        this.room.id,
+        this.currentPlayer.playerID
+      );
+
+      // Verificar se o usuário que está saindo é o último na sala, para resetar ela
+      if (this.players.length === 0) {
+        await this.roomService.resetRoom(this.room.id);
+      }
+
+      //dessinscrição dos observables
+      if (this.playerSubscription) {
+        this.playerSubscription.unsubscribe();
+      }
+    }
+  }
+
+  /**
+   * Verifica parâmetros da rota e carrega os dados relacionados
+   */
+  private async checkRouteParams() {
     const roomLink = this.route.snapshot.params['roomLink'];
     console.log('roomLink: ', roomLink);
     if (roomLink) {
+      //verificando se o usuário está logado
+      const user = this.userService.getUserLogged();
+      if (!user) {
+        console.log('Usuário não está logado');
+        this.goToLoginPage(roomLink);
+        return;
+      }
+
       const room = await this.roomService.getRoomByRoomLink(roomLink);
       if (room) {
         this.room = room;
-        this.currentPlayer = await this.roomService.getCurrentPlayer(
-          this.room.id
-        );
 
-        console.log("Jogador: ", this.currentPlayer)
+        //Verifica se o usuário está logado e pega ele
+        await this.getCurrentPlayer();
 
         this.playerSubscription = this.roomService
           .listenPlayers(this.room.id)
@@ -64,19 +93,6 @@ export class RoomsComponent {
           });
       }
     }
-  }
-
-  async ngOnDestroy() {
-    //dessinscrição dos observables
-    if (this.playerSubscription) {
-      this.playerSubscription.unsubscribe();
-    }
-
-    //Retirada do usuário da subcoleção após sua saída da sala
-    await this.roomService.removePlayer(
-      this.room.id,
-      this.currentPlayer.playerID
-    );
   }
 
   isDragging: boolean = false;
@@ -164,5 +180,24 @@ export class RoomsComponent {
 
       console.log(this.cards());
     }
+  }
+
+  //pega o Jogador logado, redireciona para login se não está logado ainda
+  async getCurrentPlayer() {
+    const currentPlayer: PlayerEntity = await this.roomService.getCurrentPlayer(
+      this.room.id
+    );
+    this.currentPlayer = currentPlayer;
+    console.log('Jogador: ', this.currentPlayer);
+  }
+
+  private goToLoginPage(roomLink: string) {
+    const queryParams: any = {
+      roomLink: roomLink,
+    };
+
+    this.router.navigate(['/login'], {
+      queryParams,
+    });
   }
 }

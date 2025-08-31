@@ -9,7 +9,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  ActivatedRoute,
+  RouterModule,
+} from '@angular/router';
 import { UserService } from '../../services/user-service.service';
 
 @Component({
@@ -30,10 +35,29 @@ export class LoginComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
       Validators.required,
-      Validators.minLength(6)]),
+      Validators.minLength(6),
+    ]),
   });
 
-  constructor(private router: Router, private userService: UserService) {}
+  roomLink: string = '';
+
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    this.checkRouteParams();
+  }
+
+  private async checkRouteParams() {
+    const roomLink = this.route.snapshot.queryParams['roomLink'];
+    console.log('roomLink: ', roomLink);
+    if (roomLink) {
+      this.roomLink = roomLink;
+    }
+  }
 
   async onSubmit() {
     if (this.loginForm.valid) {
@@ -43,12 +67,28 @@ export class LoginComponent {
       if(email && password){
         try{
           await this.userService.login(email, password);
-          this.router.navigate(['/my-games']);
-        }
-        catch(err){
-          console.log("email ou senha inválidos", err)
+          if (this.roomLink) {
+            this.router.navigate(['/rooms', this.roomLink]);
+          } else {
+            this.router.navigate(['/my-games']);
+          }
+        } catch (err) {
+          console.log('email ou senha inválidos', err);
         }
       }
+    }
+  }
+  
+  goToRegisterPage() {
+    if(this.roomLink){
+      const queryParams: any = {
+      roomLink: this.roomLink,
+    };
+
+      this.router.navigate(['/register'], { queryParams,});
+    }
+    else{
+      this.router.navigate(['/register']);
     }
   }
 }

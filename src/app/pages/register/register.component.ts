@@ -9,7 +9,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import {UserService} from '../../services/user-service.service'
 
@@ -36,7 +36,21 @@ export class RegisterComponent {
     ]),
   });
 
-  constructor(private router: Router, private userService: UserService) {}
+  roomLink: string = '';
+
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.checkRouteParams();
+  }
+
+  private async checkRouteParams() {
+    const roomLink = this.route.snapshot.queryParams['roomLink'];
+    console.log('roomLink: ', roomLink);
+    if (roomLink) {
+      this.roomLink = roomLink;
+    }
+  }
 
   async onSubmit() {
 
@@ -57,11 +71,24 @@ export class RegisterComponent {
         }
         await this.userService.register(register);
         console.log('Registro feito com sucesso');
-        this.router.navigate(['/login']);
+        this.goToLoginPage()
       }
      }
      else {
        console.log('Formulário inválido');
      }
+  }
+
+  goToLoginPage() {
+    if(this.roomLink){
+      const queryParams: any = {
+      roomLink: this.roomLink,
+    };
+
+      this.router.navigate(['/login'], { queryParams,});
+    }
+    else{
+      this.router.navigate(['/login']);
+    }
   }
 }
