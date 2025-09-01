@@ -35,7 +35,7 @@ export class ModalCreateRoomComponent {
   selectedGame: any = { label: '', value: '' };
   playerOptions = [];
   games: GameInfo[] = [];
-  user: UserEntity | null = null;
+  user!: UserEntity | null;
 
   constructor(
     private gameInfoService: GameInfoService,
@@ -44,21 +44,20 @@ export class ModalCreateRoomComponent {
     private roomService: RoomService
   ) {}
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    this.user = this.userService.getUserLogged();
+  }
 
   async ngOnChanges() {
     await this.loadGames();
   }
 
   async loadGames() {
-    this.gameInfoService.getGameInfos().subscribe((games) => {
-      this.games = games;
-      this.gameOptions = this.games.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }));
-      console.log('Lista de jogos: ', this.games);
-    });
+    if(this.user) this.games = await this.gameInfoService.oldGetGameInfos();
+    this.gameOptions = [];
+    this.games.forEach((game) => {
+      this.gameOptions.push({label: game.name, value: game.name});
+    })
   }
 
   close() {
