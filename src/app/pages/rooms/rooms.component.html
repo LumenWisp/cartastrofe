@@ -14,7 +14,8 @@
 
 <div class="grid">
     @for (card of freeModeService.cards(); track $index) {
-      <div 
+      @if (freeModeService.isTopCard(card.id!) || !card.pileId) {
+        <div 
         class="card"
         [class.flipped]="card.flipped" 
         (dblclick)="freeModeService.flipCard(card.id!)"
@@ -27,13 +28,14 @@
         [style.z-index]="card.zIndex"
       >
       @if (freeModeService.isPartOfPile(card.id!)) {
-        <div class="square-number-cards">{{ freeModeService.getNumberOfCardsFromPileId(card.pileId!) }}</div>
+        <div class="square-number-cards" cdkDragHandle>{{ freeModeService.getNumberOfCardsFromPileId(card.pileId!) }}</div>
       }
         <div class="card-inner">
           <div class="face front" [attr.card-id]="card.id">{{ card.label }}</div>
           <div class="face back" [attr.card-id]="card.id"></div>
         </div>
-      </div>      
+      </div>
+      }    
     }
 </div>
 

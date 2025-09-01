@@ -134,10 +134,25 @@ export class FreeModeService {
     return card?.pileId;
   }
 
+  // Retorna o número de cartas em uma pilha
   getNumberOfCardsFromPileId(pileId: string) {
-    const pile = this.piles.find(p => p.id === pileId)
+    const pile = this.piles.find(p => p.id === pileId);
     if (!pile?.cards) return;
     return pile?.cards.length;
+  }
+
+  // Retorna a carta no topo de uma pilha
+  getTopCard(pileId: string) {
+    const pile = this.piles.find(p => p.id === pileId);
+    if (!pile?.cards) return;
+    return pile?.cards[pile.cards.length - 1];
+  }
+
+  // Verifica se uma carta está no topo de uma pilha
+  isTopCard(cardId: string) {
+    const card = this.getCardById(cardId);
+    const topCard = this.getTopCard(card?.pileId!)
+    return cardId === topCard?.id;
   }
 
   // Embaralha uma pilha

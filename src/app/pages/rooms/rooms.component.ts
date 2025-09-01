@@ -125,6 +125,8 @@ export class RoomsComponent {
       this.freeModeService.updateCard(draggedCard!)
     }
 
+    console.log(this.freeModeService.piles)
+
   }
 
 }
