@@ -31,13 +31,22 @@ export class UtilsService {
     return formattedDate;
   }
 
-  async generateKey(zise: number = 20): Promise<string> {
+  async generateKey(size: number = 20): Promise<string> {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let key = '';
-    for (let i = 0; i < zise; i++) {
+    for (let i = 0; i < size; i++) {
       key += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return Promise.resolve(`${this.formatDate(new Date(), 'yyyyMMdd')}-${key}`);
+  }
+
+  async generateLinkCode(size: number = 20): Promise<string> {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let key = '';
+    for (let i = 0; i < size; i++) {
+      key += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return Promise.resolve(key);
   }
 
   /**

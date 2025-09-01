@@ -9,6 +9,8 @@
       <p-dropdown 
         id="gameName"
         [options]="gameOptions"
+        [(ngModel)]="selectedGame"
+        appendTo="body"
         placeholder="{{'modal-create-room.game-name-placeholder' | translate}}">
       </p-dropdown>
     </div>
@@ -22,6 +24,6 @@
       </p-dropdown>
     </div> -->
 
-    <button type="button" class="create-room-button" (click)="close()" routerLink="/rooms">{{'modal-create-room.submit-button' | translate}}</button>
+    <button type="button" class="create-room-button" (click)="createRoom(selectedGame);close()">{{'modal-create-room.submit-button' | translate}}</button>
   </div>
 </p-dialog>

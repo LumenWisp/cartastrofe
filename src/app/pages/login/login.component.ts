@@ -1,7 +1,7 @@
 // angular
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute, RouterModule } from '@angular/router';
 import { FirebaseError } from '@angular/fire/app';
 import { TranslatePipe } from '@ngx-translate/core';
 // primeng
@@ -29,7 +29,10 @@ import { FormManager } from '../../shared/form-manager';
   styleUrls: ['./login.component.css', '../../shared/auth.css'],
 })
 export class LoginComponent extends FormManager implements OnDestroy {
-  constructor(private router: Router, private userService: UserService) {
+
+  roomLink: string = '';
+
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {
     const form = new FormGroup({
       form: new FormControl('', { nonNullable: true }),
       email: new FormControl('', {
@@ -65,8 +68,20 @@ export class LoginComponent extends FormManager implements OnDestroy {
     super(form, errorMessages, formErrorMessages);
   }
 
+  ngOnInit() {
+    this.checkRouteParams();
+  }
+
   ngOnDestroy() {
     this.cleanUp();
+  }
+
+  private async checkRouteParams() {
+    const roomLink = this.route.snapshot.queryParams['roomLink'];
+    console.log('roomLink: ', roomLink);
+    if (roomLink) {
+      this.roomLink = roomLink;
+    }
   }
 
   async submit() {
@@ -83,7 +98,12 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
     try{
       await this.userService.login(email, password);
-      this.router.navigate(['/my-games']);
+      if (this.roomLink) {
+        this.router.navigate(['/rooms', this.roomLink]);
+      } 
+      else {
+        this.router.navigate(['/my-games']);
+      }
     } catch (error){
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/invalid-credential') {
@@ -94,6 +114,19 @@ export class LoginComponent extends FormManager implements OnDestroy {
       } else {
         console.log('Email ou senha inválidos');
       }
+    }
+  }
+  
+  goToRegisterPage() {
+    if(this.roomLink){
+      const queryParams: any = {
+      roomLink: this.roomLink,
+    };
+
+      this.router.navigate(['/register'], { queryParams,});
+    }
+    else{
+      this.router.navigate(['/register']);
     }
   }
 }

@@ -42,6 +42,27 @@ export class GameInfoService {
     );
   }
 
+  //alterar ou retirar essa merda dps
+  async oldGetGameInfos() {
+
+    const user = this.userService.getUserLogged()
+    if(!user){
+      throw new Error('Usuário não encontrado.');
+    }
+
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+    const queryRef = query(refCollection, where('userId', '==', user.userID));
+
+    const snapshot = await getDocs(queryRef)
+    const results: GameInfo[] = [];
+
+    snapshot.forEach((item) => {
+      results.push(item.data() as GameInfo)
+    })
+
+    return results;
+  }
+
   /**
    * Pega o gameInfo cujo `id === gameId`.
    * @param gameId id do gameInfo
