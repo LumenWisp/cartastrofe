@@ -166,7 +166,13 @@ export class FreeModeService {
   changexyOfPileCards(pileId: string, coordinates: {x: number, y:number}) {
     const pile = this.piles.find(p => p.id === pileId)
     pile?.cards.forEach(card => {
-      card.freeDragPos = coordinates;
+      this.cards.update(cards =>
+        cards.map(c =>
+          c.pileId === pileId
+            ? { ...c, freeDragPos: { ...coordinates } }
+            : c
+        )
+      );
     });
   }
 
