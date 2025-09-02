@@ -18,6 +18,10 @@ export class FreeModeService {
 
   piles: PileModel[] = [];
 
+  /*
+  FUNÇÕES DE CARTAS
+  */ 
+
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
   }
@@ -119,6 +123,10 @@ export class FreeModeService {
 
   }
 
+  /*
+  FUNÇÕES DE PILHAS
+  */ 
+
   // Cria uma pilha com o id passado
   createPile(pileId: string) {
     const newPile: PileModel = {
@@ -154,6 +162,17 @@ export class FreeModeService {
     const topCard = this.getTopCard(card?.pileId!)
     return cardId === topCard?.id;
   }
+
+  changexyOfPileCards(pileId: string, coordinates: {x: number, y:number}) {
+    const pile = this.piles.find(p => p.id === pileId)
+    pile?.cards.forEach(card => {
+      card.freeDragPos = coordinates;
+    });
+  }
+
+  /*
+  FUNÇÕES DE EMBARALHAMENTO
+  */ 
 
   // Embaralha uma pilha
   shufflePile(pileId: string) {

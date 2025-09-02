@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 220px;
+  width: 220px; /*IGUAL*/
   height: 100vh;
   background-color: #f9f9f9;
   box-shadow: -2px 0 5px rgba(0,0,0,0.1);
@@ -10,6 +10,17 @@
   box-sizing: border-box;
   z-index: 1000;
 }
+
+.play-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  right: 220px; /*IGUAL*/
+  overflow: hidden;
+}
+
 
 .menu-item {
   background-color: #fff;
