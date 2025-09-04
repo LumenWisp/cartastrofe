@@ -1,6 +1,7 @@
 // src/app/blockly/blockly.config.ts
 import * as Blockly from 'blockly';
 import { javascriptGenerator, Order } from 'blockly/javascript';
+import { BlockCodeGeneratorsService } from '../../services/block-code-generators.service';
 
 // ===============================================================
 // 📦 TOOLBOX
@@ -136,7 +137,7 @@ export function registerBlocks() {
 }
 
 // ===============================================================
-// ⚙️ GERADORES DE CÓDIGO (ainda sem lógica)
+// ⚙️ GERADORES DE CÓDIGO
 // ===============================================================
 export function registerGenerators() {
   // ON GAME START
@@ -150,8 +151,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['getCard'] = function(block, generator) {
     const text_card_id = block.getFieldValue('CARD_ID');
 
-    // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `blockCodeGeneratorsService.getCard("${text_card_id}")`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -168,11 +168,10 @@ export function registerGenerators() {
   };
 
   // GET PILE
-  javascriptGenerator.forBlock['GetPile'] = function(block) {
+  javascriptGenerator.forBlock['getPile'] = function(block) {
     const text_pile_id = block.getFieldValue('PILE_ID');
 
-    // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `blockCodeGeneratorsService.getPile("${text_pile_id}")`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
