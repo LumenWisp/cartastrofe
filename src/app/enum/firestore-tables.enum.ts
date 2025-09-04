@@ -3,4 +3,5 @@ export enum FirestoreTablesEnum {
   GAME_INFO = 'gameInfo',
   CARD = 'card',
   CARD_LAYOUT = 'cardLayout',
+  ROOM = 'room',
 }

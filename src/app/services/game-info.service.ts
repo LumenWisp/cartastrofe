@@ -28,7 +28,6 @@ export class GameInfoService {
     if (user === null) throw new Error('Usuário não está logado');
 
     const userId = user.userID;
-
     const refCollection = collection(this.firestore, this.pathGameInfo);
     const queryRef = query(refCollection, where('userId', '==', userId));
     const snapshot = await getDocs(queryRef)
@@ -36,6 +35,7 @@ export class GameInfoService {
     snapshot.forEach((item) => {
       results.push(item.data() as GameInfo)
     })
+
 
     return results;
   }

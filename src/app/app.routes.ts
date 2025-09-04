@@ -45,7 +45,7 @@ export const routes: Routes = [
         title: 'My Layouts',
       },
       {
-        path: 'rooms',
+        path: 'rooms/:roomLink',
         component: RoomsComponent,
         title: 'Rooms',
       },

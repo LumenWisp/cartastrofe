@@ -1,39 +1,108 @@
 import { Component, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FreeModeService } from '../../services/free-mode.service';
+import { Subscription } from 'rxjs';
 
-import { CdkDrag, CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragEnd,
+  CdkDragStart,
+  DragDropModule,
+} from '@angular/cdk/drag-drop';
+import { CardModel } from '../../types/card';
+import { Room } from '../../types/room';
+import { RoomService } from '../../services/room.service';
+import { PlayerEntity } from '../../types/player';
+
 import { CardGame } from '../../types/card';
 
 import { Popover, PopoverModule } from 'primeng/popover';
-
 
 @Component({
   selector: 'app-rooms',
   imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag, PopoverModule, TranslatePipe],
   templateUrl: './rooms.component.html',
-  styleUrl: './rooms.component.css'
+  styleUrl: './rooms.component.css',
 })
 export class RoomsComponent {
+  room!: Room;
+  players: PlayerEntity[] = [];
+  currentPlayer!: PlayerEntity;
 
   @ViewChild('popover') popover!: Popover;
   users: UserEntity[] = [];
   selectedCard: CardGame | null = null;
 
+  // Subscrições
+  private playerSubscription?: Subscription;
+
   constructor(
+    private route: ActivatedRoute,
+    private roomService: RoomService,
+    private router: Router,
     private userService: UserService,
     public freeModeService: FreeModeService
-  ){}
+  ) {}
 
-  async ngOnInit(){
-    const userCreator = this.userService.getUserLogged()
-    if(userCreator){
-      this.users.push(userCreator);
+  async ngOnInit() {
+    await this.checkRouteParams();
+  }
+
+  async ngOnDestroy() {
+    // Verificar se o usuário não é um convidado que foi redirecionado para o login
+    if (this.currentPlayer) {
+      //Retirada do usuário da subcoleção após sua saída da sala
+      await this.roomService.removePlayer(
+        this.room.id,
+        this.currentPlayer.playerID
+      );
+
+      // Verificar se o usuário que está saindo é o último na sala, para resetar ela
+      if (this.players.length === 0) {
+        await this.roomService.resetRoom(this.room.id);
+      }
+
+      //dessinscrição dos observables
+      if (this.playerSubscription) {
+        this.playerSubscription.unsubscribe();
+      }
+    }
+  }
+
+  /**
+   * Verifica parâmetros da rota e carrega os dados relacionados
+   */
+  private async checkRouteParams() {
+    const roomLink = this.route.snapshot.params['roomLink'];
+    console.log('roomLink: ', roomLink);
+    if (roomLink) {
+      //verificando se o usuário está logado
+      const user = this.userService.getUserLogged();
+      if (!user) {
+        console.log('Usuário não está logado');
+        this.goToLoginPage(roomLink);
+        return;
+      }
+
+      const room = await this.roomService.getRoomByRoomLink(roomLink);
+      if (room) {
+        this.room = room;
+
+        //Verifica se o usuário está logado e pega ele
+        await this.getCurrentPlayer();
+
+        this.playerSubscription = this.roomService
+          .listenPlayers(this.room.id)
+          .subscribe((players) => {
+            this.players = players;
+            console.log('Atualização em tempo real:', players);
+          });
+      }
     }
   }
 
@@ -127,4 +196,22 @@ export class RoomsComponent {
 
   }
 
+  //pega o Jogador logado, redireciona para login se não está logado ainda
+  async getCurrentPlayer() {
+    const currentPlayer: PlayerEntity = await this.roomService.getCurrentPlayer(
+      this.room.id
+    );
+    this.currentPlayer = currentPlayer;
+    console.log('Jogador: ', this.currentPlayer);
+  }
+
+  private goToLoginPage(roomLink: string) {
+    const queryParams: any = {
+      roomLink: roomLink,
+    };
+
+    this.router.navigate(['/login'], {
+      queryParams,
+    });
+  }
 }

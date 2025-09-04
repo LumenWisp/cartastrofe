@@ -2,7 +2,7 @@
 // angular
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FirebaseError } from '@angular/fire/app';
 import { TranslatePipe } from '@ngx-translate/core';
 // primeng
@@ -30,7 +30,7 @@ import { FormManager } from '../../shared/form-manager';
   styleUrls: ['./register.component.css', '../../shared/auth.css'],
 })
 export class RegisterComponent extends FormManager implements OnDestroy {
-  constructor(private router: Router, private userService: UserService) {
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {
     const form = new FormGroup({
       name: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -61,8 +61,22 @@ export class RegisterComponent extends FormManager implements OnDestroy {
     super(form, errorMessages);
   }
 
+  roomLink: string = '';
+
+  ngOnInit() {
+    this.checkRouteParams();
+  }
+
   ngOnDestroy() {
     this.cleanUp();
+  }
+
+  private async checkRouteParams() {
+    const roomLink = this.route.snapshot.queryParams['roomLink'];
+    console.log('roomLink: ', roomLink);
+    if (roomLink) {
+      this.roomLink = roomLink;
+    }
   }
 
   async submit() {
@@ -87,7 +101,7 @@ export class RegisterComponent extends FormManager implements OnDestroy {
       await this.userService.register(name, email, password);
 
       console.log('Registro feito com sucesso');
-      this.router.navigate(['/login']);
+      this.goToLoginPage()
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/email-already-in-use') {
@@ -105,5 +119,18 @@ export class RegisterComponent extends FormManager implements OnDestroy {
 
   checkPasswordsMatch(password: string, confirmPassword: string): boolean {
     return password === confirmPassword;
+  }
+
+  goToLoginPage() {
+    if(this.roomLink){
+      const queryParams: any = {
+      roomLink: this.roomLink,
+    };
+
+      this.router.navigate(['/login'], { queryParams,});
+    }
+    else{
+      this.router.navigate(['/login']);
+    }
   }
 }

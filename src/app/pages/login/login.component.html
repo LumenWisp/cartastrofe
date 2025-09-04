@@ -47,5 +47,5 @@
   <p-button type="submit" class="button-submit" label="{{'login.submit-button' | translate }}" />
 
   <!--Register Link-->
-  <a class="other-auth-link" routerLink="/register">{{'login.register-prompt' | translate }}</a>
+  <a class="other-auth-link go-to-register-text" (click)="goToRegisterPage()">{{'login.register-prompt' | translate }}</a>
 </form>
