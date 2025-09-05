@@ -56,7 +56,7 @@ export class ModalCreateRoomComponent {
     if(this.user) this.games = await this.gameInfoService.oldGetGameInfos();
     this.gameOptions = [];
     this.games.forEach((game) => {
-      this.gameOptions.push({label: game.name, value: game.name});
+      this.gameOptions.push({label: game.name, value: game.id});
     })
   }
 

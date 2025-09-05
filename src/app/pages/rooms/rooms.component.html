@@ -17,7 +17,7 @@
     <div
       class="card"
       [class.flipped]="card.flipped"
-      (dblclick)="freeModeService.flipCard(card.id!)"
+      (dblclick)="freeModeService.flipCard(card.id!);this.updateRoom();"
       (contextmenu)="showOptions($event, card, popover)"
       (cdkDragEnded)="onDrop($event)"
       (cdkDragStarted)="onDragStart($event)"
