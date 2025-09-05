@@ -1,4 +1,6 @@
-<app-app-header (openCreateRoomModal)="showCreateRoomDialog = true" />
+@if (!isHeaderHidden()) {
+  <app-app-header (openCreateRoomModal)="showCreateRoomDialog = true" />
+}
 
 <app-modal-create-room [(display)]="showCreateRoomDialog"></app-modal-create-room>
 
