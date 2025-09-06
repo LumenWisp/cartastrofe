@@ -56,7 +56,6 @@ export const routes: Routes = [
         title: 'Rule Based Room'
       },
       {
-        path: 'my-layouts/create-layout',
         path: 'my-layouts/create-layout/:cardLayoutId',
         component: CreateLayoutComponent,
         title: 'Create Layout',
