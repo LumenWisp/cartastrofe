@@ -45,6 +45,23 @@ export const toolbox = {
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
       ]
+    },
+    {
+      kind: 'category',
+      name: 'Control',
+      contents: [
+        {kind: 'block', type: 'controls_if'},
+        {"kind": "block",
+          "type": "controls_repeat_ext",
+          "inputs": {
+            "TIMES": {
+              "block": {
+                "type": "math_number",
+                "fields": { "NUM": 10 }
+              }
+            }
+          }}
+      ]
     }
   ]
 };
