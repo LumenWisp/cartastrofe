@@ -51,7 +51,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
         const categoryName = toolboxEvent.newItem;
 
-        if (categoryName && categoryName != 'Variables' &&  categoryName != 'Actions') {
+        if (categoryName && categoryName != 'Variables' &&  categoryName != 'Actions' && categoryName != this.selectedCategory) {
           // Nome da categoria clicada
           this.selectedCategory = categoryName.replace(/\s+/g, "");
           this.selectedCategory = this.selectedCategory.charAt(0).toLowerCase() + this.selectedCategory.substring(1);
@@ -73,7 +73,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
     // TODO: adicionar carregamento de cartas
     let state;
     if (this.game) {
-      state = this.game.onGameStart
+      state = this.game.onGameStart;
     }
 
     Blockly.serialization.workspaces.load(state, this.workspace);
@@ -87,6 +87,11 @@ export class BlocklyEditorComponent implements AfterViewInit {
       await this.gameInfoService.updateGameInfo(this.game.id, {
         [this.selectedCategory]: state,
       });
+
+      const key = this.selectedCategory as keyof GameInfo;
+
+      // TODO: deixar isso sem parecer uma gambiarra
+      this.game[key] = state as never;
 
       console.log('WorkSpace salvo com sucesso!')
     }

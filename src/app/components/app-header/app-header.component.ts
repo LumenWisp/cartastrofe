@@ -48,11 +48,6 @@ export class AppHeaderComponent {
           },
         },
         {
-          label: 'Criar Regras',
-          icon: 'pi pi-plus',
-          routerLink: '/rooms-rule-based'
-        },
-        {
           label: translations.logout,
           icon: 'pi pi-sign-out',
           command: () => {

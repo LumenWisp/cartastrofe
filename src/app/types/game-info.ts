@@ -15,4 +15,5 @@ export interface GameInfo extends GameInfoData {
   
   //Campos que representam o estado do workSpace das regras do jogo
   onGameStart?: any;
+  onMoveCardFromTo?: any;
 }
