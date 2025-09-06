@@ -25,6 +25,7 @@ export const toolbox = {
         { kind: 'block', type: 'getPile' },
         { kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
+        { kind: 'block', type: 'getPhase' },
       ]
     },
     {
@@ -33,6 +34,8 @@ export const toolbox = {
       contents: [
         { kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'nextPhase' },
+        { kind: 'block', type: 'endGame' },
       ]
     }
   ]
@@ -85,6 +88,18 @@ export function registerBlocks() {
     }
   };
 
+  // 🚀 GET PHASE
+  Blockly.Blocks['getPhase'] = {
+    init: function() {
+      this.appendDummyInput('DUMMY')
+        .appendField('Phase')
+        .appendField(new Blockly.FieldTextInput('phase_id'), 'PHASE_ID');
+      this.setInputsInline(true)
+      this.setOutput(true, null);
+      this.setColour(330);
+    }
+  };
+
   // 🚀 ON MOVE CARD FROM TO
   Blockly.Blocks['onMoveCardFromTo'] = {
     init: function() {
@@ -134,6 +149,29 @@ export function registerBlocks() {
       this.setColour(285);
     }
   };
+
+  // 🚀 NEXT PHASE
+  Blockly.Blocks['nextPhase'] = {
+    init: function() {
+      this.appendDummyInput('NextPhase')
+        .appendField('NextPhase');
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 END GAME
+  Blockly.Blocks['endGame'] = {
+    init: function() {
+      this.appendDummyInput('EndGame')
+        .appendField('EndGame');
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setColour(0);
+    }
+  };
+
 }
 
 // ===============================================================
@@ -172,6 +210,16 @@ export function registerGenerators() {
     const text_pile_id = block.getFieldValue('PILE_ID');
 
     const code = `blockCodeGeneratorsService.getPile("${text_pile_id}")`;
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET PHASE
+  javascriptGenerator.forBlock['getPhase'] = function(block) {
+    const text_phase_id = block.getFieldValue('PHASE_ID');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = '...';
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -221,4 +269,19 @@ export function registerGenerators() {
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
+
+  // NEXT PHASE
+  javascriptGenerator.forBlock['nextPhase'] = function() {
+    // TODO: Assemble javascript into the code variable.
+    const code = '...';
+    return code;
+  }
+
+  javascriptGenerator.forBlock['endGame'] = function() {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = '...';
+    return code;
+  }
+
 }
