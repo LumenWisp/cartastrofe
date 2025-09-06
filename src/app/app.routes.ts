@@ -17,16 +17,18 @@ import { GameComponent } from './components/game/game.component';
 import { HomepageComponent } from './pages/homepage/homepage.component';
 import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
 import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   {
-      path: '',
-      component: HomepageComponent,
-      title: 'Cartastrofe | Homepage'
+    path: '',
+    component: HomepageComponent,
+    title: 'Cartastrofe | Homepage'
   },
   {
     path: '',
     component: AppMainComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: 'my-games',
@@ -55,6 +57,7 @@ export const routes: Routes = [
       },
       {
         path: 'my-layouts/create-layout',
+        path: 'my-layouts/create-layout/:cardLayoutId',
         component: CreateLayoutComponent,
         title: 'Create Layout',
       },

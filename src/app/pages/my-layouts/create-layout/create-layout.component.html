@@ -18,22 +18,9 @@
     (click)="saveCardLayout()"
   />
 
-  <div
-    class="card-layout"
-    [ngStyle]="{
-      width: CARD_LAYOUT_WIDTH + 'px',
-      height: CARD_LAYOUT_HEIGHT + 'px',
-    }"
-  >
-    @for (cardField of cardFields; track cardField) {
-      <app-card-layout-field
-        [cardLayoutField]="cardField"
-        [cardLayoutDimensions]="DIMENSIONS"
-        dragBoundary=".card-layout"
-        (openCardLayoutField)="openCardFieldInfo(cardField)"
-      />
-    }
-  </div>
+  @if (cardLayout) {
+    <app-card-game-layout [cardLayout]="cardLayout!" [isEditing]="true" (cardLayoutFieldClicked)="openCardFieldInfo($event)" class="card-layout" />
+  }
 
   @if (cardFieldSelected) {
     <app-card-layout-field-info
@@ -44,5 +31,3 @@
     />
   }
 </div>
-
-<p-toast position="bottom-center" />

@@ -3,26 +3,26 @@ import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { CdkDrag, CdkDragMove } from '@angular/cdk/drag-drop';
 // types
-import { CardLayoutFieldDimensions, CardLayoutFieldModel } from '../../types/card-layout-field';
+import { CardLayoutField, CardFieldDimensions, CardGameField } from '../../types/card-layout-field';
 // enum
 import { CardFieldTypesEnum } from '../../enum/card-field-types.enum';
+// services
 import { UtilsService } from '../../services/utils.service';
 
 type Direction = 'right' | 'left' | 'up' | 'down'
 
 @Component({
-  selector: 'app-card-layout-field',
+  selector: 'app-card-game-layout-field',
   imports: [CommonModule, CdkDrag],
-  templateUrl: './card-layout-field.component.html',
-  styleUrl: './card-layout-field.component.css'
+  templateUrl: './card-game-layout-field.component.html',
+  styleUrl: './card-game-layout-field.component.css'
 })
-export class CardLayoutFieldComponent implements OnDestroy {
-  @Input({ required: true }) cardLayoutField!: CardLayoutFieldModel;
-  @Input({ required: true }) cardLayoutDimensions!: CardLayoutFieldDimensions;
-  @Input() dragBoundary = '';
-  @Input() value = '';
+export class CardGameLayoutFieldComponent implements OnDestroy {
+  @Input({ required: true }) cardLayoutField!: CardLayoutField | CardGameField;
+  @Input({ required: true }) dimensions!: CardFieldDimensions
+  @Input() dragBoundary = ''
 
-  @Output() openCardLayoutField = new EventEmitter<void>()
+  @Output() cardLayoutFieldClicked = new EventEmitter<typeof this.cardLayoutField>()
 
   /* relacionados ao drag */
   private isDragging = false;
@@ -44,6 +44,10 @@ export class CardLayoutFieldComponent implements OnDestroy {
     document.removeEventListener('mouseup', this.onMouseUp);
   }
 
+  hasValue(field: CardLayoutField | CardGameField): field is CardGameField {
+    return 'value' in field
+  }
+
   getIcon(type: CardFieldTypesEnum) {
     const icons = {
       [CardFieldTypesEnum.IMAGE]: 'pi-image',
@@ -53,7 +57,7 @@ export class CardLayoutFieldComponent implements OnDestroy {
   }
 
   handleClick() {
-    this.openCardLayoutField.emit();
+    this.cardLayoutFieldClicked.emit(this.cardLayoutField);
   }
 
   get dragPosition() {
@@ -68,6 +72,8 @@ export class CardLayoutFieldComponent implements OnDestroy {
   }
 
   startDrag() {
+    if (!this.dragBoundary) return;
+
     this.isDragging = true;
     this.startDragPosition = {
       x: this.cardLayoutField.x,
@@ -75,7 +81,9 @@ export class CardLayoutFieldComponent implements OnDestroy {
     }
   }
 
-  drag(event: CdkDragMove) {
+  dragging(event: CdkDragMove) {
+    if (!this.dragBoundary) return;
+
     const { x, y } = event.source.getFreeDragPosition()
 
     // não permite valores quebrados ou negativos em caso de -0
@@ -84,10 +92,14 @@ export class CardLayoutFieldComponent implements OnDestroy {
   }
 
   endDrag() {
+    if (!this.dragBoundary) return;
+
     this.isDragging = false;
   }
 
   startResize(event: MouseEvent, direction: Direction) {
+    if (!this.dragBoundary) return;
+
     // previne que o drag ocorra
     event.stopPropagation();
     // não desconsidera o click
@@ -106,20 +118,22 @@ export class CardLayoutFieldComponent implements OnDestroy {
   }
 
   private onMouseMove = (event: MouseEvent): void => {
+    if (!this.dragBoundary) return;
+
     const deltaX = event.clientX - this.resizeStartX;
     const deltaY = event.clientY - this.resizeStartY;
 
     if (this.resizeDirection === 'right') {
       const newWidth = this.utils.checkRange(
         this.startWidth + deltaX,
-        this.cardLayoutDimensions.minWidth,
-        this.cardLayoutDimensions.maxWidth - this.cardLayoutField.x
+        this.dimensions.minWidth,
+        this.dimensions.maxWidth - this.cardLayoutField.x
       );
       this.cardLayoutField.width = newWidth;
     } else if (this.resizeDirection === 'left') {
       const newWidth = this.utils.checkRange(
         this.startWidth - deltaX,
-        this.cardLayoutDimensions.minWidth,
+        this.dimensions.minWidth,
         this.startX + this.startWidth
       );
       this.cardLayoutField.width = newWidth;
@@ -131,14 +145,14 @@ export class CardLayoutFieldComponent implements OnDestroy {
     } else if (this.resizeDirection === 'down') {
       const newHeight = this.utils.checkRange(
         this.startHeight + deltaY,
-        this.cardLayoutDimensions.minHeight,
-        this.cardLayoutDimensions.maxHeight - this.cardLayoutField.y
+        this.dimensions.minHeight,
+        this.dimensions.maxHeight - this.cardLayoutField.y
       );
       this.cardLayoutField.height = newHeight;
     } else if (this.resizeDirection === 'up') {
       const newHeight = this.utils.checkRange(
         this.startHeight - deltaY,
-        this.cardLayoutDimensions.minHeight,
+        this.dimensions.minHeight,
         this.startY + this.startHeight
       );
       this.cardLayoutField.height = newHeight;

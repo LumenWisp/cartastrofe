@@ -21,6 +21,7 @@ import { GameInfo } from '../../types/game-info';
 // enums
 import { GameModesEnum } from '../../enum/game-modes.enum';
 import { forkJoin } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-my-games',
@@ -46,21 +47,6 @@ export class MyGamesComponent {
   modes: { label: string; value: GameModesEnum }[] = [];
   translateService = inject(TranslateService);
 
-  ngOnInit() {
-    this.loadGames();
-
-    forkJoin({
-      gameModeStructured: this.translateService.get('game-mode.structured'),
-      gameModeFree: this.translateService.get('game-mode.free')
-    }).subscribe(translations => {
-      this.modes = [
-        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
-        { label: translations.gameModeFree, value: GameModesEnum.FREE },
-      ];
-    });
-  }
-
-
   games: WritableSignal<GameInfo[]> = signal([]);
   search = signal('');
   gameMode = signal<GameModesEnum | null>(null);
@@ -81,7 +67,21 @@ export class MyGamesComponent {
     return games;
   });
 
-  constructor(private gameInfoService: GameInfoService) {}
+  constructor(private gameInfoService: GameInfoService, private toastService: ToastService) {}
+
+  ngOnInit() {
+    this.loadGames();
+
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
+      ];
+    });
+  }
 
   resetFilter() {
     this.search.set('');
@@ -89,39 +89,12 @@ export class MyGamesComponent {
   }
 
   loadGames() {
-    this.gameInfoService.getGameInfos().subscribe({
-      next: (games) => {
-        // dados mockados para testes
-        // this.games.set(games);
-        this.games.set([
-          {
-            id: '1',
-            name: 'Game 1',
-            description: 'Description for Game 1',
-            countPlayersMin: 2,
-            countPlayersMax: 4,
-            countCards: 0,
-            gameMode: GameModesEnum.STRUCTURED,
-            title: '???',
-            userId: 'user1',
-          },
-          {
-            id: '2',
-            name: 'Game 2',
-            description: 'Description for Game 2',
-            countPlayersMin: 3,
-            countPlayersMax: 7,
-            countCards: 6,
-            gameMode: GameModesEnum.FREE,
-            title: '???',
-            userId: 'user1',
-          },
-        ]);
-      },
-      error: (error) => {
-        console.error('Error loading games:', error);
-      }
-    });
+    this.gameInfoService.getGameInfos()
+      .then(games => {
+        this.games.set(games);
+      }).catch(() => {
+        this.toastService.showErrorToast('Erro ao carregar os jogos', 'Houve um erro ao carregar os jogos!')
+      })
   }
 
   showModal() {

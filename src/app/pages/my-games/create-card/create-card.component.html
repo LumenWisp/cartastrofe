@@ -6,7 +6,7 @@
   <input type="text" pInputText [(ngModel)]="cardLayoutName" />
 </div>
 
-<div class="card">
+<!-- <div class="card">
   @if (getCard()) {
     @for (field of getCard()!.fields; track $index) {
       <app-card-layout-field
@@ -17,7 +17,7 @@
       />
     }
   }
-</div>
+</div> -->
 
 @if (selectedField) {
   <input type="text" pInputText [(ngModel)]="selectedField.value" />

@@ -1,0 +1,48 @@
+@if (dragBoundary) {
+  <div
+    [ngClass]="['card-layout-field', cardLayoutField.type.toLowerCase()]"
+    [ngStyle]="{
+      width: cardLayoutField.width + 'px',
+      height: cardLayoutField.height + 'px',
+    }"
+    cdkDrag
+    [cdkDragBoundary]="dragBoundary"
+    [cdkDragFreeDragPosition]="dragPosition"
+    (cdkDragStarted)="startDrag()"
+    (cdkDragMoved)="dragging($event)"
+    (cdkDragEnded)="endDrag()"
+    (mousedown)="handleClick()"
+  >
+    <ng-container *ngTemplateOutlet="content"></ng-container>
+  </div>
+} @else {
+  <div
+  [ngClass]="['card-layout-field', cardLayoutField.type.toLowerCase()]"
+      [ngStyle]="{
+              width: cardLayoutField.width + 'px',
+      height: cardLayoutField.height + 'px',
+      left: cardLayoutField.x + 'px',
+      top: cardLayoutField.y + 'px',
+    }">
+    <ng-container *ngTemplateOutlet="content"></ng-container>
+  </div>
+}
+
+<ng-template #content>
+  @if (hasValue(this.cardLayoutField)) {
+    @if (cardLayoutField.type === 'IMAGE') {
+      <img [src]="this.cardLayoutField.value" alt="card">
+    } @else if (cardLayoutField.type === 'TEXT') {
+      <span>{{ this.cardLayoutField.value }}</span>
+    }
+  } @else {
+    <span [ngClass]="['pi', getIcon(cardLayoutField.type)]"></span>
+  }
+
+  @if (dragBoundary) {
+    <div class="resize-handle resize-handle-width resize-handle-right" (mousedown)="startResize($event, 'right')"></div>
+    <div class="resize-handle resize-handle-width resize-handle-left" (mousedown)="startResize($event, 'left')"></div>
+    <div class="resize-handle resize-handle-height resize-handle-top" (mousedown)="startResize($event, 'up')"></div>
+    <div class="resize-handle resize-handle-height resize-handle-bottom" (mousedown)="startResize($event, 'down')"></div>
+  }
+</ng-template>

@@ -2,36 +2,17 @@
   padding: 1rem 2rem;
 }
 
-.panels-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(200px, 90%), 1fr));
-  gap: 1rem;
-  margin-top: 20px;
-}
-
-.add-box {
+.btn-create-card-layout {
   width: 100%;
-  height: 350px;
-  background-color: #c8c8c8;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding-block: 40px;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  --p-icon-size: 1.5rem;
 }
 
-.add-box:hover {
-  background-color: #a9a9a9;
-}
-
-.plus-icon {
-  font-size: 5rem;
-  color: #333;
-}
-.placeholder-card-layout {
-  width: 100%;
-  height: 100%;
-  min-height: 350px;
-  border: dashed black 2px;
-  border-radius: 20px;
+.card-layout {
+  display: block;
+  width: max-content;
+  height: max-content;
+  background-color: white;
 }

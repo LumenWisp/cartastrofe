@@ -1,6 +1,7 @@
 .grid {
+  --min-column-size: 300;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--min-column-size) * 1px), 1fr));
   grid-auto-rows: min-content;
   gap: 1rem;
 }

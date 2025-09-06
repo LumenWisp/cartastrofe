@@ -1,6 +1,8 @@
 // angular
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 // primeng
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -14,8 +16,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { GameModesEnum } from '../../enum/game-modes.enum';
 // services
 import { GameInfoService } from '../../services/game-info.service';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-modal-create-game',
@@ -30,7 +31,7 @@ import { forkJoin } from 'rxjs';
     TooltipModule,
     TextareaModule,
     InputNumberModule,
-    TranslatePipe
+    TranslatePipe,
   ],
   templateUrl: './modal-create-game.component.html',
   styleUrl: './modal-create-game.component.css',
@@ -46,23 +47,6 @@ export class ModalCreateGameComponent {
   private readonly MAX_PLAYERS = 99;
 
   modes: { label: string; value: GameModesEnum }[] = [];
-
-  constructor(
-    private gameInfoService: GameInfoService
-  ){ }
-
-  ngOnInit(){
-
-    forkJoin({
-      gameModeStructured: this.translateService.get('game-mode.structured'),
-      gameModeFree: this.translateService.get('game-mode.free')
-    }).subscribe(translations => {
-      this.modes = [
-        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
-        { label: translations.gameModeFree, value: GameModesEnum.FREE },
-      ];
-    })
-  }
 
   form = new FormGroup({
     name: new FormControl('', {
@@ -95,17 +79,41 @@ export class ModalCreateGameComponent {
     }),
   });
 
+  constructor(
+    private gameInfoService: GameInfoService,
+    private toastService: ToastService,
+  ){ }
+
+  ngOnInit(){
+
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
+      ];
+    })
+  }
+
   close() {
     this.showModalChange.emit(false);
   }
 
-  async createGame() {
+  createGame() {
     if (!this.form.valid) {
       console.log('Formulário inválido');
       return;
     }
 
-    await this.gameInfoService.addGameInfo(this.form.getRawValue());
+    this.gameInfoService.addGameInfo(this.form.getRawValue())
+      .then(gameInfo => {
+        this.toastService.showSuccessToast('Jogo criado com sucesso', `O jogo "${gameInfo.name}" foi criado com sucesso!`)
+      })
+      .catch(() => {
+        this.toastService.showErrorToast('Erro ao criar o jogo', 'Houve um erro ao criar o jogo!')
+      })
 
     this.form.reset();
     this.showModalChange.emit(false);
