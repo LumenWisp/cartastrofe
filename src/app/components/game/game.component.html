@@ -1,25 +1,15 @@
 <!-- Pedi para o chat criar um modelinho simples de página, melhorem o que precisar depois -->
 
-<p-toolbar>
-  <div class="p-toolbar-group-left">
-    <button pButton type="button" icon="pi pi-arrow-left" class="p-button-text" (click)="goBack()"></button>
-  </div>
+<button pButton type="button" icon="pi pi-arrow-left" class="p-button-text" (click)="goBack()"></button>
 
-  <div class="p-toolbar-group-right" style="margin-left: auto;">
-    <!-- Nome do jogo com ícone de edição ao lado -->
-    <span>nome</span>
-    <i class="pi pi-pencil" style="margin-left: 0.5rem;"></i>
-  </div>
-</p-toolbar>
+<p-menu [model]="items" />
 
-<p-tabView>
-  <p-tabPanel header="CARTAS">
-    <!-- Conteúdo de cartas aqui -->
-    <p>cartinhas skibi</p>
-  </p-tabPanel>
-
-  <p-tabPanel header="REGRAS">
-    <!-- Conteúdo de regras aqui -->
-    <p>regras dop dop</p>
-  </p-tabPanel>
-</p-tabView>
+@if (activeSection === 'cartas') {
+  <p>cartas</p>
+}
+@else if (activeSection === 'campo') {
+  <p>campo</p>
+}
+@else if (activeSection === 'regras') {
+  <app-blockly-editor></app-blockly-editor>
+}

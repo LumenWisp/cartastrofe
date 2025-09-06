@@ -2,7 +2,7 @@
 // angular
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseError } from '@angular/fire/app';
 import { TranslatePipe } from '@ngx-translate/core';
 // primeng
@@ -23,7 +23,6 @@ import { FormManager } from '../../shared/form-manager';
     PasswordModule,
     ButtonModule,
     ReactiveFormsModule,
-    RouterLink,
     TranslatePipe
   ],
   templateUrl: './register.component.html',
