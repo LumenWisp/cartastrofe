@@ -15,7 +15,7 @@ import {
   DragDropModule,
 } from '@angular/cdk/drag-drop';
 import { CardModel } from '../../types/card';
-import { Room } from '../../types/room';
+import { Room, RoomState } from '../../types/room';
 import { RoomService } from '../../services/room.service';
 import { PlayerEntity } from '../../types/player';
 
@@ -40,6 +40,7 @@ export class RoomsComponent {
 
   // Subscrições
   private playerSubscription?: Subscription;
+  private roomSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +72,9 @@ export class RoomsComponent {
       if (this.playerSubscription) {
         this.playerSubscription.unsubscribe();
       }
+      if (this.roomSubscription) {
+        this.roomSubscription.unsubscribe();
+      }
     }
   }
 
@@ -96,17 +100,34 @@ export class RoomsComponent {
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();
 
+        //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
           .listenPlayers(this.room.id)
           .subscribe((players) => {
             this.players = players;
             console.log('Atualização em tempo real:', players);
           });
+
+        //ouve as mudanças feitas no documento da sala
+        this.roomSubscription = this.roomService
+          .listenRoom(this.room.id)
+          .subscribe((room) => {
+            this.room = room;
+            if(room.state?.cards){
+              this.freeModeService.cards.set(room.state.cards);
+            }
+            if(room.state?.piles){
+              this.freeModeService.piles = room.state.piles
+            }
+            console.log('Atualização em tempo real:', room);
+          });
+          
       }
     }
   }
 
   isDragging: boolean = false;
+  isDraggingHandle: boolean = false;
 
   // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
   showOptions(event: MouseEvent, card: CardGame, popover: Popover) {
@@ -123,26 +144,38 @@ export class RoomsComponent {
     if (this.selectedCard?.pileId) {
       this.freeModeService.shufflePile(this.selectedCard.pileId);
     }
+    this.updateRoom()
     pop.hide(); // fecha após embaralhar
   }
 
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardGame[]>) {
-    this.isDragging = true
+    this.isDragging = true;
     if (this.popover) {
     this.popover.hide(); // fecha o popover quando arrastar outra carta
   }
-    const cardId = event.source.element.nativeElement.getAttribute('card-id');
-    this.freeModeService.updateZindex(cardId!, 99999)
-    const card = this.freeModeService.getCardById(cardId!)
+
+  const dragOrigin = event.event.target as HTMLElement;
+  const fromHandle = dragOrigin.classList.contains('square-number-cards');
+
+  const cardId = event.source.element.nativeElement.getAttribute('card-id');
+  this.freeModeService.updateZindex(cardId!, 99999)
+  const card = this.freeModeService.getCardById(cardId!)
+
+  if (fromHandle) {
+    this.isDraggingHandle = true;
+
+  } else {
     if (card?.pileId) {
       this.freeModeService.removeCardFromPile(card?.pileId, card!);
     }
+  }
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
   onDrop(event: CdkDragEnd<CardGame[]>) {
     setTimeout(() => this.isDragging = false, 100);
+
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
@@ -150,6 +183,12 @@ export class RoomsComponent {
     draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
     const targetCardId = targetElement?.getAttribute('card-id'); // Id da carta alvo
     const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
+
+    if (this.isDraggingHandle) {
+      const draggedPileId = this.freeModeService.getPileIdFromCardId(draggedCardId!)
+      this.onDropHandle(draggedPileId!, {x, y});
+      return;
+    }
 
     if (targetElement?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
       const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
@@ -193,7 +232,14 @@ export class RoomsComponent {
       draggedCard!.freeDragPos = { x, y };
       this.freeModeService.updateCard(draggedCard!)
     }
+    this.updateRoom()
+    console.log(this.freeModeService.piles);
+  }
 
+  onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
+    this.isDraggingHandle = false;
+    this.freeModeService.changexyOfPileCards(pileId, coordinates)
+    this.updateRoom();
   }
 
   //pega o Jogador logado, redireciona para login se não está logado ainda
@@ -213,5 +259,10 @@ export class RoomsComponent {
     this.router.navigate(['/login'], {
       queryParams,
     });
+  }
+
+  async updateRoom(): Promise<void>{
+    const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
+    this.roomService.updateRoom(this.room.id, {state: newState});
   }
 }

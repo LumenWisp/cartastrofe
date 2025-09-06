@@ -1,6 +1,6 @@
 // angular
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 // primeng
 import { MenubarModule } from 'primeng/menubar';
 import { updatePreset } from '@primeng/themes';
@@ -18,7 +18,7 @@ import { AppHeaderComponent } from '../../components/app-header/app-header.compo
 export class AppMainComponent {
   showCreateRoomDialog: boolean = false;
 
-  constructor() {
+  constructor(public router: Router) {
     updatePreset({
       semantic: {
         app: {
@@ -27,4 +27,10 @@ export class AppMainComponent {
       }
     })
   }
+
+  isHeaderHidden() {
+    const hiddenRoutes = ['/rooms'];
+    return hiddenRoutes.some(route => this.router.url.startsWith(route));
+  }
+
 }

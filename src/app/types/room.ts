@@ -1,4 +1,6 @@
 import { User } from "@angular/fire/auth"
+import { CardGame } from "./card";
+import { PileModel } from "./pile";
 
 export interface Room {
     id: string;
@@ -17,4 +19,6 @@ export interface RoomState{
 
     //Em relação ao momento do jogo
     playerTurn?: string; // Id do jogador que vai jogar agora
+    cards?: CardGame[];
+    piles?: PileModel[];
 }
