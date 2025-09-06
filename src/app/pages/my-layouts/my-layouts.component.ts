@@ -1,51 +1,71 @@
-import { Component, ElementRef, HostListener, ViewChild, OnInit } from '@angular/core';
-import { CardTemplateComponent } from '../../components/card-template/card-template.component';
+// angular
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+// primeng
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputIconModule } from 'primeng/inputicon';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CardLayoutService } from '../../services/card-layout.service';
-import { UserService } from '../../services/user-service.service';
-import { CommonModule } from '@angular/common';
+// types
 import { CardLayoutModel } from '../../types/card-layout';
+// services
+import { CardLayoutService } from '../../services/card-layout.service';
+import { ToastService } from '../../services/toast.service';
+// components
+import { PlaceholderGridComponent } from '../../components/placeholder-grid/placeholder-grid.component';
+import { ModalCreateCardLayoutComponent } from '../../components/modal-create-card-layout/modal-create-card-layout.component';
+import { CardGameLayoutComponent } from '../../components/card-game-layout/card-game-layout.component';
 
 @Component({
   selector: 'app-my-layouts',
-  imports: [CardTemplateComponent, CardModule, ButtonModule, InputIconModule, CommonModule],
+  imports: [
+    CardModule,
+    ButtonModule,
+    InputIconModule,
+    CommonModule,
+    PlaceholderGridComponent,
+    ModalCreateCardLayoutComponent,
+    CardGameLayoutComponent,
+  ],
   templateUrl: './my-layouts.component.html',
-  styleUrl: './my-layouts.component.css'
+  styleUrl: './my-layouts.component.css',
 })
 export class MyLayoutsComponent implements OnInit {
-
-  @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
+  showCreateCardLayoutModal = false;
   cardLayouts: CardLayoutModel[] = [];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private cardLayoutService: CardLayoutService,
-    private userService: UserService,
+    private toastService: ToastService
   ) {}
 
-  async ngOnInit() { 
-    this.cardLayouts = await this.cardLayoutService.fetchCardLayouts(this.userService.getUserLogged()!.userID)
+  async ngOnInit() {
+    this.loadCardLayouts();
   }
 
-  @HostListener('window:resize')
-  remainingCardLayoutSpace() {
-    if (!this.panelsEl) return [];
-    const style = getComputedStyle(this.panelsEl.nativeElement);
-    const columns = style.getPropertyValue('grid-template-columns');
-    const countColumns = columns.split(' ').length
-    const count = (this.cardLayoutService.totalCardLayouts + 1) % countColumns === 0
-      ? countColumns
-      : countColumns - 1 - this.cardLayoutService.totalCardLayouts % countColumns
-    return new Array(count).fill(null);
+  loadCardLayouts() {
+    this.cardLayoutService
+      .getCardLayouts()
+      .then((cardLayouts) => {
+        this.cardLayouts = cardLayouts;
+      })
+      .catch(() => {
+        this.toastService.showErrorToast(
+          'Erro ao carregar os jogos',
+          'Houve um erro ao carregar os jogos!'
+        );
+      });
   }
 
-  goToCreateLayoutPage() {
-    this.router.navigate(['create-layout'], {
-      relativeTo: this.route
+  showModal() {
+    this.showCreateCardLayoutModal = true;
+  }
+
+  goToCreateLayoutPage(id: string) {
+    this.router.navigate(['create-layout', id], {
+      relativeTo: this.route,
     });
   }
 }

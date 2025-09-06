@@ -1,0 +1,22 @@
+<p-dialog
+  header="Card layout"
+  [(visible)]="showModal"
+  (onHide)="close()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <form class="form" [formGroup]="form" (submit)="createCardLayout()">
+    <p-floatlabel variant="on" class="floatlabel">
+      <input
+        id="name"
+        pInputText
+        [fluid]="true"
+        formControlName="name"
+      />
+      <label for="name">Nome do layout</label>
+    </p-floatlabel>
+
+    <p-button type="submit" label="Criar layout" />
+  </form>
+</p-dialog>

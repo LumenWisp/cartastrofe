@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CardLayoutFieldComponent } from './card-layout-field.component';
+import { CardGameComponent } from './card-game.component';
 
-describe('CardLayoutFieldComponent', () => {
-  let component: CardLayoutFieldComponent;
-  let fixture: ComponentFixture<CardLayoutFieldComponent>;
+describe('CardGameComponent', () => {
+  let component: CardGameComponent;
+  let fixture: ComponentFixture<CardGameComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardLayoutFieldComponent]
+      imports: [CardGameComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CardLayoutFieldComponent);
+    fixture = TestBed.createComponent(CardGameComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

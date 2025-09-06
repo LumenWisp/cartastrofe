@@ -5,8 +5,6 @@
   align-items: center;
   padding: 4px;
 
-
-
   &.image {
     border: 1px solid #000000;
   }
@@ -15,7 +13,6 @@
     border: 1px dashed #000000;
   }
 }
-
 
 .resize-handle {
   --thickness: 5px;
@@ -60,4 +57,3 @@
     translate: -50% 50%;
   }
 }
-

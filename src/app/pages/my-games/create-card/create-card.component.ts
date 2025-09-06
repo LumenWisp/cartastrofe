@@ -4,12 +4,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ToastService } from '../../../services/toast.service';
 import { CardLayoutService } from '../../../services/card-layout.service';
 import { Card } from '../../../types/card';
-import { CardLayoutFieldComponent } from "../../../components/card-layout-field/card-layout-field.component";
-import { CardLayoutFieldValue } from '../../../types/card-layout-field';
+// import { CardLayoutFieldValue } from '../../../types/card-layout-field';
 
 @Component({
   selector: 'app-create-card',
-  imports: [FormsModule, InputTextModule, CardLayoutFieldComponent],
+  imports: [FormsModule, InputTextModule],
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.css'
 })
@@ -18,7 +17,7 @@ export class CreateCardComponent implements OnInit {
   cardLayoutName = '';
   cards: Card[] = [];
 
-  selectedField: CardLayoutFieldValue | null = null;
+  selectedField: any | null = null;
 
   MIN_CARD_FIELD_WIDTH = 40;
   MIN_CARD_FIELD_HEIGHT = 40;
@@ -38,25 +37,25 @@ export class CreateCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cardLayoutService.fetchCardLayouts('NEkPe1V5PDccYzJFyNWSrrUKukS2').then(cardLayouts => {
-      console.log(cardLayouts)
-      cardLayouts.forEach(cardLayout => {
-        this.cards.push({
-          name: cardLayout.name,
-          fields: cardLayout.cardFields.map(cardField => ({
-            ...cardField,
-            value: ''
-          })),
-        })
-      })
-    })
+    // this.cardLayoutService.getCardLayouts('NEkPe1V5PDccYzJFyNWSrrUKukS2').then(cardLayouts => {
+    //   console.log(cardLayouts)
+    //   cardLayouts.forEach(cardLayout => {
+    //     this.cards.push({
+    //       name: cardLayout.name,
+    //       fields: cardLayout.cardFields.map(cardField => ({
+    //         ...cardField,
+    //         value: ''
+    //       })),
+    //     })
+    //   })
+    // })
   }
 
   getCard() {
-    return this.cards.find(card => card.name === this.cardLayoutName) ?? null
+    // return this.cards.find(card => card.name === this.cardLayoutName) ?? null
   }
 
-  clickCard(field: CardLayoutFieldValue) {
+  clickCard(field: any) {
     this.selectedField = field;
   }
 }

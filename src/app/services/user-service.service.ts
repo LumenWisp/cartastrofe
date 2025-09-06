@@ -1,12 +1,29 @@
-import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, getDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
+import { Injectable, inject, signal } from '@angular/core';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  user,
+} from '@angular/fire/auth';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+} from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { map, startWith } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private auth = inject(Auth);
@@ -15,19 +32,16 @@ export class UserService {
 
   private currentUserData: UserEntity | null = null;
 
-
   readonly user$ = user(this.auth);
-  readonly currentUser$ = this.user$.pipe(
-    map(user => {
-      return user
-        ? {
-            email: user.email!,
-            userID: user.uid
-          }
-        : null;
-    }),
-    startWith(undefined)
-  );
+  readonly currentUser = signal<
+    | {
+        email: string;
+        userID: string;
+      }
+    | null
+    | undefined
+  >(undefined);
+  readonly currentUser$ = toObservable(this.currentUser);
 
   constructor() {}
 
@@ -50,7 +64,11 @@ export class UserService {
    * @param password A senha do usuário.
    */
   async register(name: string, email: string, password: string): Promise<void> {
-    const { user } = await createUserWithEmailAndPassword(this.auth, email, password);
+    const { user } = await createUserWithEmailAndPassword(
+      this.auth,
+      email,
+      password
+    );
     const uid = user.uid;
 
     const userData: UserEntity = {
@@ -71,7 +89,11 @@ export class UserService {
    */
   async login(email: string, password: string): Promise<void> {
     // Autentica o usuário com Firebase Auth
-    const { user } = await signInWithEmailAndPassword(this.auth, email, password);
+    const { user } = await signInWithEmailAndPassword(
+      this.auth,
+      email,
+      password
+    );
     const uid = user.uid;
 
     // Busca os dados do Firestore com o UID

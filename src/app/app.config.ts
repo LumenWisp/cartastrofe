@@ -14,6 +14,7 @@ import { MessageService } from 'primeng/api';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideHttpClient } from '@angular/common/http';
+import { UserService } from './services/user-service.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

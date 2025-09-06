@@ -1,7 +1,9 @@
 import { CardFieldModel } from "../types/card-field";
-import { CardLayoutFieldValue } from "./card-layout-field";
+import { CardLayout } from "./card-layout";
+
 
 // DEIXEI ALGUNS CAMPOS COMO OPCIONAL PARA TESTES NO MODO LIVRE, REMOVER DEPOIS!!
+/** @deprecated criar um novo modelo */
 export interface CardGame {
     id?: string,
     templateId?: string,
@@ -17,6 +19,7 @@ export interface CardGame {
     freeDragPos: {x: number, y: number},
 }
 
+/** @deprecated criar um novo modelo */
 export interface CardModel {
   id: string,
   layoutId: string,
@@ -24,12 +27,15 @@ export interface CardModel {
   fields: CardField[],
 }
 
+/** @deprecated criar um novo modelo */
 export interface CardField {
   property: string,
   value: string,
 }
 
+
+
 export interface Card {
-  name: string,
-  fields: CardLayoutFieldValue[],
+  layout: CardLayout;
+  data: { [property: string]: string; }
 }
