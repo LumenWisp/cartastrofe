@@ -10,7 +10,7 @@ import { UtilsService } from './utils.service';
 })
 export class GameInfoService {
   private firestore = inject(Firestore);
-  pathGameInfo = FirestoreTablesEnum.GAME_INFO
+  private pathGameInfo = FirestoreTablesEnum.GAME_INFO
 
   constructor(
     private userService: UserService,
@@ -63,5 +63,24 @@ export class GameInfoService {
     await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
 
     return gameInfoObject;
+  }
+
+  /**
+   * Atualiza o gameInfo especificado pelo id.
+   * @param id id do gameInfo
+   * @param item informações do gameInfo que serão atualizadas
+   */
+  async updateGameInfo(id: string, item: Partial<GameInfo>): Promise<void> {
+    if (!id) {
+      throw new Error('ID do jogo é obrigatório.');
+    }
+
+    const ref = doc(this.firestore, this.pathGameInfo, id);
+
+    const updatedData = {
+      ...item,
+    };
+
+    await setDoc(ref, updatedData, { merge: true });
   }
 }

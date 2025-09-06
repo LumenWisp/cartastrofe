@@ -11,6 +11,10 @@ export const toolbox = {
   contents: [
     {
       kind: 'category',
+      name: 'Start of the Game',
+    },
+    {
+      kind: 'category',
       name: 'Triggers',
       contents: [
         { kind: 'block', type: 'onGameStart' },
@@ -25,7 +29,6 @@ export const toolbox = {
         { kind: 'block', type: 'getPile' },
         { kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
-        { kind: 'block', type: 'getPhase' },
       ]
     },
     {
@@ -34,10 +37,12 @@ export const toolbox = {
       contents: [
         { kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
-        { kind: 'block', type: 'nextPhase' },
-        { kind: 'block', type: 'endGame' },
       ]
-    }
+    },
+    {
+      kind: 'category',
+      name: 'Win Condition',
+    },
   ]
 };
 
