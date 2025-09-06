@@ -19,23 +19,10 @@ export interface CardGame {
     freeDragPos: {x: number, y: number},
 }
 
-/** @deprecated criar um novo modelo */
 export interface CardModel {
   id: string,
   layoutId: string,
+  userId: string,
   name: string,
-  fields: CardField[],
-}
-
-/** @deprecated criar um novo modelo */
-export interface CardField {
-  property: string,
-  value: string,
-}
-
-
-
-export interface Card {
-  layout: CardLayout;
   data: { [property: string]: string; }
 }

@@ -71,8 +71,6 @@ export class CardLayoutService {
     const docSnapshot = await getDocs(queryRef);
     const cardLayoutModel: CardLayoutModel = docSnapshot.docs[0].data() as CardLayoutModel;
 
-    console.log(cardLayoutModel)
-
     return cardLayoutModel;
   }
 
@@ -115,7 +113,6 @@ export class CardLayoutService {
 
     const id = await this.utilsService.generateKey()
 
-
     const data: CardLayoutModel = {
       id,
       cardFields: [],
@@ -124,7 +121,6 @@ export class CardLayoutService {
     }
 
     await addDoc(cardLayoutsRef, data)
-
   }
 
   /**
@@ -136,12 +132,5 @@ export class CardLayoutService {
     await updateDoc(userRef, {
     cardLayouts: arrayUnion(cardLayoutId)
   });
-  }
-
-  /**
-   * Retorna o total de cardLayouts do usuário logado.
-   */
-  get totalCardLayouts() {
-    return 10; // para manter algumas funcionalidades operando normalmente, mas deve ser removida posteriormente
   }
 }
