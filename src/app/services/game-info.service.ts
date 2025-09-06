@@ -2,7 +2,16 @@ import { inject, Injectable } from '@angular/core';
 import { GameInfo, GameInfoData } from '../types/game-info';
 import { UserService } from './user-service.service';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { collection, doc, Firestore, getCountFromServer, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import {
+  collection,
+  doc,
+  Firestore,
+  getCountFromServer,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
 
 @Injectable({
@@ -10,7 +19,7 @@ import { UtilsService } from './utils.service';
 })
 export class GameInfoService {
   private firestore = inject(Firestore);
-  private pathGameInfo = FirestoreTablesEnum.GAME_INFO
+  private pathGameInfo = FirestoreTablesEnum.GAME_INFO;
 
   constructor(
     private userService: UserService,
@@ -21,23 +30,39 @@ export class GameInfoService {
    * Pega os gameInfos do usuário logado.
    */
   async getGameInfos() {
-    const user = this.userService.currentUser()
+    const user = this.userService.currentUser();
 
-    if (user === undefined) return []
+    if (user === undefined) return [];
 
     if (user === null) throw new Error('Usuário não está logado');
 
     const userId = user.userID;
     const refCollection = collection(this.firestore, this.pathGameInfo);
     const queryRef = query(refCollection, where('userId', '==', userId));
-    const snapshot = await getDocs(queryRef)
+    const snapshot = await getDocs(queryRef);
     const results: GameInfo[] = [];
     snapshot.forEach((item) => {
-      results.push(item.data() as GameInfo)
-    })
-
+      results.push(item.data() as GameInfo);
+    });
 
     return results;
+  }
+
+  async getGameInfoById(id: string): Promise<GameInfo> {
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+
+    let queryRef = query(refCollection, where('id', '==', id));
+
+    try {
+      const snapshot = await getDocs(queryRef);
+      const rooms: GameInfo[] = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+      })) as GameInfo[];
+      return rooms[0];
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
   }
 
   /**
@@ -45,20 +70,20 @@ export class GameInfoService {
    * @param gameInfoData informações do jogo
    */
   async addGameInfo(gameInfo: GameInfoData) {
-    const user = this.userService.currentUser()
+    const user = this.userService.currentUser();
 
     if (!user) throw new Error('Usuário não está logado');
 
     const userId = user.userID;
 
-    const id = await this.utilsService.generateKey()
+    const id = await this.utilsService.generateKey();
 
     const gameInfoObject: GameInfo = {
       ...gameInfo,
       id,
       userId,
       countCards: 0,
-    }
+    };
 
     await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
 

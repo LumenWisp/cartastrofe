@@ -11,7 +11,7 @@ export const toolbox = {
   contents: [
     {
       kind: 'category',
-      name: 'Start of the Game',
+      name: 'On Game Start',
     },
     {
       kind: 'category',
@@ -20,6 +20,10 @@ export const toolbox = {
         { kind: 'block', type: 'onGameStart' },
         { kind: 'block', type: 'onMoveCardFromTo' },
       ]
+    },
+    {
+      kind: 'category',
+      name: 'Win Condition',
     },
     {
       kind: 'category',
@@ -41,11 +45,7 @@ export const toolbox = {
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
       ]
-    },
-    {
-      kind: 'category',
-      name: 'Win Condition',
-    },
+    }
   ]
 };
 
