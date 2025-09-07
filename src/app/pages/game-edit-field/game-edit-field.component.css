@@ -75,3 +75,19 @@
   font-weight: bold;
   cursor: grab;
 }
+
+.game-item {
+  position: relative;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.rename-box {
+  margin-top: 5px;
+}
+
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}

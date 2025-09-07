@@ -5,6 +5,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 
 import { ButtonModule } from 'primeng/button';
+import { Popover, PopoverModule } from 'primeng/popover';
 
 import { GameInfo } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
@@ -13,13 +14,14 @@ import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-game-edit-field',
-  imports: [ButtonModule, RouterLink, CdkDrag, CommonModule],
+  imports: [ButtonModule, RouterLink, CdkDrag, CommonModule, PopoverModule],
   templateUrl: './game-edit-field.component.html',
   styleUrl: './game-edit-field.component.css'
 })
 export class GameEditFieldComponent implements OnInit{
   game!: GameInfo;
   items: GameFieldItem[] = [];
+  selectedItemIndex: number | null = null;
 
   addPile() {
     this.items.push({
@@ -48,6 +50,19 @@ export class GameEditFieldComponent implements OnInit{
     private toastService: ToastService,
     private route: ActivatedRoute,
   ) {}
+
+    onItemClick(event: MouseEvent, index: number, popover: Popover) {
+      event.preventDefault();
+      this.selectedItemIndex = index;
+      popover.toggle(event); // abre/fecha no clique
+    }
+
+    deleteItem(index: number, popover: Popover) {
+      this.items.splice(index, 1);
+      this.selectedItemIndex = null;
+      popover.hide();
+    }
+
 
   /**
    * Atualiza a posição do item ao terminar o drag
