@@ -1,6 +1,5 @@
 <div class="sidebar-right">
-
-    <p-button routerLink="/my-games" label="Sair" />
+  <p-button routerLink="/my-games" label="Sair" />
 
   <p-panel header="{{'rooms.header' | translate}}">
     @for (player of players; track $index) {
@@ -27,7 +26,7 @@
 
 <p-popover #popover [dismissable]="true">
   @if(selectedCard && freeModeService.isPartOfPile(selectedCard.id!)) {
-    <ng-container>
+  <ng-container>
     <p-button
       label="Embaralhar"
       icon="pi pi-refresh"

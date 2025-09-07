@@ -11,6 +11,10 @@ export class FreeModeService {
 
   piles: PileModel[] = [];
 
+  /*
+  FUNÇÕES DE CARTAS
+  */ 
+
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
   }
@@ -21,10 +25,10 @@ export class FreeModeService {
 
   // Atualiza o signal cards
   updateCard(card: CardGame) {
-  this.cards.update(cards =>
-    cards.map(c => c.id === card.id ? { ...card } : c)
-  );
-}
+    this.cards.update(cards =>
+      cards.map(c => c.id === card.id ? { ...card } : c)
+    );
+  }
 
   removeCard(cardId: string) {
     this.cards.update(cards => cards.filter(c => c.id !== cardId));
@@ -50,12 +54,12 @@ export class FreeModeService {
 
   // Atualiza o zindex de uma carta
   updateZindex(cardId: string, zIndex: number) {
-  this.cards.update(cards =>
-    cards.map(c =>
-      c.id === cardId ? { ...c, zIndex } : c
-    )
-  );
-}
+    this.cards.update(cards =>
+      cards.map(c =>
+        c.id === cardId ? { ...c, zIndex } : c
+      )
+    );
+  }
 
   // Retorna o id da pilha em que a carta está, se tiver
   checkCardHasPile(cardId: string) {
@@ -112,6 +116,10 @@ export class FreeModeService {
 
   }
 
+  /*
+  FUNÇÕES DE PILHAS
+  */ 
+
   // Cria uma pilha com o id passado
   createPile(pileId: string) {
     const newPile: PileModel = {
@@ -126,6 +134,44 @@ export class FreeModeService {
     const card = this.getCardById(cardId);
     return card?.pileId;
   }
+
+  // Retorna o número de cartas em uma pilha
+  getNumberOfCardsFromPileId(pileId: string) {
+    const pile = this.piles.find(p => p.id === pileId);
+    if (!pile?.cards) return;
+    return pile?.cards.length;
+  }
+
+  // Retorna a carta no topo de uma pilha
+  getTopCard(pileId: string) {
+    const pile = this.piles.find(p => p.id === pileId);
+    if (!pile?.cards) return;
+    return pile?.cards[pile.cards.length - 1];
+  }
+
+  // Verifica se uma carta está no topo de uma pilha
+  isTopCard(cardId: string) {
+    const card = this.getCardById(cardId);
+    const topCard = this.getTopCard(card?.pileId!)
+    return cardId === topCard?.id;
+  }
+
+  changexyOfPileCards(pileId: string, coordinates: {x: number, y:number}) {
+    const pile = this.piles.find(p => p.id === pileId)
+    pile?.cards.forEach(card => {
+      this.cards.update(cards =>
+        cards.map(c =>
+          c.pileId === pileId
+            ? { ...c, freeDragPos: { ...coordinates } }
+            : c
+        )
+      );
+    });
+  }
+
+  /*
+  FUNÇÕES DE EMBARALHAMENTO
+  */ 
 
   // Embaralha uma pilha
   shufflePile(pileId: string) {
