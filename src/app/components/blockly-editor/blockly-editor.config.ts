@@ -13,18 +13,11 @@ export const toolbox = {
       kind: 'category',
       name: 'Triggers',
       contents: [
-        {
-          kind: 'category',
-          name: 'On Game Start',
-        },
-        {
-          kind: 'category',
-          name: 'Win Condition',
-        },
-        {
-          kind: 'category',
-          name: 'On Move Card From To',
-        }
+        { kind: 'category', name: 'On Game Start' },
+        { kind: 'category', name: 'Win Condition' },
+        { kind: 'category', name: 'On Move Card From To' },
+        { kind: 'category', name: 'On Phase Start' },
+        { kind: 'category', name: 'On Phase End' },
       ]
     },
     { 
@@ -202,6 +195,27 @@ export function registerBlocks() {
     }
   };
 
+  // 🚀 ON PHASE START
+  Blockly.Blocks['onPhaseStart'] = {
+    init: function() {
+      this.appendValueInput('PHASE')
+        .appendField('onPhaseStart');
+      this.setInputsInline(true)
+      this.setNextStatement(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 ON PHASE END
+  Blockly.Blocks['onPhaseEnded'] = {
+    init: function() {
+      this.appendValueInput('PHASE')
+        .appendField('onPhaseEnd');
+      this.setInputsInline(true)
+      this.setNextStatement(true, null);
+      this.setColour(120);
+    }
+  };
 }
 
 // ===============================================================
@@ -313,5 +327,23 @@ export function registerGenerators() {
     const code = '...';
     return code;
   }
+
+  javascriptGenerator.forBlock['onPhaseStart'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
+
+    // TODO: Assemble javascript into the code variable.
+    const code = '...';
+    return code;
+  }
+
+  javascriptGenerator.forBlock['onPhaseEnded'] = function(block, generator) {
+      // TODO: change Order.ATOMIC to the correct operator precedence strength
+      const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
+
+      // TODO: Assemble javascript into the code variable.
+      const code = '...';
+      return code;
+    }
 
 }
