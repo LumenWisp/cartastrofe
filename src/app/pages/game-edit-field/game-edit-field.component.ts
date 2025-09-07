@@ -1,17 +1,39 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CdkDrag } from '@angular/cdk/drag-drop';
+
 import { ButtonModule } from 'primeng/button';
+
 import { GameInfo } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { GameFieldItems } from '../../types/game-field-items';
 
 @Component({
   selector: 'app-game-edit-field',
-  imports: [ButtonModule, RouterLink],
+  imports: [ButtonModule, RouterLink, CdkDrag],
   templateUrl: './game-edit-field.component.html',
   styleUrl: './game-edit-field.component.css'
 })
 export class GameEditFieldComponent implements OnInit{
   game!: GameInfo;
+  items: GameFieldItems[] = [];
+
+  addPile() {
+    this.items.push({
+      type: 'pile',
+      position: {x: 100, y: 100},
+      nameIdentifier: ''
+    });
+  }
+
+  addLabel() {
+    this.items.push({
+      type: 'label',
+      position: {x: 100, y: 100},
+      nameIdentifier: ''
+    });
+  }
+
 
   ngOnInit() {
     this.checkRouteParams();

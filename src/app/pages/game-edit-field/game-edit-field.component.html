@@ -1,3 +1,48 @@
 <div class="sidebar-right">
+
   <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+
+  <div class="toolbox">
+    <!-- Botão para adicionar pilha -->
+    <div class="tool-card" (click)="addPile()">
+      <div class="pile-preview"></div>
+      <span>Pilha</span>
+    </div>
+
+    <!-- Botão para adicionar label -->
+    <div class="tool-card" (click)="addLabel()">
+      <div class="label-preview">Label Attribute</div>
+    </div>
+  </div>
+
+  <p-button label="Salvar Campo" />
+
+</div>
+
+<!-- Área de jogo -->
+<div class="game-field" #gameField>
+  <button 
+    cdkDrag 
+    cdkDragBoundary=".game-field"
+    class="next-phase-btn">
+    Next Phase
+  </button>
+  @for (item of items; track item) {
+    @if (item.type === 'pile') {
+      <div 
+        cdkDrag
+        cdkDragBoundary=".game-field"
+        class="pile">
+        {{ item.nameIdentifier }}
+      </div>
+    }
+    @if (item.type === 'label') {
+      <div 
+        cdkDrag
+        cdkDragBoundary=".game-field"
+        class="label">
+        {{ item.nameIdentifier }}
+      </div>
+    }
+  }
 </div>
