@@ -31,6 +31,7 @@ export const toolbox = {
         { kind: 'block', type: 'getPile' },
         { kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
+        { kind: 'block', type: 'getGeneralVariableValue' },
         { kind: 'block', type: 'getPhase' },
       ]
     },
@@ -49,6 +50,8 @@ export const toolbox = {
       name: 'Control',
       contents: [
         {kind: 'block', type: 'controls_if'},
+        {kind: 'block', type: 'logic_compare'},
+        {kind: 'block', type: 'logic_operation'},
         {"kind": "block",
           "type": "controls_repeat_ext",
           "inputs": {
@@ -58,7 +61,8 @@ export const toolbox = {
                 "fields": { "NUM": 10 }
               }
             }
-          }}
+          }
+        },
       ]
     }
   ]
@@ -91,7 +95,7 @@ export function registerBlocks() {
   // 🚀 MOVE CARD TO
   Blockly.Blocks['MoveCardTo'] = {
     init: function() {
-      this.appendValueInput('OLD_PILE').appendField('Move');
+      this.appendValueInput('CARD').appendField('Move');
       this.appendValueInput('NEW_PILE').appendField('To');
       this.setInputsInline(true);
       this.setPreviousStatement(true, null);
@@ -140,6 +144,9 @@ export function registerBlocks() {
     init: function() {
       this.appendValueInput('ATTRIBUTE').appendField('ChangeAttribute');
       this.appendDummyInput()
+        .appendField('From')
+        .appendField(new Blockly.FieldTextInput('value_card'), 'CARD');
+      this.appendDummyInput()
         .appendField('To')
         .appendField(new Blockly.FieldTextInput('new_attribute'), 'NEW_ATTRIBUTE');
       this.setInputsInline(true);
@@ -170,6 +177,18 @@ export function registerBlocks() {
       this.setInputsInline(true);
       this.setOutput(true, null);
       this.setColour(285);
+    }
+  };
+
+  // 🚀 GET GENERAL VARIABLE VALUE
+  Blockly.Blocks['getGeneralVariableValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Variable')
+        .appendField(new Blockly.FieldTextInput('value'), 'VALUE');
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(315);
     }
   };
 
@@ -225,7 +244,7 @@ export function registerGenerators() {
   // ON GAME START
   javascriptGenerator.forBlock['onGameStart'] = function() {
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = ''; //Todo o código que compoem a aba de onGameStart vai estar um um mesmo atributo do game/card
     return code;
   };
 
@@ -233,7 +252,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['getCard'] = function(block, generator) {
     const text_card_id = block.getFieldValue('CARD_ID');
 
-    const code = `blockCodeGeneratorsService.getCard("${text_card_id}")`;
+    const code = `${text_card_id}`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -241,11 +260,11 @@ export function registerGenerators() {
   // MOVE CARD TO
   javascriptGenerator.forBlock['MoveCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_old_pile = generator.valueToCode(block, 'OLD_PILE', Order.ATOMIC);
+    const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
     const value_new_pile = generator.valueToCode(block, 'NEW_PILE', Order.ATOMIC);
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `blockCodeGeneratorsService.moveCardTo(${value_card}, ${value_new_pile});updateRoom();`;
     return code;
   };
 
@@ -253,7 +272,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['getPile'] = function(block) {
     const text_pile_id = block.getFieldValue('PILE_ID');
 
-    const code = `blockCodeGeneratorsService.getPile("${text_pile_id}")`;
+    const code = `${text_pile_id}`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -263,7 +282,7 @@ export function registerGenerators() {
     const text_phase_id = block.getFieldValue('PHASE_ID');
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `${text_phase_id}`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -276,7 +295,7 @@ export function registerGenerators() {
     const value_new_pile = generator.valueToCode(block, 'NEW_PILE', Order.ATOMIC);
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = '';
     return code;
   };
 
@@ -284,10 +303,11 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['ChangeAttributeFromCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
     const value_attribute = generator.valueToCode(block, 'ATTRIBUTE', Order.ATOMIC);
+    const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
     const text_new_attribute = block.getFieldValue('NEW_ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `blockCodeGeneratorsService.ChangeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
     return code;
   };
 
@@ -296,20 +316,32 @@ export function registerGenerators() {
     const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `${text_attribute}`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
 
   // GET CARD ATTRIBUTE
   javascriptGenerator.forBlock['GetCardAttribute'] = function(block, generator) {
-    const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: change Order.ATOMIC to the correct operator precedence strength
     const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
+    const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
     const code = '...';
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET GENERAL VARIABLE VALUE
+  javascriptGenerator.forBlock['getGeneralVariableValue'] = function(block, generator) {
+
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_card = block.getFieldValue('VALUE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `${value_card}`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -324,7 +356,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['endGame'] = function() {
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = 'roomService.updateRoom(${this.room.id}, {state:{isGameOcurring: false, gameId: this.room.state.gameId}});';
     return code;
   }
 
@@ -333,7 +365,7 @@ export function registerGenerators() {
     const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = '';
     return code;
   }
 
@@ -342,7 +374,7 @@ export function registerGenerators() {
       const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
 
       // TODO: Assemble javascript into the code variable.
-      const code = '...';
+      const code = '';
       return code;
     }
 
