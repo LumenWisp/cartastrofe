@@ -13,6 +13,9 @@ import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
 import { GameComponent } from './components/game/game.component';
+import { GameEditCardsComponent } from './pages/game-edit-cards/game-edit-cards.component';
+import { GameEditFieldComponent } from './pages/game-edit-field/game-edit-field.component';
+import { GameEditRulesComponent } from './pages/game-edit-rules/game-edit-rules.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
 import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
@@ -66,9 +69,19 @@ export const routes: Routes = [
         title: 'Game Description',
       },
       {
-        path: 'my-games/game-edit/:gameId',
-        component: GameComponent,
-        title: 'Edit game'
+        path: 'my-games/game-edit-cards/:gameId',
+        component: GameEditCardsComponent,
+        title: 'Edit cards'
+      },
+      {
+        path: 'my-games/game-edit-field/:gameId',
+        component: GameEditFieldComponent,
+        title: 'Edit field'
+      },
+      {
+        path: 'my-games/game-edit-rules/:gameId',
+        component: GameEditRulesComponent,
+        title: 'Edit rules'
       }
     ],
   },

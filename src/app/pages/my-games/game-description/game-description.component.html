@@ -9,7 +9,9 @@
 <div class="content-wrapper">
   <div class="buttons">
     <p-button label="Voltar" icon="pi pi-arrow-left" severity="secondary" [rounded]="true" routerLink="/my-games" />
-    <p-button label="Criar" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit', gameInfo?.id]" />
+    <p-button label="Cartas" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-cards', gameInfo?.id]" />
+    <p-button label="Campo" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-field', gameInfo?.id]" />
+    <p-button label="Regras" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-rules', gameInfo?.id]" />
   </div>
 
   <div class="content">
