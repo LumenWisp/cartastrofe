@@ -23,7 +23,7 @@ export const toolbox = {
         },
         {
           kind: 'category',
-          name: 'on Move Card From To',
+          name: 'On Move Card From To',
         }
       ]
     },

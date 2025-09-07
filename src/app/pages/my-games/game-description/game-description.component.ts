@@ -30,24 +30,13 @@ export class GameDescriptionComponent implements OnInit {
     this.getGameInfoFromRoute();
   }
 
-  getGameInfoFromRoute() {
+  async getGameInfoFromRoute() {
     const gameId = this.route.snapshot.paramMap.get('gameId');
 
     if (!gameId) return;
 
-    // buscar o jogo pelo gameId <--------------------
-
-    // dado mockado
-    this.gameInfo = {
-      id: '1',
-      name: 'Game 1',
-      description: 'Description for Game 1',
-      countPlayersMin: 2,
-      countPlayersMax: 4,
-      countCards: 0,
-      gameMode: GameModesEnum.STRUCTURED,
-      userId: 'user1',
-    }
+    // buscar o jogo pelo gameId
+    this.gameInfo =  await this.gameInfoService.getGameInfoById(gameId)
 
     this.ngIconGamemode = {
       'pi-shield': this.gameInfo.gameMode === GameModesEnum.STRUCTURED,
