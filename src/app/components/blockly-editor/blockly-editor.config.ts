@@ -11,19 +11,24 @@ export const toolbox = {
   contents: [
     {
       kind: 'category',
-      name: 'On Game Start',
-    },
-    {
-      kind: 'category',
       name: 'Triggers',
       contents: [
-        { kind: 'block', type: 'onGameStart' },
-        { kind: 'block', type: 'onMoveCardFromTo' },
+        {
+          kind: 'category',
+          name: 'On Game Start',
+        },
+        {
+          kind: 'category',
+          name: 'Win Condition',
+        },
+        {
+          kind: 'category',
+          name: 'on Move Card From To',
+        }
       ]
     },
-    {
-      kind: 'category',
-      name: 'Win Condition',
+    { 
+      kind: 'sep',
     },
     {
       kind: 'category',

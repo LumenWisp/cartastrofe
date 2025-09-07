@@ -32,6 +32,13 @@ export class BlocklyEditorComponent implements AfterViewInit {
   private workspace!: Blockly.WorkspaceSvg;
   selectedCategory: string = '';
 
+  //Lista de categorias do blockly que não devem carregar um workspace
+  // Ou seja, são categorias utilitárias
+  utilsFields: string[] = ['Actions', 'Variables', 'Control']
+  
+  //Listas de categorias que abrem para outras categorias(como Triggers)
+  generalFields: string[] = ['Triggers']
+
   constructor(private gameInfoService: GameInfoService) {}
 
   ngAfterViewInit() {
@@ -51,7 +58,13 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
         const categoryName = toolboxEvent.newItem;
 
-        if (categoryName && categoryName != 'Variables' &&  categoryName != 'Actions' && categoryName != this.selectedCategory) {
+        if
+        (
+          categoryName &&
+          categoryName != this.selectedCategory &&
+          (!this.utilsFields.includes(categoryName)) &&
+          (!this.generalFields.includes(categoryName))
+        ) {
           // Nome da categoria clicada
           this.selectedCategory = categoryName.replace(/\s+/g, "");
           this.selectedCategory = this.selectedCategory.charAt(0).toLowerCase() + this.selectedCategory.substring(1);
@@ -62,13 +75,13 @@ export class BlocklyEditorComponent implements AfterViewInit {
     });
   }
 
-  generateCode() {
+  generateCode(): void {
     const code = javascriptGenerator.workspaceToCode(this.workspace);
     console.log(code);
     console.log(code.length);
   }
 
-  loadWorkSpaceState(): void{
+  loadWorkSpaceState(): void {
 
     // TODO: adicionar carregamento de cartas
     let state;
@@ -79,7 +92,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
     Blockly.serialization.workspaces.load(state, this.workspace);
   }
 
-  async saveWorkSpaceState() {
+  async saveWorkSpaceState(): Promise<void> {
     const state = Blockly.serialization.workspaces.save(this.workspace);
     console.log(state);
 
