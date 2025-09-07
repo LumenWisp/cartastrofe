@@ -1,0 +1,12 @@
+.sidebar-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 220px;
+  height: 100vh;
+  background-color: #f9f9f9;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  padding: 1rem;
+  box-sizing: border-box;
+  z-index: 1000;
+}
