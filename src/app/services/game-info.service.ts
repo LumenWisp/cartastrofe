@@ -13,6 +13,8 @@ import {
   where,
 } from '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
+import { BlockWorkspaceService } from './block-workspace.service';
+import { GameModesEnum } from '../enum/game-modes.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,8 @@ export class GameInfoService {
 
   constructor(
     private userService: UserService,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private blockWorkspaceService: BlockWorkspaceService,
   ) {}
 
   /**
@@ -78,12 +81,22 @@ export class GameInfoService {
 
     const id = await this.utilsService.generateKey();
 
-    const gameInfoObject: GameInfo = {
+    let gameInfoObject: GameInfo = {
       ...gameInfo,
       id,
       userId,
       countCards: 0,
     };
+
+    // Verificar se é um jogo estruturado para adicionar o workspace das regras
+    if(gameInfo.gameMode === GameModesEnum.STRUCTURED){
+      gameInfoObject = {
+        ...gameInfoObject,
+        onGameStart: this.blockWorkspaceService.onGameStartDefault,
+        onMoveCardFromTo: this.blockWorkspaceService.onMoveCardFromToDefault,
+        winCondition: this.blockWorkspaceService.winConditionDefault,
+      }
+    }
 
     await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
 

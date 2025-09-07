@@ -13,7 +13,12 @@ export interface GameInfo extends GameInfoData {
   countCards: number;
   userId: string;
   
-  //Campos que representam o estado do workSpace das regras do jogo
+  // ===============================================================
+  // Campos que representam o estado do workSpace das regras do jogo
+  // ===============================================================
+
+  // Triggers
   onGameStart?: any;
   onMoveCardFromTo?: any;
+  winCondition?: any;
 }

@@ -21,6 +21,8 @@ import { GameModesEnum } from '../../../enum/game-modes.enum';
   styleUrl: './game-description.component.css'
 })
 export class GameDescriptionComponent implements OnInit {
+  GameModesEnum = GameModesEnum;
+
   gameInfo: GameInfo | null = null
   ngIconGamemode = {};
 

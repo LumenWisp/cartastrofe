@@ -86,7 +86,9 @@ export class BlocklyEditorComponent implements AfterViewInit {
     // TODO: adicionar carregamento de cartas
     let state;
     if (this.game) {
-      state = this.game.onGameStart;
+      
+      const key = this.selectedCategory as keyof GameInfo;
+      state = this.game[key];
     }
 
     Blockly.serialization.workspaces.load(state, this.workspace);
