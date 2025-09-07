@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { GameInfoService } from '../../services/game-info.service';
 import { GameInfo } from '../../types/game-info';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlocklyEditorComponent } from '../../components/blockly-editor/blockly-editor.component';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-game-edit-rules',
-  imports: [BlocklyEditorComponent],
+  imports: [BlocklyEditorComponent, RouterLink, ButtonModule],
   templateUrl: './game-edit-rules.component.html',
   styleUrl: './game-edit-rules.component.css'
 })
