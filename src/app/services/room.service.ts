@@ -20,6 +20,7 @@ import {
   where,
   collectionData,
   deleteField,
+  docData,
 } from '@angular/fire/firestore';
 import { Room, RoomState } from '../types/room';
 import { UtilsService } from './utils.service';
@@ -27,6 +28,7 @@ import { UserService } from './user-service.service';
 import { PlayerEntity } from '../types/player';
 import { UserEntity } from '../types/user';
 import { RoomRolesEnum } from '../enum/room-roles.enum';
+import { FreeModeService } from './free-mode.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +39,8 @@ export class RoomService {
 
   constructor(
     private utilsService: UtilsService,
-    private userService: UserService
+    private userService: UserService,
+    private freeModeService: FreeModeService
   ) {}
 
   //==================== MÉTODOS PARA ROOM
@@ -76,6 +79,7 @@ export class RoomService {
       const roomState: RoomState = {
         isGameOcurring: false,
         gameId: gameId,
+        cards: this.freeModeService.cards() //DADOS MOCKADOS.
       };
 
       const updatedRoom: Room = {
@@ -174,9 +178,25 @@ export class RoomService {
     await updateDoc(ref, updatedData);
   }
 
+  // Observa o documento da sala esperando uma mudança para atualizar para todos
+  listenRoom(roomId: string): Observable<Room> {
+    const refDoc = doc(
+      this.firestore,
+      this.path,
+      roomId
+    );
+
+    try {
+      return docData(refDoc) as Observable<Room>;
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
   //==================== MÉTODOS PARA JOGADORES
 
-  // Observa a colleção de jogadores esperando uma mudança para atualizar para todos
+  // Observa a subcoleção de jogadores esperando uma mudança para atualizar para todos
   listenPlayers(roomId: string): Observable<PlayerEntity[]> {
     const refCollection = collection(
       this.firestore,

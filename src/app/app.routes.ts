@@ -15,6 +15,7 @@ import { GameDescriptionComponent } from './pages/my-games/game-description/game
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
 import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
+import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
 import { authGuard } from './auth.guard';
 import { GameEditComponent } from './pages/my-games/game-edit/game-edit.component';
 
@@ -53,6 +54,11 @@ export const routes: Routes = [
         path: 'rooms/:roomLink',
         component: RoomsComponent,
         title: 'Rooms',
+      },
+      {
+        path: 'rooms-rule-based',
+        component: RuleBasedRoomComponent,
+        title: 'Rule Based Room'
       },
       {
         path: 'my-layouts/create-layout/:cardLayoutId',
