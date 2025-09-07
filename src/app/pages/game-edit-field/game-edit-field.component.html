@@ -30,6 +30,7 @@
         cdkDrag 
         cdkDragBoundary=".game-field"
         (cdkDragEnded)="onDragEnd($event, 0)"
+        [cdkDragFreeDragPosition]="item.position"
         class="next-phase-btn">
         Next Phase
       </button>
@@ -42,6 +43,7 @@
         cdkDrag
         cdkDragBoundary=".game-field"
         (cdkDragEnded)="onDragEnd($event, i)"
+        [cdkDragFreeDragPosition]="item.position"
         [ngClass]="item.type">
         {{ item.nameIdentifier }}
       </div>

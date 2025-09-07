@@ -19,13 +19,13 @@ import { ToastService } from '../../services/toast.service';
 })
 export class GameEditFieldComponent implements OnInit{
   game!: GameInfo;
-  items: GameFieldItem[] = [{type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'}];
+  items: GameFieldItem[] = [];
 
   addPile() {
     this.items.push({
       type: 'pile',
       position: {x: 100, y: 100},
-      nameIdentifier: ''
+      nameIdentifier: `item_${this.items.length}`
     });
     console.log(this.game)
   }
@@ -34,7 +34,7 @@ export class GameEditFieldComponent implements OnInit{
     this.items.push({
       type: 'label',
       position: {x: 100, y: 100},
-      nameIdentifier: ''
+      nameIdentifier: `item_${this.items.length}`
     });
   }
 
@@ -76,9 +76,15 @@ export class GameEditFieldComponent implements OnInit{
    */
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
-    console.log('gameId: ', gameId);
     this.game = await this.gameInfoService.getGameInfoById(gameId);
-    console.log('Jogo selecionado: ', this.game);
+
+    if (this.game.fieldItems && this.game.fieldItems.length > 0) {
+      this.items = [...this.game.fieldItems];
+    }
+    
+    else {
+      this.items.push({type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
+    }
   }
 
 }
