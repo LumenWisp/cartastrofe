@@ -15,34 +15,37 @@
     </div>
   </div>
 
-  <p-button label="Salvar Campo" />
+  <p-button label="Salvar Campo" (click)="saveField()" />
 
 </div>
 
 <!-- Área de jogo -->
 <div class="game-field" #gameField>
-  <button 
-    cdkDrag 
-    cdkDragBoundary=".game-field"
-    class="next-phase-btn">
-    Next Phase
-  </button>
-  @for (item of items; track item) {
-    @if (item.type === 'pile') {
-      <div 
-        cdkDrag
+  
+  @for (item of items; track item; let i = $index) {
+
+    @if (item.type === 'passPhase') {
+
+      <button 
+        cdkDrag 
         cdkDragBoundary=".game-field"
-        class="pile">
-        {{ item.nameIdentifier }}
-      </div>
+        (cdkDragEnded)="onDragEnd($event, 0)"
+        class="next-phase-btn">
+        Next Phase
+      </button>
+
     }
-    @if (item.type === 'label') {
+
+    @else {
+
       <div 
         cdkDrag
         cdkDragBoundary=".game-field"
-        class="label">
+        (cdkDragEnded)="onDragEnd($event, i)"
+        [ngClass]="item.type">
         {{ item.nameIdentifier }}
       </div>
+
     }
   }
 </div>

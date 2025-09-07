@@ -1,5 +1,5 @@
 import { GameModesEnum } from '../enum/game-modes.enum';
-
+import { GameFieldItem } from './game-field-item';
 export interface GameInfoData {
   name: string;
   description: string;
@@ -12,6 +12,7 @@ export interface GameInfo extends GameInfoData {
   id: string;
   countCards: number;
   userId: string;
+  fieldItems?: GameFieldItem[];
   
   // ===============================================================
   // Campos que representam o estado do workSpace das regras do jogo
