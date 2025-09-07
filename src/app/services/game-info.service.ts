@@ -94,6 +94,8 @@ export class GameInfoService {
         ...gameInfoObject,
         onGameStart: this.blockWorkspaceService.onGameStartDefault,
         onMoveCardFromTo: this.blockWorkspaceService.onMoveCardFromToDefault,
+        onPhaseStart: this.blockWorkspaceService.onPhaseStartDefault,
+        onPhaseEnd: this.blockWorkspaceService.onPhaseEndDefault,
         winCondition: this.blockWorkspaceService.winConditionDefault,
       }
     }

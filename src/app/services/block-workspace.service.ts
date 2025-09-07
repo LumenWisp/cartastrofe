@@ -36,6 +36,34 @@ export class BlockWorkspaceService {
     },
   };
 
+  public readonly onPhaseStartDefault: any = {
+    blocks: {
+      blocks: [
+        {
+          id: 'default_block_onPhaseStartDefault',
+          type: 'onPhaseStart',
+          x: 220,
+          y: 39,
+        },
+      ],
+      languageVersion: 0,
+    },
+  };
+
+  public readonly onPhaseEndDefault: any = {
+    blocks: {
+      blocks: [
+        {
+          id: 'default_block_onPhaseEndDefault',
+          type: 'onPhaseEnded',
+          x: 220,
+          y: 39,
+        },
+      ],
+      languageVersion: 0,
+    },
+  };
+
   public readonly winConditionDefault: any = {
     blocks: {
       blocks: [

@@ -20,5 +20,7 @@ export interface GameInfo extends GameInfoData {
   // Triggers
   onGameStart?: any;
   onMoveCardFromTo?: any;
+  onPhaseStart?: any;
+  onPhaseEnd?: any;
   winCondition?: any;
 }
