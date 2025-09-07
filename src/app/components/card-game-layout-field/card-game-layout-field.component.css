@@ -1,0 +1,59 @@
+.card-layout-field {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+
+  &.image {
+    border: 1px solid #000000;
+  }
+
+  &.text {
+    border: 1px dashed #000000;
+  }
+}
+
+.resize-handle {
+  --thickness: 5px;
+  --length: 60%;
+
+  position: absolute;
+  opacity: 0.7;
+  background: #000000;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.resize-handle-width {
+    top: 50%;
+    width: var(--thickness);
+    height: var(--length);
+    cursor: ew-resize;
+  }
+  &.resize-handle-height {
+    left: 50%;
+    width: var(--length);
+    height: var(--thickness);
+    cursor: ns-resize;
+  }
+
+  &.resize-handle-right {
+    right: 0;
+    translate: 50% -50%;
+  }
+  &.resize-handle-left {
+    left: 0;
+    translate: -50% -50%;
+  }
+  &.resize-handle-top {
+    top: 0;
+    translate: -50% -50%;
+  }
+  &.resize-handle-bottom {
+    bottom: 0;
+    translate: -50% 50%;
+  }
+}

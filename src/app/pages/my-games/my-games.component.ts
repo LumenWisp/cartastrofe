@@ -1,16 +1,27 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+// angular
+import { Component, computed, inject, signal, WritableSignal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+// primeng
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { ButtonModule } from 'primeng/button';
-import { GameInfoService } from '../../services/game-info.service';
 import { PanelModule } from 'primeng/panel';
-import { CommonModule } from '@angular/common';
-import { UserEntity } from '../../types/user';
-import { UserService } from '../../services/user-service.service';
-import { GameInfo } from '../../types/game-info';
+import { SelectButtonModule } from 'primeng/selectbutton';
+// components
+import { ModalCreateGameComponent } from '../../components/modal-create-game/modal-create-game.component';
 import { PanelGameComponent } from '../../components/panel-game/panel-game.component';
+import { PlaceholderGridComponent } from "../../components/placeholder-grid/placeholder-grid.component";
+// services
+import { GameInfoService } from '../../services/game-info.service';
+// types
+import { GameInfo } from '../../types/game-info';
+// enums
+import { GameModesEnum } from '../../enum/game-modes.enum';
+import { forkJoin } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-my-games',
@@ -23,46 +34,70 @@ import { PanelGameComponent } from '../../components/panel-game/panel-game.compo
     ButtonModule,
     PanelModule,
     CommonModule,
-  ],
+    TranslatePipe,
+    PlaceholderGridComponent,
+    FormsModule,
+    SelectButtonModule,
+],
   templateUrl: './my-games.component.html',
   styleUrl: './my-games.component.css',
 })
 export class MyGamesComponent {
-  showCreateGameModal: boolean = false;
+  showCreateGameModal = false;
+  modes: { label: string; value: GameModesEnum }[] = [];
+  translateService = inject(TranslateService);
 
-  user: UserEntity | null = null;
-  games: GameInfo[] = []
+  games: WritableSignal<GameInfo[]> = signal([]);
+  search = signal('');
+  gameMode = signal<GameModesEnum | null>(null);
 
-  @ViewChild('panels') panelsEl: ElementRef<HTMLDivElement> | undefined;
+  filteredGames = computed(() => {
+    let games = this.games();
 
-  constructor(
-    private gameInfoService: GameInfoService,
-    private userService: UserService
-  ) {}
+    if (this.search()) {
+      games = games.filter(game => {
+        return game.name.toLowerCase().includes(this.search().toLowerCase());
+      });
+    }
 
-  async ngOnInit(){
-    this.user = this.userService.getUserLogged();
-    await this.loadGames()
+    if (this.gameMode()) {
+      games = games.filter(game => game.gameMode === this.gameMode());
+    }
+
+    return games;
+  });
+
+  constructor(private gameInfoService: GameInfoService, private toastService: ToastService) {}
+
+  ngOnInit() {
+    this.loadGames();
+
+    forkJoin({
+      gameModeStructured: this.translateService.get('game-mode.structured'),
+      gameModeFree: this.translateService.get('game-mode.free')
+    }).subscribe(translations => {
+      this.modes = [
+        { label: translations.gameModeStructured, value: GameModesEnum.STRUCTURED },
+        { label: translations.gameModeFree, value: GameModesEnum.FREE },
+      ];
+    });
   }
 
-  @HostListener('window:resize')
-  remainingGameInfoSpace() {
-    if (!this.panelsEl) return [];
-
-    const style = getComputedStyle(this.panelsEl.nativeElement);
-    const styleColumns = style.getPropertyValue('grid-template-columns');
-    const columns = styleColumns.split(' ').length;
-    const occupiedColumns = this.gameInfoService.totalGameInfos + 1;
-    const remainder = occupiedColumns % columns;
-    const count = remainder === 0 ? columns : columns - remainder;
-    return new Array(count).fill(null);
+  resetFilter() {
+    this.search.set('');
+    this.gameMode.set(null);
   }
 
-  async loadGames(){
-    if(this.user) this.games = await this.gameInfoService.getGameInfos(this.user?.userID)
+  loadGames() {
+    this.gameInfoService.getGameInfos()
+      .then(games => {
+        this.games.set(games);
+      }).catch(() => {
+        this.toastService.showErrorToast('Erro ao carregar os jogos', 'Houve um erro ao carregar os jogos!')
+      })
   }
 
-  showDialog() {
+  showModal() {
     this.showCreateGameModal = true;
   }
 }

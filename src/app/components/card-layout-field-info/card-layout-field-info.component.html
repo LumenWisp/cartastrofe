@@ -1,0 +1,80 @@
+<div class="card-field-info">
+  <p-button icon="pi pi-times" (click)="infoClosed()" />
+
+  <div>
+    <label class="card-field-info-label" for="type">Type</label>
+
+    <p-select
+      [options]="optionsCardType"
+      [(ngModel)]="cardLayoutField.type"
+      optionLabel="label"
+      optionValue="value"
+    />
+  </div>
+
+  <div>
+    <label class="card-field-info-label" for="x">X</label>
+    <p-input-number
+      class="input-number"
+      [fluid]="true"
+      [min]="0"
+      [max]="cardLayoutDimensions.maxWidth - cardLayoutField.width"
+      inputId="x"
+      [(ngModel)]="cardLayoutField.x"
+      [showButtons]="true"
+      (onInput)="checkX()"
+    />
+  </div>
+
+  <div>
+    <label class="card-field-info-label" for="y">Y</label>
+    <p-input-number
+      class="input-number"
+      [fluid]="true"
+      [min]="0"
+      [max]="cardLayoutDimensions.maxHeight - cardLayoutField.height"
+      inputId="y"
+      [(ngModel)]="cardLayoutField.y"
+      [showButtons]="true"
+      (onInput)="checkY()"
+    />
+  </div>
+
+  <div>
+    <label class="card-field-info-label" for="width">Width</label>
+    <p-input-number
+      class="input-number"
+      [fluid]="true"
+      [min]="cardLayoutDimensions.minWidth"
+      [max]="cardLayoutDimensions.maxWidth"
+      inputId="width"
+      [(ngModel)]="cardLayoutField.width"
+      [showButtons]="true"
+      (onInput)="checkWidth()"
+    />
+  </div>
+
+  <div>
+    <label class="card-field-info-label" for="height">Height</label>
+    <p-input-number
+      class="input-number"
+      [fluid]="true"
+      [min]="cardLayoutDimensions.minHeight"
+      [max]="cardLayoutDimensions.maxHeight"
+      inputId="height"
+      [(ngModel)]="cardLayoutField.height"
+      [showButtons]="true"
+      (onInput)="checkHeight()"
+    />
+  </div>
+
+  <div>
+    <label class="card-field-info-label" for="value">Property</label>
+    <input
+      type="text"
+      pInputText
+      [fluid]="true"
+      [(ngModel)]="cardLayoutField.property"
+    />
+  </div>
+</div>

@@ -1,23 +1,66 @@
-<h1>Bem-vindo</h1>
-<span class="message">Faça o cadastro</span>
+<h1>{{'register.title' | translate }}</h1>
+<span class="message">{{'register.register-message' | translate }}</span>
 
-<form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<span class="form-control-error" [class.visible]="form.invalid && form.touched">
+  @if (registerForm.submitted) {
+    {{ 'register.errors.form-invalid' | translate }}  
+  }
+</span>
+
+<form class="form" [formGroup]="form" (ngSubmit)="submit()" #registerForm="ngForm">
+  @let nome = form.controls['name'];
+  @let email = form.controls['email'];
+  @let senha = form.controls['password'];
+  @let confirmarSenha = form.controls['confirmPassword'];
+
+
+  <!--Nome-->
   <p-floatlabel variant="on">
-    <label for="name">Nome</label>
+    <label for="name">{{'register.name-label' | translate }}</label>
     <input id="name" pInputText [fluid]="true" formControlName="name" />
   </p-floatlabel>
+  <span class="form-control-error" [class.visible]="nome.invalid && nome.touched"> 
+    {{ 'register.errors.name-required' | translate }}
+  </span>
 
+  <!--Email-->
   <p-floatlabel variant="on">
-    <label for="email">Email</label>
+    <label for="email">{{'register.email' | translate }}</label>
     <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
+  <span class="form-control-error" [class.visible]="email.invalid && email.touched"> 
+    @if (email.hasError('required')) {
+      {{ 'register.errors.email-required' | translate }}
+    } @else if (email.hasError('email')) {
+      {{ 'register.errors.email-invalid' | translate }}
+    }
+  </span>
 
+  <!--Senha-->
   <p-floatlabel variant="on">
     <p-password inputId="password" [toggleMask]="true" [feedback]="false" [fluid]="true" formControlName="password" />
-    <label for="password">Senha</label>
+    <label for="password">{{'register.password' | translate }}</label>
   </p-floatlabel>
+  <span class="form-control-error" [class.visible]="senha.invalid && senha.touched"> 
+    
+    @if (senha.hasError('pattern')) {
+      {{ 'register.errors.password-pattern' | translate }}
+    } @else {
+      {{ 'register.errors.password-required' | translate }}
+    }
+  </span>
 
-  <p-button type="submit" class="button-submit" label="Cadastrar" />
+  <!--Confirmação de Senha-->
+  <p-floatlabel variant="on">
+    <p-password inputId="confirmPassword" [toggleMask]="true" [feedback]="false" [fluid]="true" formControlName="confirmPassword" />
+    <label for="confirmPassword">{{'register.confirm-password' | translate }}</label>
+  </p-floatlabel>
+  <span class="form-control-error" [class.visible]="confirmarSenha.invalid && confirmarSenha.touched"> 
+    {{ 'register.errors.confirm-password-required' | translate }}
+  </span>
 
-  <a class="other-auth-link link" routerLink="/login">Já tem conta?</a>
+
+  <p-button type="submit" class="button-submit" label="{{'register.submit-button' | translate }}" />
+
+  <a class="other-auth-link go-to-login-text" (click)="goToLoginPage()">{{'register.login-prompt' | translate }}</a>
 </form>

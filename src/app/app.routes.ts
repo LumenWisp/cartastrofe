@@ -12,18 +12,23 @@ import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
+import { GameComponent } from './components/game/game.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
+import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
+import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   {
-      path: '',
-      component: HomepageComponent,
-      title: 'Cartastrofe | Homepage'
+    path: '',
+    component: HomepageComponent,
+    title: 'Cartastrofe | Homepage'
   },
   {
     path: '',
     component: AppMainComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: 'my-games',
@@ -31,17 +36,27 @@ export const routes: Routes = [
         title: 'My Games',
       },
       {
+        path: 'my-games/create-card',
+        component: CreateCardComponent,
+        title: 'Create Card',
+      },
+      {
         path: 'my-layouts',
         component: MyLayoutsComponent,
         title: 'My Layouts',
       },
       {
-        path: 'rooms',
+        path: 'rooms/:roomLink',
         component: RoomsComponent,
         title: 'Rooms',
       },
       {
-        path: 'my-layouts/create-layout',
+        path: 'rooms-rule-based',
+        component: RuleBasedRoomComponent,
+        title: 'Rule Based Room'
+      },
+      {
+        path: 'my-layouts/create-layout/:cardLayoutId',
         component: CreateLayoutComponent,
         title: 'Create Layout',
       },
@@ -50,6 +65,11 @@ export const routes: Routes = [
         component: GameDescriptionComponent,
         title: 'Game Description',
       },
+      {
+        path: 'my-games/game-edit/:gameId',
+        component: GameComponent,
+        title: 'Edit game'
+      }
     ],
   },
   {

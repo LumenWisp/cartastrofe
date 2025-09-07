@@ -1,5 +1,16 @@
+import { CardGameField, CardLayoutField } from './card-layout-field';
+
+export interface CardLayoutModel extends CardLayout {
+  id: string;
+  userId: string;
+}
+
 export interface CardLayout {
-  id: number;
   name: string;
-  userId: number;
+  cardFields: CardLayoutField[];
+}
+
+export interface CardGameLayout {
+  name: string;
+  cardFields: CardGameField[];
 }

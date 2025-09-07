@@ -1,10 +1,15 @@
-export interface GameInfo {
-  id: string;
+import { GameModesEnum } from '../enum/game-modes.enum';
+
+export interface GameInfoData {
   name: string;
   description: string;
-  title: string;
+  gameMode: GameModesEnum;
   countPlayersMin: number;
-  countPlayersMax?: number;
+  countPlayersMax: number;
+}
+
+export interface GameInfo extends GameInfoData {
+  id: string;
   countCards: number;
   userId: string;
 }

@@ -1,20 +1,51 @@
-<h1>Bem-vindo</h1>
-<span class="message">Faça o login</span>
+<h1>{{ 'login.title' | translate }}</h1>
+<span class="message">{{ 'login.login-message' | translate }}</span>
 
-<form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
+<span class="form-control-error" [class.visible]="form.invalid && form.touched">
+  @if (loginForm.submitted) {
+    {{ 'login.errors.invalid-credentials' | translate }}
+  }
+</span>
+
+<form class="form" [formGroup]="form" (submit)="submit()" #loginForm="ngForm">
+  @let email = form.controls['email'];
+  @let password = form.controls['password'];
+
+  <!--Email-->
   <p-floatlabel variant="on">
-    <label for="email">Email</label>
-    <input id="email" pInputText fluid="true" formControlName="email" />
+    <label for="email">{{'login.email' | translate }}</label>
+    <input id="email" pInputText [fluid]="true" formControlName="email" />
   </p-floatlabel>
+  <span class="form-control-error" [class.visible]="email.invalid && email.touched"> 
+    @if (email.hasError('required')) {
+      {{ 'login.errors.email-required' | translate }}
+    } @else if (email.hasError('email')) {
+      {{ 'login.errors.email-invalid' | translate }}
+    }
+  </span>
 
+  
+  <!--Password-->
   <p-floatlabel variant="on">
-    <p-password inputId="password" [toggleMask]="true" feedback="false" fluid="true" formControlName="password" />
-    <label for="password">Senha</label>
+    <p-password
+      inputId="password"
+      [toggleMask]="true"
+      [feedback]="false"
+      [fluid]="true"
+      formControlName="password"
+    />
+    <label for="password">{{'login.password-label' | translate }}</label>
   </p-floatlabel>
+  <span class="form-control-error" [class.visible]="password.invalid && password.touched">
+    {{ 'login.errors.password-required' | translate }}
+  </span>
 
-  <a class="link" routerLink="/forget-password">Esqueceu a senha?</a>
+  <!--Forgot Password-->
+  <a class="forget-password-link" routerLink="/forget-password">{{'login.forgot-password' | translate }}</a>
 
-  <p-button type="submit" class="button-submit" label="Entrar" />
+  <!--Submit Button-->
+  <p-button type="submit" class="button-submit" label="{{'login.submit-button' | translate }}" />
 
-  <a class="other-auth-link link" routerLink="/register">Não tem conta?</a>
+  <!--Register Link-->
+  <a class="other-auth-link go-to-register-text" (click)="goToRegisterPage()">{{'login.register-prompt' | translate }}</a>
 </form>

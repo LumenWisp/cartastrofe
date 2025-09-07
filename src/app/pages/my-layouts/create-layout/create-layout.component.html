@@ -1,3 +1,33 @@
-<input type="text" pInputText/>
+<p-drawer [(visible)]="menuVisible" header="Card Layout">
+  <p-menu [model]="menuItems"></p-menu>
+</p-drawer>
 
-<router-outlet></router-outlet>
+<div class="layout">
+  <p-button
+    class="lateral-menu-btn"
+    label="Menu"
+    icon="pi pi-arrow-right"
+    iconPos="right"
+    (click)="menuVisible = true"
+  />
+  <p-button
+    class="save-btn"
+    label="Salvar"
+    icon="pi pi-save"
+    iconPos="right"
+    (click)="saveCardLayout()"
+  />
+
+  @if (cardLayout) {
+    <app-card-game-layout [cardLayout]="cardLayout!" [isEditing]="true" (cardLayoutFieldClicked)="openCardFieldInfo($event)" class="card-layout" />
+  }
+
+  @if (cardFieldSelected) {
+    <app-card-layout-field-info
+      class="card-layout-info-menu"
+      [cardLayoutField]="cardFieldSelected"
+      [cardLayoutDimensions]="DIMENSIONS"
+      (cardLayoutFieldInfoClosed)="closeCardFieldInfo()"
+    />
+  }
+</div>

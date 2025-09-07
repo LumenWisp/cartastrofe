@@ -1,5 +1,4 @@
 @import "primeicons/primeicons.css";
-@import "./app/shared/form-variables.css";
 
 * {
   padding: 0;
@@ -16,4 +15,33 @@
     --bg: #f9fafc;
     --card-bg: #fff;
     --shadow: 0 4px 24px rgba(44,62,80,0.08);
+}
+
+a {
+  color: black;
+}
+
+a:hover {
+  color: #2c2c2c;
+}
+
+p-password .p-password-mask-icon:hover {
+  cursor: pointer; /* mostra que o ícone de "mostrar senha" é clicável */
+}
+
+p-menubar .p-menubar-button {
+  order: 1; /* posiciona o menu de hamburguer à direita */
+}
+
+p-dialog .p-dialog-content {
+  overflow-y: visible;
+}
+
+textarea {
+  resize: none;
+}
+
+body {
+  height: 100dvh;
+  background: var(--p-app-body);
 }

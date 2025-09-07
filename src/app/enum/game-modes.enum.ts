@@ -1,4 +1,4 @@
-export enum GameModes {
+export enum GameModesEnum {
   STRUCTURED = 'STRUCTURED',
   FREE = 'FREE',
 }
