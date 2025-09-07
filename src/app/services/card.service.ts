@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { CardModel } from '../types/card';
 import { CardGameLayout, CardLayoutModel } from '../types/card-layout';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
-import { addDoc, collection, doc, Firestore } from '@angular/fire/firestore';
+import { addDoc, collection, doc, Firestore, getDocs, query, where } from '@angular/fire/firestore';
 import { UserService } from './user-service.service';
 import { UtilsService } from './utils.service';
 
@@ -18,13 +18,20 @@ export class CardService {
     private utilsService: UtilsService,
   ) {}
 
+  async getCardsByLayoutId(cardLayoutId: string): Promise<CardModel[]> {
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('layoutId', '==', cardLayoutId));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as CardModel) || [];
+  }
+
   async saveCard(cardName: string, card: CardGameLayout, cardLayout: CardLayoutModel) {
-    const user = this.userService.currentUser()
+    const user = await this.userService.currentUser()
 
     if (user === undefined) return
     if (user === null) throw new Error('Usuário não está logado');
 
-    const userId = user.userID;
+    const userId = user.userId;
 
     const collectionRef = collection(this.firestore, this.path)
 

@@ -1,16 +1,17 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, WritableSignal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { Router, RouterModule } from '@angular/router';
 import { GameInfoService } from '../../services/game-info.service';
-import { GameInfo } from '../../types/game-info';
-import { UserEntity } from '../../types/user';
-import { UserService } from '../../services/user-service.service';
+import { GameInfoModel } from '../../types/game-info';
 import { FormsModule } from '@angular/forms';
 import { RoomService } from '../../services/room.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CardLayoutModel } from '../../types/card-layout';
+import { CardLayoutService } from '../../services/card-layout.service';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-modal-create-room',
@@ -23,6 +24,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     RouterModule,
     FormsModule,
     TranslatePipe,
+    SelectModule
   ],
   templateUrl: './modal-create-room.component.html',
   styleUrl: './modal-create-room.component.css',
@@ -31,50 +33,32 @@ export class ModalCreateRoomComponent {
   @Input() display: boolean = false;
   @Output() displayChange = new EventEmitter<boolean>();
 
-  gameOptions: any = [];
-  selectedGame: any = { label: '', value: '' };
-  playerOptions = [];
-  games: GameInfo[] = [];
-  user!: UserEntity | null;
+  gameInfo: WritableSignal<GameInfoModel | null> = signal(null);
+  gameInfos: GameInfoModel[] = []
 
   constructor(
     private gameInfoService: GameInfoService,
-    private userService: UserService,
     private router: Router,
     private roomService: RoomService
-  ) {}
-
-  async ngOnInit() {
-    this.user = this.userService.getUserLogged();
+  ) {
+    this.loadGames();
   }
 
-  async ngOnChanges() {
-    await this.loadGames();
-  }
-
-  async loadGames() {
-    if(this.user) this.games = await this.gameInfoService.getGameInfos();
-    this.gameOptions = [];
-    this.games.forEach((game) => {
-      this.gameOptions.push({label: game.name, value: game.name});
-    })
+  loadGames() {
+    this.gameInfoService.getGameInfosPlayable().then((gameInfos) => {
+      this.gameInfos = gameInfos
+    });
   }
 
   close() {
-    this.selectedGame = { label: '', value: '' };
-    this.display = false;
-    this.displayChange.emit(this.display);
+    this.displayChange.emit(false);
   }
 
-  async createRoom(gameId: string): Promise<void> {
-    if (typeof gameId != 'string') {
-      console.error('Selecione uma sala');
-      return;
-    }
+  async createRoom(): Promise<void> {
+    if (!this.gameInfo()) return
 
     try {
-      console.log('ID do jogo selecionado: ', this.selectedGame);
-      const room = await this.roomService.createRoom(gameId);
+      const room = await this.roomService.createRoom(this.gameInfo()!.id);
 
       if (!room) {
         console.log('Não há salas disponiveis');
@@ -84,6 +68,8 @@ export class ModalCreateRoomComponent {
     } catch (error) {
       console.error('Erro ao criar sala', error);
       throw error;
+    } finally {
+      this.close();
     }
   }
 

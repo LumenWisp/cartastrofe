@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 // services
 import { GameInfoService } from '../../../services/game-info.service';
 // types
-import { GameInfo } from '../../../types/game-info';
+import { GameInfoModel } from '../../../types/game-info';
 // enums
 import { GameModesEnum } from '../../../enum/game-modes.enum';
 
@@ -21,7 +21,7 @@ import { GameModesEnum } from '../../../enum/game-modes.enum';
   styleUrl: './game-description.component.css'
 })
 export class GameDescriptionComponent implements OnInit {
-  gameInfo: GameInfo | null = null
+  gameInfo: GameInfoModel | null = null
   ngIconGamemode = {};
 
   constructor(private route: ActivatedRoute, private gameInfoService: GameInfoService) {}

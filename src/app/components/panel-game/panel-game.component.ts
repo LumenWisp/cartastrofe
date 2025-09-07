@@ -9,7 +9,7 @@ import { ButtonModule } from 'primeng/button';
 // enums
 import { GameModesEnum } from '../../enum/game-modes.enum';
 // types
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -20,7 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './panel-game.component.css',
 })
 export class PanelGameComponent implements OnInit {
-  @Input({ required: true }) gameInfo!: GameInfo;
+  @Input({ required: true }) gameInfo!: GameInfoModel;
 
   ngIconGamemode = {};
 

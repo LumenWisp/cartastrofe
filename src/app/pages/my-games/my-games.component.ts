@@ -19,7 +19,7 @@ import { PlaceholderGridComponent } from "../../components/placeholder-grid/plac
 import { GameInfoService } from '../../services/game-info.service';
 import { ToastService } from '../../services/toast.service';
 // types
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 // enums
 import { GameModesEnum } from '../../enum/game-modes.enum';
 
@@ -47,7 +47,7 @@ export class MyGamesComponent {
   modes: { label: string; value: GameModesEnum }[] = [];
   translateService = inject(TranslateService);
 
-  games: WritableSignal<GameInfo[]> = signal([]);
+  games: WritableSignal<GameInfoModel[]> = signal([]);
   search = signal('');
   gameMode = signal<GameModesEnum | null>(null);
 

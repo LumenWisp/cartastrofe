@@ -1,10 +1,30 @@
-<p-tabs value="game-info">
-  <p-tablist>
-    <p-tab value="game-info">Jogo</p-tab>
-  </p-tablist>
-  <p-tabpanels>
-    <p-tabpanel value="game-info">
+@if (currentGame) {
+  <p-tabs value="game-info">
+    <p-tablist>
+      <p-tab value="game-info">Jogo</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="game-info">
+        <div>
+          <span>Card Layout:</span>
 
-    </p-tabpanel>
-  </p-tabpanels>
-</p-tabs>
+          <p-select
+            [options]="cardLayouts"
+            [(ngModel)]="cardLayout"
+            optionLabel="name"
+            placeholder="Select a Card Layout"
+          ></p-select>
+        </div>
+
+        <p-button
+          label="Salvar"
+          icon="pi pi-save"
+          iconPos="right"
+          (click)="saveGame()"
+        />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+} @else {
+  <p>Nenhum jogo encontrado</p>
+}
