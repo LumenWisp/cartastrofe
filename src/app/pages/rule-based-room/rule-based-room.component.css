@@ -55,6 +55,18 @@
   user-select: none;
 }
 
+.hand {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: 75%;
+  height: 200px;
+  border-radius: 6px;
+  background-color: gray;
+}
+
 .next-phase-btn {
   padding: 0.7rem 1.2rem;
   background: #4caf50;

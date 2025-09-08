@@ -37,6 +37,13 @@
 
     }
 
+    @else if (item.type === 'hand') {
+      <div 
+        [ngClass]="item.type">
+        {{ item.nameIdentifier }}
+    </div>
+    }
+
     @else {
 
       <div 

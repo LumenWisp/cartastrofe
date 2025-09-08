@@ -1,5 +1,6 @@
+import { GameFieldItemEnum } from "../enum/game-field-item.enum";
 export interface GameFieldItem {
-    type: 'pile' | 'label' | 'passPhase',
+    type: GameFieldItemEnum,
     position: {x: number, y: number},
     nameIdentifier: string,
 }

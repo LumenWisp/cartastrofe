@@ -44,7 +44,7 @@
   position: relative;
   width: calc(100% - 260px);
   height: 100vh;
-  background: #fff;
+  background-color: transparent;
   overflow: hidden;
 }
 
@@ -63,7 +63,18 @@
   border: 1px solid #333;
   background: #fafafa;
   border-radius: 4px;
-  font-weight: bold;
+}
+
+.hand {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: 75%;
+  height: 200px;
+  border-radius: 6px;
+  background-color: gray;
 }
 
 .next-phase-btn {

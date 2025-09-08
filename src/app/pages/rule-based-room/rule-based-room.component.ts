@@ -25,6 +25,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 // RXJS
 import { Subscription } from 'rxjs';
 
+// ENUM
+import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
+
 @Component({
   selector: 'app-rule-based-room',
   imports: [CommonModule, PanelModule, ButtonModule,CdkDrag, TranslatePipe, RouterLink],
@@ -91,7 +94,7 @@ export class RuleBasedRoomComponent implements OnInit{
     }
     
     else {
-      this.items.push({type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
+      this.items.push({type: GameFieldItemEnum.PASSPHASE, position: {x: 0, y: 0}, nameIdentifier: 'passPhase'}, {type: GameFieldItemEnum.HAND, position: {x: 0, y: 0}, nameIdentifier: 'hand'});
     }
   }
 
@@ -133,7 +136,7 @@ export class RuleBasedRoomComponent implements OnInit{
           }
           
           else {
-            this.items.push({type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
+            this.items.push({type: GameFieldItemEnum.PASSPHASE, position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
           }
         }
           

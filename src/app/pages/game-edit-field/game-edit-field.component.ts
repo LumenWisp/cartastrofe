@@ -12,6 +12,8 @@ import { GameInfoService } from '../../services/game-info.service';
 import { GameFieldItem } from '../../types/game-field-item';
 import { ToastService } from '../../services/toast.service';
 
+import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
+
 @Component({
   selector: 'app-game-edit-field',
   imports: [ButtonModule, RouterLink, CdkDrag, CommonModule, PopoverModule],
@@ -25,7 +27,7 @@ export class GameEditFieldComponent implements OnInit{
 
   addPile() {
     this.items.push({
-      type: 'pile',
+      type: GameFieldItemEnum.PILE,
       position: {x: 100, y: 100},
       nameIdentifier: `item_${this.items.length}`
     });
@@ -34,7 +36,7 @@ export class GameEditFieldComponent implements OnInit{
 
   addLabel() {
     this.items.push({
-      type: 'label',
+      type: GameFieldItemEnum.LABEL,
       position: {x: 100, y: 100},
       nameIdentifier: `item_${this.items.length}`
     });
@@ -98,7 +100,10 @@ export class GameEditFieldComponent implements OnInit{
     }
     
     else {
-      this.items.push({type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
+      this.items.push(
+        {type: GameFieldItemEnum.PASSPHASE, position: {x: 0, y: 0}, nameIdentifier: 'passPhase'}, 
+        {type: GameFieldItemEnum.HAND, position: {x: 0, y: 0}, nameIdentifier: 'hand'}
+      );
     }
   }
 
