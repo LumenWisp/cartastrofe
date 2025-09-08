@@ -43,8 +43,8 @@ export class ModalCreateGameComponent {
 
   translateService = inject(TranslateService);
 
-  private readonly MIN_PLAYERS = 2;
-  private readonly MAX_PLAYERS = 99;
+  private readonly MIN_PLAYERS = 1;
+  private readonly MAX_PLAYERS = 4;
 
   modes: { label: string; value: GameModesEnum }[] = [];
 
@@ -95,6 +95,24 @@ export class ModalCreateGameComponent {
         { label: translations.gameModeFree, value: GameModesEnum.FREE },
       ];
     })
+
+    this.form.controls.gameMode.valueChanges.subscribe((mode) => {
+      if (mode === GameModesEnum.STRUCTURED) {
+        this.form.controls.countPlayersMax.setValidators([
+          Validators.required,
+          Validators.min(1),
+          Validators.max(2)
+        ]);
+      } 
+      else {
+        this.form.controls.countPlayersMax.setValidators([
+          Validators.required,
+          Validators.min(1),
+          Validators.max(4)
+        ]);
+      }
+      this.form.controls.countPlayersMax.updateValueAndValidity();
+    });
   }
 
   close() {

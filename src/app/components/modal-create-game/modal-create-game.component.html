@@ -43,7 +43,7 @@
     </div>
 
     <div class="inline-input">
-      <span>Número de jogadores <br> (mínimo 2, máximo 99)</span>
+      <span>Número de jogadores em cada modo<br> FREE: (mínimo 1, máximo 4) <br> STRUCTURED: (mínimo 1, máximo 2)</span>
 
       <div class="stacked-input">
         <span>Min</span>
@@ -52,8 +52,8 @@
           id="countPlayersMin"
           inputId="integeronly"
           [showButtons]="true"
-          [min]="2"
-          [max]="99"
+          [min]="1"
+          [max]="(this.form.controls.gameMode.value === 'STRUCTURED')? 2 : 4"
           [fluid]="true"
           [allowEmpty]="false"
           buttonLayout="vertical"
@@ -68,8 +68,8 @@
           id="countPlayersMax"
           inputId="integeronly"
           [showButtons]="true"
-          [min]="2"
-          [max]="99"
+          [min]="1"
+          [max]="(this.form.controls.gameMode.value === 'STRUCTURED')? 2 : 4"
           [fluid]="true"
           [allowEmpty]="false"
           buttonLayout="vertical"

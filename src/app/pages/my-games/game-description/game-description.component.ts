@@ -45,4 +45,10 @@ export class GameDescriptionComponent implements OnInit {
       'pi-compass': this.gameInfo.gameMode === GameModesEnum.FREE,
     }
   }
+
+  async deleteGame(): Promise<void>{
+    if(this.gameInfo){
+      await this.gameInfoService.deleteGameInfo(this.gameInfo.id);
+    }
+  }
 }

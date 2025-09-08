@@ -35,7 +35,7 @@ export class PanelGameComponent implements OnInit {
     }
   }
 
-  async deleteGame(){
+  async deleteGame(): Promise<void> {
     await this.gameInfoService.deleteGameInfo(this.gameInfo.id);
     this.removeGameInfo.emit(this.gameInfo.id);
   }

@@ -14,6 +14,7 @@
       <p-button label="Campo" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-field', gameInfo?.id]" />
       <p-button label="Regras" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-rules', gameInfo?.id]" />
     }
+    <p-button label="Deletar" icon="pi pi-trash" severity="danger" [rounded]="true" (onClick)="deleteGame()" routerLink="/my-games" />
   </div>
 
   <div class="content">

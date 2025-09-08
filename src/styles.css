@@ -15,6 +15,7 @@
     --bg: #f9fafc;
     --card-bg: #fff;
     --shadow: 0 4px 24px rgba(44,62,80,0.08);
+    --danger: #f64e3f;
 }
 
 a {
