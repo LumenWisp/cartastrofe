@@ -20,6 +20,7 @@
       <button 
         cdkDrag
         [cdkDragFreeDragPosition]="item.position"
+        [cdkDragDisabled]="true"
         class="next-phase-btn">
         Next Phase
       </button>
@@ -31,6 +32,7 @@
       <div
         cdkDrag
         [cdkDragFreeDragPosition]="item.position"
+        [cdkDragDisabled]="true"
         [ngClass]="item.type">
         {{ item.nameIdentifier }}
       </div>

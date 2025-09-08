@@ -41,6 +41,7 @@
   background: #cce;
   border: 2px solid #99a;
   border-radius: 6px;
+  user-select: none;
 }
 
 .label {
@@ -51,6 +52,7 @@
   background: #fafafa;
   border-radius: 4px;
   font-weight: bold;
+  user-select: none;
 }
 
 .next-phase-btn {
@@ -61,4 +63,5 @@
   border-radius: 6px;
   font-weight: bold;
   cursor: grab;
+  user-select: none;
 }
