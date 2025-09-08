@@ -69,7 +69,7 @@ export class BlockWorkspaceService {
       blocks: [
         {
           id: 'default_block_winCondition',
-          type: 'onGameStart',
+          type: 'winCondition',
           x: 220,
           y: 39,
         },

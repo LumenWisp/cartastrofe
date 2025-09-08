@@ -35,7 +35,7 @@ export class ModalCreateRoomComponent {
   selectedGame: any = { label: '', value: '' };
   playerOptions = [];
   games: GameInfo[] = [];
-  user!: UserEntity | null;
+  user!: { email: string, userID: string; } | null | undefined;
 
   constructor(
     private gameInfoService: GameInfoService,
@@ -45,7 +45,7 @@ export class ModalCreateRoomComponent {
   ) {}
 
   async ngOnInit() {
-    this.user = this.userService.getUserLogged();
+    this.user = this.userService.currentUser();
   }
 
   async ngOnChanges() {

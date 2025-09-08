@@ -31,8 +31,8 @@ export const toolbox = {
         { kind: 'block', type: 'getPile' },
         { kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
-        { kind: 'block', type: 'getGeneralVariableValue' },
         { kind: 'block', type: 'getPhase' },
+        { kind: 'block', type: 'getGeneralVariableValue' },
       ]
     },
     {
@@ -78,6 +78,15 @@ export function registerBlocks() {
       this.appendDummyInput().appendField('onGameStart');
       this.setNextStatement(true, null);
       this.setColour(120);
+    }
+  };
+
+  // 🚀 WIN CONDITION
+  Blockly.Blocks['winCondition'] = {
+    init: function() {
+      this.appendDummyInput().appendField('winCondition');
+      this.setNextStatement(true, null);
+      this.setColour(60);
     }
   };
 
@@ -248,6 +257,13 @@ export function registerGenerators() {
     return code;
   };
 
+  // WIN CONDITION
+  javascriptGenerator.forBlock['winCondition'] = function() {
+    // TODO: Assemble javascript into the code variable.
+    const code = ''; //Todo o código que compoem a aba de winCondition vai estar um um mesmo atributo do game/card
+    return code;
+  };
+
   // GET CARD
   javascriptGenerator.forBlock['getCard'] = function(block, generator) {
     const text_card_id = block.getFieldValue('CARD_ID');
@@ -307,7 +323,7 @@ export function registerGenerators() {
     const text_new_attribute = block.getFieldValue('NEW_ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `blockCodeGeneratorsService.ChangeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
+    const code = `blockCodeGeneratorsService.changeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
     return code;
   };
 
@@ -329,7 +345,7 @@ export function registerGenerators() {
     const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = `${text_attribute}`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };

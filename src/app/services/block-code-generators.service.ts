@@ -9,7 +9,17 @@ export class BlockCodeGeneratorsService {
 
   constructor(private freeModeService: FreeModeService) { }
 
-  // Criar as funcoes usadas nos retornos dos blocos lógicos. exexmplo: getCard, getPile, moveCardTo
+  //===============================
+  //          TRIGGERS
+  //===============================
+
+  onPhase(phaseId: string, currentPhase: string): boolean{
+    return phaseId === currentPhase;
+  }
+
+  //===============================
+  //          ACTIONS
+  //===============================
   moveCardTo(cardId: string, pileId: string): void {
     const card =  this.freeModeService.getCardById(cardId);
     if(card){
@@ -19,7 +29,7 @@ export class BlockCodeGeneratorsService {
     }
   }
 
-  ChangeAttributeFromCardTo(attribute: keyof CardGame, cardId: string, attributeNewValue: string){
+  changeAttributeFromCardTo(attribute: keyof CardGame, cardId: string, attributeNewValue: string){
 
     const card =  this.freeModeService.getCardById(cardId);
     const newValue = parseInt(attributeNewValue)
