@@ -1,5 +1,5 @@
 // angular
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // primeng
 import { PanelModule } from 'primeng/panel';
@@ -12,6 +12,7 @@ import { GameModesEnum } from '../../enum/game-modes.enum';
 import { GameInfo } from '../../types/game-info';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { GameInfoService } from '../../services/game-info.service';
 
 @Component({
   selector: 'app-panel-game',
@@ -20,16 +21,22 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './panel-game.component.css',
 })
 export class PanelGameComponent implements OnInit {
+  @Output() removeGameInfo = new EventEmitter<string>();
   @Input({ required: true }) gameInfo!: GameInfo;
 
   ngIconGamemode = {};
 
-  constructor() {}
+  constructor(private gameInfoService: GameInfoService) {}
 
   ngOnInit() {
     this.ngIconGamemode = {
       'pi-shield': this.gameInfo.gameMode === GameModesEnum.STRUCTURED,
       'pi-compass': this.gameInfo.gameMode === GameModesEnum.FREE,
     }
+  }
+
+  async deleteGame(){
+    await this.gameInfoService.deleteGameInfo(this.gameInfo.id);
+    this.removeGameInfo.emit(this.gameInfo.id);
   }
 }

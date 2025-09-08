@@ -4,6 +4,7 @@ import { UserService } from './user-service.service';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 import {
   collection,
+  deleteDoc,
   doc,
   Firestore,
   getCountFromServer,
@@ -26,7 +27,7 @@ export class GameInfoService {
   constructor(
     private userService: UserService,
     private utilsService: UtilsService,
-    private blockWorkspaceService: BlockWorkspaceService,
+    private blockWorkspaceService: BlockWorkspaceService
   ) {}
 
   /**
@@ -89,7 +90,7 @@ export class GameInfoService {
     };
 
     // Verificar se é um jogo estruturado para adicionar o workspace das regras
-    if(gameInfo.gameMode === GameModesEnum.STRUCTURED){
+    if (gameInfo.gameMode === GameModesEnum.STRUCTURED) {
       gameInfoObject = {
         ...gameInfoObject,
         onGameStart: this.blockWorkspaceService.onGameStartDefault,
@@ -97,12 +98,28 @@ export class GameInfoService {
         onPhaseStart: this.blockWorkspaceService.onPhaseStartDefault,
         onPhaseEnd: this.blockWorkspaceService.onPhaseEndDefault,
         winCondition: this.blockWorkspaceService.winConditionDefault,
-      }
+      };
     }
 
     await setDoc(doc(this.firestore, this.pathGameInfo, id), gameInfoObject);
 
     return gameInfoObject;
+  }
+
+  async deleteGameInfo(id: string): Promise<void> {
+    const refCollection = collection(
+      this.firestore,
+      this.pathGameInfo
+    );
+
+    try {
+      console.log(`Retirando jogo com ID ${id} da sala`);
+      const gameRef = doc(refCollection, id);
+      await deleteDoc(gameRef);
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
   }
 
   /**

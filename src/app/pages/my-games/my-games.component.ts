@@ -100,4 +100,8 @@ export class MyGamesComponent {
   showModal() {
     this.showCreateGameModal = true;
   }
+
+  removeGameInfo(id: string){
+    this.games.set(this.games().filter(gameInfo => gameInfo.id !== id));
+  }
 }
