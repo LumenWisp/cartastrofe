@@ -29,7 +29,7 @@ export class AppMainComponent {
   }
 
   isHeaderHidden() {
-    const hiddenRoutes = ['/rooms/', '/my-games/game-edit-field'];
+    const hiddenRoutes = ['/rooms/', '/my-games/game-edit-field', '/ruled-rooms'];
     return hiddenRoutes.some(route => this.router.url.startsWith(route));
   }
 

@@ -105,7 +105,6 @@ export class RoomsComponent {
           .listenPlayers(this.room.id)
           .subscribe((players) => {
             this.players = players;
-            console.log('Atualização em tempo real:', players);
           });
 
         //ouve as mudanças feitas no documento da sala
@@ -119,7 +118,6 @@ export class RoomsComponent {
             if(room.state?.piles){
               this.freeModeService.piles = room.state.piles
             }
-            console.log('Atualização em tempo real:', room);
           });
           
       }

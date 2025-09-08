@@ -4,7 +4,7 @@ import { PileModel } from "./pile";
 
 export interface Room {
     id: string;
-    avaiable: boolean;
+    available: boolean;
     name: string;
     roomLink: string; // link da sala no momento atual, sempre muda ao criar uma nova sala
 

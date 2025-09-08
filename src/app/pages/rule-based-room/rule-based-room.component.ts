@@ -1,15 +1,29 @@
+// ANGULAR
 import { Component, OnInit } from '@angular/core';
-import { GameFieldItem } from '../../types/game-field-item';
-import { GameInfo } from '../../types/game-info';
-import { GameInfoService } from '../../services/game-info.service';
-import { ActivatedRoute } from '@angular/router';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { PlayerEntity } from '../../types/player';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
+// SERVICES
+import { GameInfoService } from '../../services/game-info.service';
+import { RoomService } from '../../services/room.service';
+import { UserService } from '../../services/user-service.service';
+
+// PRIME NG
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+
+// TYPES
+import { GameFieldItem } from '../../types/game-field-item';
+import { GameInfo } from '../../types/game-info';
+import { PlayerEntity } from '../../types/player';
+import { Room } from '../../types/room';
+
+// NGX TRANSLATE
+import { TranslatePipe } from '@ngx-translate/core';
+
+// RXJS
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-rule-based-room',
@@ -18,24 +32,58 @@ import { RouterLink } from '@angular/router';
   styleUrl: './rule-based-room.component.css'
 })
 export class RuleBasedRoomComponent implements OnInit{
+  room!: Room;
   game!: GameInfo;
   items: GameFieldItem[] = [];
   players: PlayerEntity[] = [];
+  currentPlayer!: PlayerEntity;
+
+  // Subscrições
+    private playerSubscription?: Subscription;
+    private roomSubscription?: Subscription;
 
   constructor(
       private gameInfoService: GameInfoService,
       private route: ActivatedRoute,
+      private roomService: RoomService,
+      private userService: UserService,
+      private router: Router,
     ) {}
 
   ngOnInit() {
-      this.checkRouteParams();
+      this.checkQueryParamsGame();
+      this.checkRouteParamsRoom();
+  }
+
+  async ngOnDestroy() {
+    // Verificar se o usuário não é um convidado que foi redirecionado para o login
+    if (this.currentPlayer) {
+      //Retirada do usuário da subcoleção após sua saída da sala
+      await this.roomService.removePlayer(
+        this.room.id,
+        this.currentPlayer.playerID
+      );
+
+      // Verificar se o usuário que está saindo é o último na sala, para resetar ela
+      if (this.players.length === 0) {
+        await this.roomService.resetRoom(this.room.id);
+      }
+
+      //dessinscrição dos observables
+      if (this.playerSubscription) {
+        this.playerSubscription.unsubscribe();
+      }
+      if (this.roomSubscription) {
+        this.roomSubscription.unsubscribe();
+      }
+    }
   }
 
   /**
    * Verifica parâmetros da rota e carrega os dados relacionados
    */
-  private async checkRouteParams() {
-    const gameId = this.route.snapshot.params['gameId'];
+  private async checkQueryParamsGame() {
+    const gameId = this.route.snapshot.queryParams['gameId'];
     this.game = await this.gameInfoService.getGameInfoById(gameId);
 
     if (this.game.fieldItems && this.game.fieldItems.length > 0) {
@@ -46,4 +94,70 @@ export class RuleBasedRoomComponent implements OnInit{
       this.items.push({type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
     }
   }
+
+
+  private async checkRouteParamsRoom() {
+    const roomLink = this.route.snapshot.params['roomLink'];
+    console.log('roomLink: ', roomLink);
+    if (roomLink) {
+      //verificando se o usuário está logado
+      const user = this.userService.getUserLogged();
+      if (!user) {
+        console.log('Usuário não está logado');
+        this.goToLoginPage(roomLink);
+        return;
+      }
+
+      const room = await this.roomService.getRoomByRoomLink(roomLink);
+      if (room) {
+        this.room = room;
+
+        //Verifica se o usuário está logado e pega ele
+        await this.getCurrentPlayer();
+
+        //ouve as mudanças feitas na subcoleção de usuários
+        this.playerSubscription = this.roomService
+          .listenPlayers(this.room.id)
+          .subscribe((players) => {
+            this.players = players;
+          });
+
+
+        // Carregar o campo do jogo
+        const gameId = room.state?.gameId;
+        if (gameId) {
+          this.game = await this.gameInfoService.getGameInfoById(gameId);
+
+          if (this.game.fieldItems && this.game.fieldItems.length > 0) {
+            this.items = [...this.game.fieldItems];
+          }
+          
+          else {
+            this.items.push({type: 'passPhase', position: {x: 0, y: 0}, nameIdentifier: 'passPhase'});
+          }
+        }
+          
+      }
+    }
+  }
+
+  //pega o Jogador logado, redireciona para login se não está logado ainda
+  async getCurrentPlayer() {
+    const currentPlayer: PlayerEntity = await this.roomService.getCurrentPlayer(
+      this.room.id
+    );
+    this.currentPlayer = currentPlayer;
+    console.log('Jogador: ', this.currentPlayer);
+  }
+
+  private goToLoginPage(roomLink: string) {
+    const queryParams: any = {
+      roomLink: roomLink,
+    };
+
+    this.router.navigate(['/login'], {
+      queryParams,
+    });
+  }
+
 }

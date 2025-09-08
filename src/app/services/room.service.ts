@@ -84,7 +84,7 @@ export class RoomService {
 
       const updatedRoom: Room = {
         ...avaiableRoom,
-        avaiable: false,
+        available: false,
         roomLink: roomLink,
         state: roomState,
       };
@@ -108,7 +108,7 @@ export class RoomService {
     let queryRef = query(
       refCollection,
       where('roomLink', '==', roomLink),
-      where('avaiable', '==', false)
+      where('available', '==', false)
     );
 
     try {
@@ -144,7 +144,7 @@ export class RoomService {
     const refCollection = collection(this.firestore, this.path);
 
     try {
-      let queryRef = query(refCollection, where('avaiable', '==', true));
+      let queryRef = query(refCollection, where('available', '==', true));
 
       //Adicionado limite pois só precisa de 1 sala disponivel
       queryRef = query(queryRef, limit(1));
@@ -169,7 +169,7 @@ export class RoomService {
     const ref = doc(this.firestore, this.path, id);
 
     const updatedData = {
-      avaiable: true,
+      available: true,
       name: '',
       roomLink: '',
       state: deleteField(),

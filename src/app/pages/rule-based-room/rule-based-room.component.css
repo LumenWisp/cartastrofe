@@ -26,3 +26,39 @@
   background-color: #e0e0e0;
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
+
+.game-field {
+  position: relative;
+  width: calc(100% - 260px);
+  height: 100vh;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.pile {
+  width: 80px;
+  height: 120px;
+  background: #cce;
+  border: 2px solid #99a;
+  border-radius: 6px;
+}
+
+.label {
+  width: 100px;
+  height: 50px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #333;
+  background: #fafafa;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.next-phase-btn {
+  padding: 0.7rem 1.2rem;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: grab;
+}
