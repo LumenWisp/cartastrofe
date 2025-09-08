@@ -54,7 +54,7 @@ export const routes: Routes = [
         title: 'Rooms',
       },
       {
-        path: 'rooms-rule-based',
+        path: 'ruled-rooms/:roomLink',
         component: RuleBasedRoomComponent,
         title: 'Rule Based Room'
       },

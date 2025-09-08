@@ -1,1 +1,41 @@
-<app-blockly-editor></app-blockly-editor>
+<div class="sidebar-right">
+  <p-button routerLink="/my-games" label="Sair" />
+
+  <p-panel header="{{'rooms.header' | translate}}">
+    @for (player of players; track $index) {
+    <div class="menu-item">
+      {{ player.name }}
+    </div>
+    }
+  </p-panel>
+</div>
+
+<!-- Área de jogo -->
+<div class="game-field" #gameField>
+  
+  @for (item of items; track item; let i = $index) {
+
+    @if (item.type === 'passPhase') {
+
+      <button 
+        cdkDrag
+        [cdkDragFreeDragPosition]="item.position"
+        class="next-phase-btn">
+        Next Phase
+      </button>
+
+    }
+
+    @else {
+
+      <div
+        cdkDrag
+        [cdkDragFreeDragPosition]="item.position"
+        [ngClass]="item.type">
+        {{ item.nameIdentifier }}
+      </div>
+
+    }
+  }
+
+</div>

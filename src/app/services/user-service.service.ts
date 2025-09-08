@@ -112,6 +112,7 @@ export class UserService {
 
       if (!docRef.empty) {
         this.currentUserData = docRef.docs[0].data() as UserEntity;
+        localStorage.setItem('user', JSON.stringify(this.currentUserData));
       }
     }
   }

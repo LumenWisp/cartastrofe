@@ -1,16 +1,27 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
+// PRIMENG
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
-import { Router, RouterModule } from '@angular/router';
+
+// SERVICES
 import { GameInfoService } from '../../services/game-info.service';
-import { GameInfo } from '../../types/game-info';
-import { UserEntity } from '../../types/user';
 import { UserService } from '../../services/user-service.service';
-import { FormsModule } from '@angular/forms';
 import { RoomService } from '../../services/room.service';
+import { ToastService } from '../../services/toast.service';
+
+// ENUMS
+import { GameModesEnum } from '../../enum/game-modes.enum';
+
+// NGX TRANSLATE
 import { TranslatePipe } from '@ngx-translate/core';
+
+// TYPES
+import { GameInfo } from '../../types/game-info';
 
 @Component({
   selector: 'app-modal-create-room',
@@ -41,7 +52,8 @@ export class ModalCreateRoomComponent {
     private gameInfoService: GameInfoService,
     private userService: UserService,
     private router: Router,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private toastService: ToastService,
   ) {}
 
   async ngOnInit() {
@@ -68,7 +80,7 @@ export class ModalCreateRoomComponent {
 
   async createRoom(gameId: string): Promise<void> {
     if (typeof gameId != 'string') {
-      console.error('Selecione uma sala');
+      this.toastService.showErrorToast('Erro ao criar sala', 'Selecione um jogo para criar a sala')
       return;
     }
 
@@ -79,7 +91,18 @@ export class ModalCreateRoomComponent {
       if (!room) {
         console.log('Não há salas disponiveis');
       } else {
-        if (room.state) this.goToGameRoom(room.roomLink);
+
+        const game = await this.gameInfoService.getGameInfoById(gameId);
+
+        if (room.state) {
+          if (game.gameMode === GameModesEnum.FREE) {
+            this.goToGameRoom(room.roomLink, GameModesEnum.FREE);
+          }
+
+          else if (game.gameMode === GameModesEnum.STRUCTURED) {
+            this.goToGameRoom(room.roomLink, GameModesEnum.STRUCTURED);
+          }
+        }
       }
     } catch (error) {
       console.error('Erro ao criar sala', error);
@@ -87,7 +110,12 @@ export class ModalCreateRoomComponent {
     }
   }
 
-  private goToGameRoom(roomLink: string) {
-    this.router.navigate(['/rooms', roomLink]);
+  private goToGameRoom(roomLink: string, mode: GameModesEnum) {
+    if (mode === GameModesEnum.FREE) {
+      this.router.navigate(['/rooms', roomLink]);
+    }
+    else {
+      this.router.navigate(['/ruled-rooms', roomLink]);
+    }
   }
 }
