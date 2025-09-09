@@ -53,7 +53,7 @@ export class ModalCreateGameComponent {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    gameMode: new FormControl(GameModesEnum.STRUCTURED, {
+    gameMode: new FormControl(GameModesEnum.FREE, {
       nonNullable: true,
       validators: [Validators.required]
     }),

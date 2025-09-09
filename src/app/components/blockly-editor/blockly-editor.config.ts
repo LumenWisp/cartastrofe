@@ -328,11 +328,11 @@ export function registerGenerators() {
   };
 
   // GET GAME ATTRIBUTE
-  javascriptGenerator.forBlock['GetGameAttribute'] = function(block) {
+  javascriptGenerator.forBlock['getGameAttribute'] = function(block) {
     const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `${text_attribute}`;
+    const code = `room['${text_attribute}']`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -345,7 +345,7 @@ export function registerGenerators() {
     const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `${text_attribute}`;
+    const code = `'${text_attribute}'`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -357,7 +357,7 @@ export function registerGenerators() {
     const value_card = block.getFieldValue('VALUE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `${value_card}`;
+    const code = JSON.stringify(value_card).replace(/^"|"$/g, "'");
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -372,7 +372,8 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['endGame'] = function() {
 
     // TODO: Assemble javascript into the code variable.
-    const code = 'roomService.updateRoom(${this.room.id}, {state:{isGameOcurring: false, gameId: this.room.state.gameId}});';
+    //const code = 'roomService.updateRoom(${this.room.id}, {state:{isGameOcurring: false, gameId: this.room.state.gameId}});';
+    const code = "console.log('pamonha');roomService.updateRoom(room.id, {state:{isGameOcurring: false, gameId: room.state.gameId}});";
     return code;
   }
 

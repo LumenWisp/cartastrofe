@@ -75,10 +75,19 @@ export class BlocklyEditorComponent implements AfterViewInit {
     });
   }
 
-  generateCode(): void {
+  async saveStringCode(): Promise<void> {
     const code = javascriptGenerator.workspaceToCode(this.workspace);
     console.log(code);
     console.log(code.length);
+
+    if(this.game){
+      const key: string = this.selectedCategory + 'Code';
+      await this.gameInfoService.updateGameInfo(this.game.id, {
+        [key]: code,
+      });
+
+      console.log("String do código salvo com sucesso!");
+    }
   }
 
   loadWorkSpaceState(): void {

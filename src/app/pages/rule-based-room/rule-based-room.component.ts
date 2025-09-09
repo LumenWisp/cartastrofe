@@ -17,13 +17,14 @@ import { ButtonModule } from 'primeng/button';
 import { GameFieldItem } from '../../types/game-field-item';
 import { GameInfo } from '../../types/game-info';
 import { PlayerEntity } from '../../types/player';
-import { Room } from '../../types/room';
+import { Room, RoomState } from '../../types/room';
 
 // NGX TRANSLATE
 import { TranslatePipe } from '@ngx-translate/core';
 
 // RXJS
 import { Subscription } from 'rxjs';
+import { BlockCodeGeneratorsService } from '../../services/block-code-generators.service';
 
 // ENUM
 import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
@@ -51,6 +52,7 @@ export class RuleBasedRoomComponent implements OnInit{
       private roomService: RoomService,
       private userService: UserService,
       private router: Router,
+      private blockCodeGeneratorsService: BlockCodeGeneratorsService,
     ) {}
 
   ngOnInit() {
@@ -161,6 +163,30 @@ export class RuleBasedRoomComponent implements OnInit{
     this.router.navigate(['/login'], {
       queryParams,
     });
+  }
+
+  private runStringCode(stringCode: string) {
+    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', stringCode);
+
+    func(this.blockCodeGeneratorsService, this.room, this.roomService);
+  }
+
+  async startGame(){
+    // Atualizando a sala para que seja visivel que o jogo já começou
+    //if(this.room.state) this.room.state['isGameOcurring'] = true;
+    //this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
+
+    //Começando o jogo
+    this.playGame();
+  }
+
+  async playGame(){
+
+    //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
+    if(this.game.onGameStartCode){
+      this.runStringCode(this.game.onGameStartCode)
+      //this.runStringCode("console.log('SKIBIDI ONICHAN');")
+    }
   }
 
 }

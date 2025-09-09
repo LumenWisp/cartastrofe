@@ -24,4 +24,15 @@ export interface GameInfo extends GameInfoData {
   onPhaseStart?: any;
   onPhaseEnd?: any;
   winCondition?: any;
+
+  // ===============================================================
+  // Campos que representam o código em string das regras do jogo
+  // ===============================================================
+
+  // Triggers
+  onGameStartCode?: string;
+  onMoveCardFromToCode?: string;
+  onPhaseStartCode?: string;
+  onPhaseEndCode?: string;
+  winConditionCode?: string;
 }
