@@ -18,6 +18,7 @@ import { HomepageComponent } from './pages/homepage/homepage.component';
 import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
 import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
 import { authGuard } from './auth.guard';
+import { MyCardsComponent } from './pages/my-cards/my-cards.component';
 
 export const routes: Routes = [
   {
@@ -69,6 +70,11 @@ export const routes: Routes = [
         path: 'my-games/game-edit/:gameId',
         component: GameComponent,
         title: 'Edit game'
+      },
+      {
+        path: 'my-cards',
+        component: MyCardsComponent,
+        title: 'My Cards',
       }
     ],
   },

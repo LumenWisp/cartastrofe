@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-card-3d',
@@ -8,7 +8,42 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   templateUrl: './card-3d.component.html',
   styleUrls: ['./card-3d.component.css']
 })
-export class Card3dComponent {
+export class Card3dComponent implements AfterViewInit {
+  @ViewChild('card3dContainer') card3dContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('scalableContentFront') scalableContentFront!: ElementRef<HTMLDivElement>;
+  @ViewChild('scalableContentBack') scalableContentBack!: ElementRef<HTMLDivElement>;
+  ngAfterViewInit() {
+    this.applyScaling();
+    const resizeObserver = new ResizeObserver(() => {
+      this.applyScaling();
+    });
+    resizeObserver.observe(this.card3dContainer.nativeElement);
+  }
+
+  applyScaling() {
+    const container = this.card3dContainer?.nativeElement;
+    const front = this.scalableContentFront?.nativeElement;
+    const back = this.scalableContentBack?.nativeElement;
+    if (!container || !front || !back) return;
+
+    front.style.width = 'auto';
+    back.style.width = 'auto';
+
+    // Native design size for card content
+    const BASE_WIDTH = front.clientWidth;
+    const BASE_HEIGHT = front.clientHeight;
+
+    const parentWidth = container.clientWidth;
+    const parentHeight = container.clientHeight;
+    const scaleX = parentWidth / BASE_WIDTH;
+    const scaleY = parentHeight / BASE_HEIGHT;
+    const scale = Math.min(scaleX, scaleY);
+
+    front.style.transform = `scale(${scale})`;
+    back.style.transform = `scale(${scale})`;
+    front.style.transformOrigin = 'top left';
+    back.style.transformOrigin = 'top left';
+  }
   @Input() flip: boolean = false;
   @Input() glow: boolean = false;
   @Input() rotate: boolean = false;

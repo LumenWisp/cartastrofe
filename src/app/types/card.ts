@@ -37,5 +37,6 @@ export interface CardField {
 
 export interface Card {
   layout: CardLayout;
+  name: string;
   data: { [property: string]: string; }
 }
