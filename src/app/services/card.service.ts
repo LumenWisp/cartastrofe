@@ -1,43 +1,53 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Card } from '../types/card';
+import { inject, Injectable } from '@angular/core';
+import { CardModel } from '../types/card';
+import { CardGameLayout, CardLayoutModel } from '../types/card-layout';
+import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { addDoc, collection, doc, Firestore, getDocs, query, where } from '@angular/fire/firestore';
+import { UserService } from './user-service.service';
+import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  private cardsSubject = new BehaviorSubject<Card[]>([]);
-  cards$: Observable<Card[]> = this.cardsSubject.asObservable();
-  private cardIDGenerator = 1;
+  private firestore = inject(Firestore);
+  private path = FirestoreTablesEnum.CARD;
 
-  constructor() {}
+  constructor(
+    private userService: UserService,
+    private utilsService: UtilsService,
+  ) {}
 
-  // Retorna a lista atual
-  getCards() {
-
+  async getCardsByLayoutId(cardLayoutId: string): Promise<CardModel[]> {
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('layoutId', '==', cardLayoutId));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as CardModel) || [];
   }
 
-  getCardNextID() {
+  async saveCard(cardName: string, card: CardGameLayout, cardLayout: CardLayoutModel) {
+    const user = await this.userService.currentUser()
 
-  }
+    if (user === undefined) return
+    if (user === null) throw new Error('Usuário não está logado');
 
-  // Adiciona um novo Card
-  addCard(card: Card): void {
+    const userId = user.userId;
 
-  }
+    const collectionRef = collection(this.firestore, this.path)
 
-  // Remove Card por ID
-  removeCard(id: number) {
+    const id = await this.utilsService.generateKey()
 
-  }
+    const data: CardModel = {
+      id,
+      userId,
+      layoutId: cardLayout.id,
+      name: cardName,
+      data: card.cardFields.reduce((acc, field) => {
+        acc[field.property] = field.value;
+        return acc;
+      }, {} as { [property: string]: string })
+    }
 
-  // Atualiza Card por ID
-  updateCardByID(id: number, updated: Card) {
-
-  }
-
-  // Busca todos os Cards com base no gameID
-  getCardsByGameID(gameID: number) {
-
+    await addDoc(collectionRef, data)
   }
 }

@@ -8,8 +8,9 @@ export interface GameInfoData {
   countPlayersMax: number;
 }
 
-export interface GameInfo extends GameInfoData {
+export interface GameInfoModel extends GameInfoData {
   id: string;
   countCards: number;
   userId: string;
+  cardLayoutId?: string;
 }

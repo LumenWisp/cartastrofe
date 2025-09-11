@@ -1,1 +1,18 @@
-<p>card-game works!</p>
+
+
+<div
+  style="position: relative ;"
+  [class.flipped]="card.flipped"
+  (dblclick)="onDoubleClick($event)"
+  (contextmenu)="onContextMenu($event)"
+  (cdkDragEnded)="onDragEnd($event)"
+  (cdkDragStarted)="onDragStart($event)"
+  cdkDrag
+  [cdkDragFreeDragPosition]="card.freeDragPos"
+  [attr.card-id]="card.id"
+  [style.z-index]="card.zIndex"
+>
+  <app-card-game-layout style="display: block;" class="face" [cardLayout]="cardLayoutValues" />
+  <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px; z-index: -1;" class="face back" [attr.card-id]="card.id"></div>
+</div>
+

@@ -3,6 +3,7 @@ import { Component, computed, inject, signal, WritableSignal } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 // primeng
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -16,12 +17,11 @@ import { PanelGameComponent } from '../../components/panel-game/panel-game.compo
 import { PlaceholderGridComponent } from "../../components/placeholder-grid/placeholder-grid.component";
 // services
 import { GameInfoService } from '../../services/game-info.service';
+import { ToastService } from '../../services/toast.service';
 // types
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 // enums
 import { GameModesEnum } from '../../enum/game-modes.enum';
-import { forkJoin } from 'rxjs';
-import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-my-games',
@@ -47,7 +47,7 @@ export class MyGamesComponent {
   modes: { label: string; value: GameModesEnum }[] = [];
   translateService = inject(TranslateService);
 
-  games: WritableSignal<GameInfo[]> = signal([]);
+  games: WritableSignal<GameInfoModel[]> = signal([]);
   search = signal('');
   gameMode = signal<GameModesEnum | null>(null);
 

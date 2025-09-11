@@ -1,61 +1,80 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastService } from '../../../services/toast.service';
 import { CardLayoutService } from '../../../services/card-layout.service';
-import { Card } from '../../../types/card';
 // import { CardLayoutFieldValue } from '../../../types/card-layout-field';
+import { SelectModule } from 'primeng/select';
+import { CardGameLayout, CardLayoutModel } from '../../../types/card-layout';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { CardGameLayoutComponent } from "../../../components/card-game-layout/card-game-layout.component";
+import { CardGameField } from '../../../types/card-layout-field';
+import { CardService } from '../../../services/card.service';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-create-card',
-  imports: [FormsModule, InputTextModule],
+  imports: [FormsModule, InputTextModule, SelectModule, FloatLabelModule, CardGameLayoutComponent, ButtonModule],
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.css'
 })
-export class CreateCardComponent implements OnInit {
+export class CreateCardComponent {
   cardName = '';
-  cardLayoutName = '';
-  cards: Card[] = [];
+  cardLayout: WritableSignal<CardLayoutModel | null> = signal(null);
+  cardLayouts: CardLayoutModel[] = []
 
-  selectedField: any | null = null;
+  cardGame = computed(() => {
+    const layout = this.cardLayout();
+    return layout
+      ? {
+        name: layout.name,
+        cardFields: layout.cardFields.map(field => ({ ...field, value: '' }))
+      } as CardGameLayout
+      : null;
+  })
 
-  MIN_CARD_FIELD_WIDTH = 40;
-  MIN_CARD_FIELD_HEIGHT = 40;
-  CARD_LAYOUT_WIDTH = 200;
-  CARD_LAYOUT_HEIGHT = 300;
-
-  DIMENSIONS = {
-    minWidth: this.MIN_CARD_FIELD_WIDTH,
-    minHeight: this.MIN_CARD_FIELD_HEIGHT,
-    maxWidth: this.CARD_LAYOUT_WIDTH,
-    maxHeight: this.CARD_LAYOUT_HEIGHT,
-  }
+  selectedField: CardGameField | null = null;
 
   constructor(
     private cardLayoutService: CardLayoutService,
+    private cardService: CardService,
     private toastService: ToastService,
-  ) {}
-
-  ngOnInit(): void {
-    // this.cardLayoutService.getCardLayouts('NEkPe1V5PDccYzJFyNWSrrUKukS2').then(cardLayouts => {
-    //   console.log(cardLayouts)
-    //   cardLayouts.forEach(cardLayout => {
-    //     this.cards.push({
-    //       name: cardLayout.name,
-    //       fields: cardLayout.cardFields.map(cardField => ({
-    //         ...cardField,
-    //         value: ''
-    //       })),
-    //     })
-    //   })
-    // })
+  ) {
+    this.loadCardLayouts();
   }
 
-  getCard() {
-    // return this.cards.find(card => card.name === this.cardLayoutName) ?? null
+  loadCardLayouts() {
+    this.cardLayoutService.getCardLayouts().then(cardLayouts => {
+      this.cardLayouts = cardLayouts;
+    })
   }
 
-  clickCard(field: any) {
+  clickCardField(field: CardGameField) {
     this.selectedField = field;
+  }
+
+  saveCard() {
+    if (!this.cardGame()) {
+      this.toastService.showErrorToast(
+        'Criação de carta',
+        'Nenhum layout de carta selecionado.'
+      );
+      return;
+    }
+
+    if (this.cardName.trim() === '') {
+      this.toastService.showErrorToast(
+        'Criação de carta',
+        'Nenhum nome de carta fornecido.'
+      );
+      return;
+    }
+
+    this.cardService.saveCard(this.cardName, this.cardGame()!, this.cardLayout()!).then(() => {
+      this.toastService.showSuccessToast(
+        'Criação de carta',
+        'Carta criada com sucesso.'
+      );
+    });
   }
 }

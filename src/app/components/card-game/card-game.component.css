@@ -1,0 +1,5 @@
+.back  { background: #d64545; transform: rotateY(180deg); }
+
+.flipped .face {
+  transform: rotateY(180deg);
+}

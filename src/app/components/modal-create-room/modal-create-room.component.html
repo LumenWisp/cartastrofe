@@ -6,24 +6,23 @@
   <div class="create-room-form-container">
     <div class="create-room-form-group">
       <label for="gameName">{{'modal-create-room.game-name' | translate}}</label>
-      <p-dropdown 
-        id="gameName"
-        [options]="gameOptions"
-        [(ngModel)]="selectedGame"
-        appendTo="body"
+      <p-select
+        [options]="gameInfos"
+        [(ngModel)]="gameInfo"
+        optionLabel="name"
         placeholder="{{'modal-create-room.game-name-placeholder' | translate}}">
-      </p-dropdown>
-    </div>
+      ></p-select>
+  </div>
 
     <!-- <div class="create-room-form-group">
       <label for="playerCount">Número de jogadores</label>
-      <p-dropdown 
+      <p-dropdown
         id="playerCount"
         [options]="playerOptions"
         placeholder="Selecione o nº de jogadores">
       </p-dropdown>
     </div> -->
 
-    <button type="button" class="create-room-button" (click)="createRoom(selectedGame);close()">{{'modal-create-room.submit-button' | translate}}</button>
+    <button type="button" class="create-room-button" (click)="createRoom()">{{'modal-create-room.submit-button' | translate}}</button>
   </div>
 </p-dialog>

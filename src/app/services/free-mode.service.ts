@@ -7,14 +7,7 @@ import { PileModel } from '../types/pile';
 })
 export class FreeModeService {
 
-  cards = signal<CardGame[]>([
-  { id: 'A', label: 'A', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'B', label: 'B', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'C', label: 'C', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'D', label: 'D', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'E', label: 'E', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'F', label: 'F', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-]);
+  cards = signal<CardGame[]>([]);
 
   piles: PileModel[] = [];
 

@@ -60,9 +60,9 @@ export class RoomService {
   }
 
   async createRoom(gameId: string): Promise<Room | null> {
-    if (!this.userService.getUserLogged()) {
-      throw new Error('Usuário não encontrado.');
-    }
+    const user = await this.userService.currentUser();
+
+    if (!user) throw new Error('Usuário não está logado')
 
     try {
       const avaiableRoom = await this.getAvaiableRoom();
@@ -92,7 +92,6 @@ export class RoomService {
       await this.updateRoom(updatedRoom.id, updatedRoom);
 
       //Adicionando o usuário que criou a sala como administrador
-      const user = this.userService.getUserLogged();
       await this.createPlayer(updatedRoom.id, user!, RoomRolesEnum.ADMIN);
 
       return updatedRoom;
@@ -218,9 +217,9 @@ export class RoomService {
     user: UserEntity,
     role: RoomRolesEnum
   ): Promise<PlayerEntity> {
-    if (!this.userService.getUserLogged()) {
-      throw new Error('Usuário não encontrado.');
-    }
+    const currentUser = this.userService.currentUser();
+
+    if (!currentUser) throw new Error('Usuário não está logado')
 
     const refCollection = collection(
       this.firestore,
@@ -233,8 +232,8 @@ export class RoomService {
       const playerID: string = await this.utilsService.generateKey(15);
 
       const player: PlayerEntity = {
-        playerID: playerID,
-        userID: user.userID,
+        playerId: playerID,
+        userId: user.userId,
         name: user.name,
         role: role,
       };
@@ -289,11 +288,9 @@ export class RoomService {
   }
 
   async getCurrentPlayer(roomId: string): Promise<PlayerEntity> {
-    const user = this.userService.getUserLogged();
+    const currentUser = await this.userService.currentUser();
 
-    if (!user) {
-      throw new Error('Usuário não encontrado.');
-    }
+    if (!currentUser) throw new Error('Usuário não está logado')
 
     const refCollection = collection(
       this.firestore,
@@ -303,7 +300,7 @@ export class RoomService {
     );
 
     try {
-      let queryRef = query(refCollection, where('userID', '==', user.userID));
+      let queryRef = query(refCollection, where('userID', '==', currentUser.userId));
 
       const snapshot = await getDocs(queryRef);
       const result: PlayerEntity[] = snapshot.docs.map((doc) => ({
@@ -312,7 +309,7 @@ export class RoomService {
 
       // Verificando se é um convidado que veio da página de login
       if(!result[0]){
-        const player: PlayerEntity = await this.createPlayer(roomId, user, RoomRolesEnum.NORMAL);
+        const player: PlayerEntity = await this.createPlayer(roomId, currentUser, RoomRolesEnum.NORMAL);
         return player;
       }
 

@@ -3,7 +3,6 @@ import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { UserEntity } from '../../types/user';
-import { UserService } from '../../services/user-service.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FreeModeService } from '../../services/free-mode.service';
 import { Subscription } from 'rxjs';
@@ -22,10 +21,14 @@ import { PlayerEntity } from '../../types/player';
 import { CardGame } from '../../types/card';
 
 import { Popover, PopoverModule } from 'primeng/popover';
+import { CardGameComponent } from "../../components/card-game/card-game.component";
+import { CardLayoutService } from '../../services/card-layout.service';
+import { GameInfoService } from '../../services/game-info.service';
+import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-layout';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag, PopoverModule, TranslatePipe],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css',
 })
@@ -38,6 +41,8 @@ export class RoomsComponent {
   users: UserEntity[] = [];
   selectedCard: CardGame | null = null;
 
+  cardLayout: CardLayout | null = null;
+
   // Subscrições
   private playerSubscription?: Subscription;
   private roomSubscription?: Subscription;
@@ -46,8 +51,8 @@ export class RoomsComponent {
     private route: ActivatedRoute,
     private roomService: RoomService,
     private router: Router,
-    private userService: UserService,
-    public freeModeService: FreeModeService
+    public freeModeService: FreeModeService,
+    private gameInfoService: GameInfoService
   ) {}
 
   async ngOnInit() {
@@ -60,7 +65,7 @@ export class RoomsComponent {
       //Retirada do usuário da subcoleção após sua saída da sala
       await this.roomService.removePlayer(
         this.room.id,
-        this.currentPlayer.playerID
+        this.currentPlayer.playerId
       );
 
       // Verificar se o usuário que está saindo é o último na sala, para resetar ela
@@ -85,17 +90,34 @@ export class RoomsComponent {
     const roomLink = this.route.snapshot.params['roomLink'];
     console.log('roomLink: ', roomLink);
     if (roomLink) {
-      //verificando se o usuário está logado
-      const user = this.userService.getUserLogged();
-      if (!user) {
-        console.log('Usuário não está logado');
-        this.goToLoginPage(roomLink);
-        return;
-      }
+
 
       const room = await this.roomService.getRoomByRoomLink(roomLink);
       if (room) {
         this.room = room;
+
+        if (this.room.state) {
+          const cardLayout = await this.gameInfoService.getCardLayout(this.room.state.gameId)
+          this.cardLayout = {
+            name: cardLayout.name,
+            cardFields: cardLayout.cardFields.map(field => ({ ...field })),
+          }
+
+          const cards = await this.gameInfoService.getCards(this.room.state.gameId)
+
+          for (const card of cards) {
+            this.freeModeService.addCard({
+              name: card.name,
+              data: card.data,
+              freeDragPos: { x: 0, y: 0 },
+              flipped: false,
+              id: card.id,
+              label: card.name,
+              pileId: undefined,
+              zIndex: 1,
+            })
+          }
+        }
 
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();

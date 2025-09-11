@@ -9,10 +9,3 @@
   font-size: 1.5rem;
   --p-icon-size: 1.5rem;
 }
-
-.card-layout {
-  display: block;
-  width: max-content;
-  height: max-content;
-  background-color: white;
-}

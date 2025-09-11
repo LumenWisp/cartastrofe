@@ -23,7 +23,6 @@ import { FormManager } from '../../shared/form-manager';
     PasswordModule,
     ButtonModule,
     ReactiveFormsModule,
-    RouterLink,
     TranslatePipe
   ],
   templateUrl: './register.component.html',
