@@ -14,7 +14,7 @@ import {
 } from './blockly-editor.config';
 import { ButtonModule } from 'primeng/button';
 import { javascriptGenerator } from 'blockly/javascript';
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 import { CardGame } from '../../types/card';
 import { GameInfoService } from '../../services/game-info.service';
 
@@ -26,7 +26,7 @@ import { GameInfoService } from '../../services/game-info.service';
 })
 export class BlocklyEditorComponent implements AfterViewInit {
   @ViewChild('blocklyDiv', { static: true }) blocklyDiv!: ElementRef;
-  @Input() game: GameInfo | null = null;
+  @Input() game: GameInfoModel | null = null;
   @Input() card: CardGame | null = null;
 
   private workspace!: Blockly.WorkspaceSvg;
@@ -96,7 +96,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
     let state;
     if (this.game) {
       
-      const key = this.selectedCategory as keyof GameInfo;
+      const key = this.selectedCategory as keyof GameInfoModel;
       state = this.game[key];
     }
 
@@ -112,7 +112,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
         [this.selectedCategory]: state,
       });
 
-      const key = this.selectedCategory as keyof GameInfo;
+      const key = this.selectedCategory as keyof GameInfoModel;
 
       // TODO: deixar isso sem parecer uma gambiarra
       this.game[key] = state as never;

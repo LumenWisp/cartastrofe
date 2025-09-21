@@ -9,7 +9,7 @@ import { ButtonModule } from 'primeng/button';
 // enums
 import { GameModesEnum } from '../../enum/game-modes.enum';
 // types
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameInfoService } from '../../services/game-info.service';
@@ -22,7 +22,7 @@ import { GameInfoService } from '../../services/game-info.service';
 })
 export class PanelGameComponent implements OnInit {
   @Output() removeGameInfo = new EventEmitter<string>();
-  @Input({ required: true }) gameInfo!: GameInfo;
+  @Input({ required: true }) gameInfo!: GameInfoModel;
 
   ngIconGamemode = {};
 

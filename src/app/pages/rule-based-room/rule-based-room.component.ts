@@ -15,7 +15,7 @@ import { ButtonModule } from 'primeng/button';
 
 // TYPES
 import { GameFieldItem } from '../../types/game-field-item';
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 import { PlayerEntity } from '../../types/player';
 import { Room, RoomState } from '../../types/room';
 
@@ -37,7 +37,7 @@ import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
 })
 export class RuleBasedRoomComponent implements OnInit{
   room!: Room;
-  game!: GameInfo;
+  game!: GameInfoModel;
   items: GameFieldItem[] = [];
   players: PlayerEntity[] = [];
   currentPlayer!: PlayerEntity;
@@ -66,7 +66,7 @@ export class RuleBasedRoomComponent implements OnInit{
       //Retirada do usuário da subcoleção após sua saída da sala
       await this.roomService.removePlayer(
         this.room.id,
-        this.currentPlayer.playerID
+        this.currentPlayer.playerId
       );
 
       // Verificar se o usuário que está saindo é o último na sala, para resetar ela
@@ -89,7 +89,9 @@ export class RuleBasedRoomComponent implements OnInit{
    */
   private async checkQueryParamsGame() {
     const gameId = this.route.snapshot.queryParams['gameId'];
-    this.game = await this.gameInfoService.getGameInfoById(gameId);
+    const game = await this.gameInfoService.getGameInfoById(gameId);
+
+    if(game) this.game = game
 
     if (this.game.fieldItems && this.game.fieldItems.length > 0) {
       this.items = [...this.game.fieldItems];
@@ -106,7 +108,7 @@ export class RuleBasedRoomComponent implements OnInit{
     console.log('roomLink: ', roomLink);
     if (roomLink) {
       //verificando se o usuário está logado
-      const user = this.userService.getUserLogged();
+      const user = await this.userService.currentUser();
       if (!user) {
         console.log('Usuário não está logado');
         this.goToLoginPage(roomLink);
@@ -131,7 +133,8 @@ export class RuleBasedRoomComponent implements OnInit{
         // Carregar o campo do jogo
         const gameId = room.state?.gameId;
         if (gameId) {
-          this.game = await this.gameInfoService.getGameInfoById(gameId);
+          const game = await this.gameInfoService.getGameInfoById(gameId);
+          if(game) this.game = game
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
             this.items = [...this.game.fieldItems];

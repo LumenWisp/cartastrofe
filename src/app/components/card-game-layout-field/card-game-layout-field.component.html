@@ -17,13 +17,15 @@
   </div>
 } @else {
   <div
-  [ngClass]="['card-layout-field', cardLayoutField.type.toLowerCase()]"
-      [ngStyle]="{
-              width: cardLayoutField.width + 'px',
+    [ngClass]="['card-layout-field', cardLayoutField.type.toLowerCase()]"
+    [ngStyle]="{
+      width: cardLayoutField.width + 'px',
       height: cardLayoutField.height + 'px',
       left: cardLayoutField.x + 'px',
       top: cardLayoutField.y + 'px',
-    }">
+    }"
+    (mousedown)="handleClick()"
+  >
     <ng-container *ngTemplateOutlet="content"></ng-container>
   </div>
 }

@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
+  getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
@@ -9,14 +10,14 @@ import {
 } from '@angular/fire/auth';
 import {
   Firestore,
-  doc,
-  setDoc,
-  getDoc,
   collection,
-  query,
-  where,
+  doc,
+  getDoc,
   getDocs,
-  limit,
+  query,
+  setDoc,
+  where,
+  limit
 } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
@@ -30,31 +31,39 @@ export class UserService {
   private firestore = inject(Firestore);
   private path = FirestoreTablesEnum.USER;
 
-  private currentUserData: UserEntity | null = null;
-
   readonly user$ = user(this.auth);
-  readonly currentUser = signal<
-    | {
-        email: string;
-        userID: string;
-      }
+  readonly _currentUser = signal<
+    | UserEntity
     | null
     | undefined
   >(undefined);
-  readonly currentUser$ = toObservable(this.currentUser);
 
   constructor() {}
 
-  getUserLogged(): UserEntity | null {
-    if (this.currentUserData) return this.currentUserData;
-
-    const raw = localStorage.getItem('user');
-    if (raw) {
-      this.currentUserData = JSON.parse(raw);
-      return this.currentUserData;
+  async currentUser() {
+    console.log(this._currentUser())
+    if (this._currentUser()) {
+      return this._currentUser()
     }
 
-    return null;
+    const auth = getAuth()
+    const currentUser = auth.currentUser
+    const id = currentUser?.uid
+
+    if (id) {
+      this._currentUser.set(await this.getUserById(id))
+    }
+
+    return this._currentUser();
+  }
+
+
+  async getUserById(uid: string) {
+    const refCollection = collection(this.firestore, this.path);
+    const queryRef = query(refCollection, where('userId', '==', uid));
+    const snapshot = await getDocs(queryRef);
+    const userInfo = snapshot.docs[0]?.data() as UserEntity;
+    return userInfo;
   }
 
   /**
@@ -72,7 +81,7 @@ export class UserService {
     const uid = user.uid;
 
     const userData: UserEntity = {
-      userID: uid,
+      userId: uid,
       name,
       email,
       cardLayoutsIds: [],
@@ -96,6 +105,8 @@ export class UserService {
     );
     const uid = user.uid;
 
+    console.log("USUÁRIO QUE LOGOU", uid)
+
     // Busca os dados do Firestore com o UID
     const docSnap = await getDoc(doc(this.firestore, this.path, uid));
 
@@ -111,8 +122,8 @@ export class UserService {
       const docRef = await getDocs(queryRef);
 
       if (!docRef.empty) {
-        this.currentUserData = docRef.docs[0].data() as UserEntity;
-        localStorage.setItem('user', JSON.stringify(this.currentUserData));
+//        this.currentUserData = docRef.docs[0].data() as UserEntity;
+//        localStorage.setItem('user', JSON.stringify(this.currentUserData));
       }
     }
   }
@@ -123,7 +134,5 @@ export class UserService {
 
   async logout(): Promise<void> {
     await signOut(this.auth);
-    this.currentUserData = null;
-    localStorage.removeItem('user');
   }
 }

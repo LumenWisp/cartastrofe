@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { Popover, PopoverModule } from 'primeng/popover';
 
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
 import { GameFieldItem } from '../../types/game-field-item';
 import { ToastService } from '../../services/toast.service';
@@ -21,7 +21,7 @@ import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
   styleUrl: './game-edit-field.component.css'
 })
 export class GameEditFieldComponent implements OnInit{
-  game!: GameInfo;
+  game!: GameInfoModel;
   items: GameFieldItem[] = [];
   selectedItemIndex: number | null = null;
 
@@ -93,7 +93,8 @@ export class GameEditFieldComponent implements OnInit{
    */
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
-    this.game = await this.gameInfoService.getGameInfoById(gameId);
+    const game = await this.gameInfoService.getGameInfoById(gameId);
+    if(game) this.game = game
 
     if (this.game.fieldItems && this.game.fieldItems.length > 0) {
       this.items = [...this.game.fieldItems];

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameInfoService } from '../../services/game-info.service';
-import { GameInfo } from '../../types/game-info';
+import { GameInfoModel } from '../../types/game-info';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlocklyEditorComponent } from '../../components/blockly-editor/blockly-editor.component';
 import { ButtonModule } from 'primeng/button';
@@ -12,7 +12,7 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './game-edit-rules.component.css'
 })
 export class GameEditRulesComponent implements OnInit{
-  game!: GameInfo;
+  game!: GameInfoModel;
 
   ngOnInit() {
     this.checkRouteParams();
@@ -29,7 +29,8 @@ export class GameEditRulesComponent implements OnInit{
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
     console.log('gameId: ', gameId);
-    this.game = await this.gameInfoService.getGameInfoById(gameId);
+    const game = await this.gameInfoService.getGameInfoById(gameId);
+    if(game) this.game = game;
     console.log('Jogo selecionado: ', this.game);
   }
 

@@ -12,7 +12,7 @@ import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
-import { GameComponent } from './components/game/game.component';
+//import { GameComponent } from './components/game/game.component';
 import { GameEditCardsComponent } from './pages/game-edit-cards/game-edit-cards.component';
 import { GameEditFieldComponent } from './pages/game-edit-field/game-edit-field.component';
 import { GameEditRulesComponent } from './pages/game-edit-rules/game-edit-rules.component';
@@ -21,6 +21,7 @@ import { HomepageComponent } from './pages/homepage/homepage.component';
 import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
 import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
 import { authGuard } from './auth.guard';
+import { GameEditComponent } from './pages/my-games/game-edit/game-edit.component';
 
 export const routes: Routes = [
   {
@@ -39,9 +40,14 @@ export const routes: Routes = [
         title: 'My Games',
       },
       {
-        path: 'my-games/create-card',
-        component: CreateCardComponent,
-        title: 'Create Card',
+        path: 'my-games/game-description/:gameId',
+        component: GameDescriptionComponent,
+        title: 'Game Description',
+      },
+      {
+        path: 'my-games/game-edit/:gameId',
+        component: GameEditComponent,
+        title: 'Edit game'
       },
       {
         path: 'my-layouts',
@@ -64,9 +70,9 @@ export const routes: Routes = [
         title: 'Create Layout',
       },
       {
-        path: 'my-games/game-description/:gameId',
-        component: GameDescriptionComponent,
-        title: 'Game Description',
+        path: 'my-cards',
+        component: CreateCardComponent,
+        title: 'Create Card',
       },
       {
         path: 'my-games/game-edit-cards/:gameId',

@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 // services
 import { GameInfoService } from '../../../services/game-info.service';
 // types
-import { GameInfo } from '../../../types/game-info';
+import { GameInfoModel } from '../../../types/game-info';
 // enums
 import { GameModesEnum } from '../../../enum/game-modes.enum';
 
@@ -22,8 +22,7 @@ import { GameModesEnum } from '../../../enum/game-modes.enum';
 })
 export class GameDescriptionComponent implements OnInit {
   GameModesEnum = GameModesEnum;
-
-  gameInfo: GameInfo | null = null
+  gameInfo: GameInfoModel | null = null
   ngIconGamemode = {};
 
   constructor(private route: ActivatedRoute, private gameInfoService: GameInfoService) {}
@@ -38,11 +37,12 @@ export class GameDescriptionComponent implements OnInit {
     if (!gameId) return;
 
     // buscar o jogo pelo gameId
-    this.gameInfo =  await this.gameInfoService.getGameInfoById(gameId)
+    const gameInfo =  await this.gameInfoService.getGameInfoById(gameId)
+    if(gameInfo) this.gameInfo = gameInfo
 
     this.ngIconGamemode = {
-      'pi-shield': this.gameInfo.gameMode === GameModesEnum.STRUCTURED,
-      'pi-compass': this.gameInfo.gameMode === GameModesEnum.FREE,
+      'pi-shield': this.gameInfo!.gameMode === GameModesEnum.STRUCTURED,
+      'pi-compass': this.gameInfo!.gameMode === GameModesEnum.FREE,
     }
   }
 

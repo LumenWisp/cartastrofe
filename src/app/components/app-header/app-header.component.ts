@@ -21,7 +21,6 @@ export class AppHeaderComponent {
   translateService = inject(TranslateService);
   menuItems: MenuItem[] = [];
 
-
   ngOnInit() {
     forkJoin({
       myGames: this.translateService.get('app-main.menu-items.my-games'),
@@ -34,6 +33,11 @@ export class AppHeaderComponent {
           label: translations.myGames,
           icon: 'pi pi-wrench',
           routerLink: '/my-games',
+        },
+        {
+          label: 'Minhas Cartas',
+          icon: 'pi pi-id-card',
+          routerLink: '/my-cards'
         },
         {
           label: translations.myLayouts,
