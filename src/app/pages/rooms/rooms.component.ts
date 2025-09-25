@@ -41,7 +41,7 @@ export class RoomsComponent {
   users: UserEntity[] = [];
   selectedCard: CardGame | null = null;
 
-  cardLayout: CardLayout | null = null;
+  cardLayouts: { [id: string]: CardLayout } = {};
 
   // Subscrições
   private playerSubscription?: Subscription;
@@ -97,24 +97,30 @@ export class RoomsComponent {
         this.room = room;
 
         if (this.room.state) {
-          const cardLayout = await this.gameInfoService.getCardLayout(this.room.state.gameId)
-          this.cardLayout = {
-            name: cardLayout.name,
-            cardFields: cardLayout.cardFields.map(field => ({ ...field })),
+          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
+
+          for (const cardLayout of cardLayouts) {
+            this.cardLayouts[cardLayout!.id] = {
+              name: cardLayout!.name,
+              cardFields: cardLayout!.cardFields.map(field => ({ ...field })),
+            }
           }
 
           const cards = await this.gameInfoService.getCards(this.room.state.gameId)
 
-          for (const card of cards) {
-            this.freeModeService.addCard({
-              name: card.name,
-              data: card.data,
-              freeDragPos: { x: 0, y: 0 },
-              flipped: false,
-              id: card.id,
-              label: card.name,
-              pileId: undefined,
-              zIndex: 1,
+          for (const cardLayout of cardLayouts) {
+            cards[cardLayout!.id].forEach(card => {
+              this.freeModeService.addCard({
+                name: card.name,
+                cardLayoutId: cardLayout!.id,
+                data: card.data,
+                freeDragPos: { x: 0, y: 0 },
+                flipped: false,
+                id: card.id,
+                label: card.name,
+                pileId: undefined,
+                zIndex: 1,
+              })
             })
           }
         }
@@ -141,7 +147,7 @@ export class RoomsComponent {
               this.freeModeService.piles = room.state.piles
             }
           });
-          
+
       }
     }
   }

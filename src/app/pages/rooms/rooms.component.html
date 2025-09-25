@@ -10,11 +10,10 @@
   </p-panel>
 </div>
 
-
 <div class="grid">
-  @for (card of freeModeService.cards(); track $index) {
+  @for (card of freeModeService.cards(); track card.id) {
       <app-card-game
-        [cardLayout]="cardLayout!"
+        [cardLayout]="cardLayouts[card.cardLayoutId]"
         [card]="card"
         (cardDragStart)="onDragStart($event)"
         (cardDragEnd)="onDrop($event)"

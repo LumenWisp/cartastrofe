@@ -19,6 +19,7 @@ import { CardLayoutService } from './card-layout.service';
 import { CardService } from './card.service';
 import { BlockWorkspaceService } from './block-workspace.service';
 import { GameModesEnum } from '../enum/game-modes.enum';
+import { CardModel } from '../types/card';
 
 @Injectable({
   providedIn: 'root',
@@ -72,7 +73,7 @@ async getGameInfosPlayable() {
   snapshot.forEach((item) => {
     // Access the data and check for the property
     const data = item.data() as GameInfoModel;
-    if (data.cardLayoutId !== undefined) {
+    if (data.cardLayoutIds !== undefined) {
       results.push(data);
     }
   });
@@ -95,22 +96,30 @@ async getGameInfosPlayable() {
     return gameInfo;
   }
 
-  async getCardLayout(id: string) {
+  async getCardLayouts(id: string) {
     const gameInfo = await this.getGameInfoById(id);
 
     if (!gameInfo) throw new Error('GameInfo não encontrado');
-    if (!gameInfo.cardLayoutId) throw new Error('GameInfo não possui cardLayoutId');
+    if (!gameInfo.cardLayoutIds || gameInfo.cardLayoutIds.length === 0) return [];
 
-    const cardLayout = await this.cardLayoutService.getCardLayoutById(gameInfo.cardLayoutId);
-    if (!cardLayout) throw new Error('CardLayout não encontrado');
+    const cardLayouts = await Promise.all(gameInfo.cardLayoutIds.map(async cl => await this.cardLayoutService.getCardLayoutById(cl)));
 
-    return cardLayout;
+    if (!cardLayouts || cardLayouts.length === 0) return [];
+
+    return cardLayouts;
   }
 
   async getCards(id: string) {
-    const cardLayout = await this.getCardLayout(id);
-    if (!cardLayout) throw new Error('CardLayout não encontrado');
-    const cards = await this.cardService.getCardsByLayoutId(cardLayout.id);
+    const cardLayouts = await this.getCardLayouts(id);
+    if (!cardLayouts) throw new Error('CardLayouts não encontrados');
+    const cards: { [key: string]: CardModel[] } = {};
+
+    for (const cardLayout of cardLayouts) {
+      if (cardLayout && cardLayout.id) {
+        cards[cardLayout.id] = await this.cardService.getCardsByLayoutId(cardLayout.id);
+      }
+    }
+
     return cards;
   }
 

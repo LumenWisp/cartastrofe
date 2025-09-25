@@ -41,7 +41,6 @@ export class UserService {
   constructor() {}
 
   async currentUser() {
-    console.log(this._currentUser())
     if (this._currentUser()) {
       return this._currentUser()
     }

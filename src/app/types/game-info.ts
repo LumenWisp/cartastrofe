@@ -12,9 +12,9 @@ export interface GameInfoModel extends GameInfoData {
   id: string;
   countCards: number;
   userId: string;
-  cardLayoutId?: string;
+  cardLayoutIds?: string[];
   fieldItems?: GameFieldItem[];
-  
+
   // ===============================================================
   // Campos que representam o estado do workSpace das regras do jogo
   // ===============================================================

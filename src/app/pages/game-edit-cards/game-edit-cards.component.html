@@ -1,1 +1,26 @@
-<p>game-edit-cards works!</p>
+@for (cardLayout of cardLayoutUsed; track $index) {
+  <div>
+    <span>Card Layout:</span>
+
+    <p-select
+      [options]="cardLayouts"
+      [(ngModel)]="cardLayoutUsed[$index]"
+      optionLabel="name"
+      placeholder="Select a Card Layout"
+    ></p-select>
+  </div>
+}
+
+<p-button
+  label="Adicionar Card Layout"
+  icon="pi pi-plus"
+  iconPos="right"
+  (click)="cardLayoutUsed.push(null)"
+/>
+
+<p-button
+  label="Salvar"
+  icon="pi pi-save"
+  iconPos="right"
+  (click)="saveGame()"
+/>

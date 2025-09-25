@@ -6,6 +6,7 @@ import { CardLayout } from "./card-layout";
 /** @deprecated criar um novo modelo */
 export interface CardGame {
   id: string,
+  cardLayoutId: string,
   name: string,
   data: { [property: string]: string; }
 
