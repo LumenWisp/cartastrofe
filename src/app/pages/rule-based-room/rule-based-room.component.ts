@@ -28,6 +28,7 @@ import { BlockCodeGeneratorsService } from '../../services/block-code-generators
 
 // ENUM
 import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-rule-based-room',
@@ -47,8 +48,10 @@ export class RuleBasedRoomComponent implements OnInit{
     private roomSubscription?: Subscription;
 
   // Caracteristicas do jogo
-  phases = ['fase 1', 'fase 2', 'fase 3']; // dados mockados
+  phases: string[] = []; // dados mockados
   currentPhaseNumber = 0;
+  currentPlayerToPlayNumber = 0;
+  currentPlayerToPlay!: PlayerEntity;
 
   winConditionCode: string = '';
 
@@ -63,6 +66,7 @@ export class RuleBasedRoomComponent implements OnInit{
       private userService: UserService,
       private router: Router,
       private blockCodeGeneratorsService: BlockCodeGeneratorsService,
+      private toastService: ToastService
     ) {}
 
   ngOnInit() {
@@ -139,6 +143,17 @@ export class RuleBasedRoomComponent implements OnInit{
             this.players = players;
           });
 
+        //ouve as mudanças feitas no documento dessa sala
+        this.roomSubscription = this.roomService
+          .listenRoom(this.room.id)
+          .subscribe((room) => {
+            
+            if((this.room.state?.isGameOcurring != room.state?.isGameOcurring) && room.state?.isGameOcurring === false){
+              this.toastService.showSuccessToast('', 'Fim de jogo');
+            }
+            this.room = room;
+          });
+
 
         // Carregar o campo do jogo
         const gameId = room.state?.gameId;
@@ -147,6 +162,12 @@ export class RuleBasedRoomComponent implements OnInit{
           if(game) {
             this.game = game;
             this.winConditionCode = this.game.winConditionCode!;
+            if(this.game.gamePhases){
+              this.phases = this.game.gamePhases;
+            }
+            else{
+              this.phases = ['fase 1', 'fase 2', 'fase 3']
+            }
           }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
@@ -198,6 +219,9 @@ export class RuleBasedRoomComponent implements OnInit{
 
   async playGame(){
 
+    const playersOrderToPlay = this.players;
+    this.currentPlayerToPlay = playersOrderToPlay[this.currentPlayerToPlayNumber];
+
     //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
     if(this.game.onGameStartCode){
       this.runStringCode(this.game.onGameStartCode)
@@ -205,13 +229,19 @@ export class RuleBasedRoomComponent implements OnInit{
     }
   }
 
-  async nextPhase(){
-    if(this.currentPhaseNumber == this.phases.length-1){
-      this.currentPhaseNumber = 0;
+  nextPhase(){
+    this.currentPhaseNumber++;
+    if(this.currentPhaseNumber < this.phases.length){
     }
     else{
-      this.currentPhaseNumber++;
+      this.currentPhaseNumber = 0;
     }
+    console.log("Fase Atual: ", this.phases[this.currentPhaseNumber]);
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
+  }
+
+  endGame(){
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
   }
 
 }
