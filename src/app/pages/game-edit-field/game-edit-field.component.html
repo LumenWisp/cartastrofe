@@ -29,6 +29,8 @@
         <p-button label="Salvar atributo" icon="pi pi-save" (click)="saveAttribute(nameAttribute.value)"/>
       </div>
 
+      <p-listbox [options]="optionsAttribute" />
+
       <div>
         <span>Fases do jogo</span>
 
@@ -37,6 +39,8 @@
           <p-button label="Salvar fase" icon="pi pi-save" (click)="savePhase(namePhase.value)"/>
         </div>
       </div>
+
+      <p-listbox [options]="optionsPhase" />
 
     </div>
   }  

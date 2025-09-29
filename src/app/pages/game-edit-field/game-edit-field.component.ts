@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { ListboxModule } from 'primeng/listbox';
 
 import { GameInfoModel } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
@@ -18,7 +19,7 @@ import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
 
 @Component({
   selector: 'app-game-edit-field',
-  imports: [ButtonModule, RouterLink, CdkDrag, CommonModule, PopoverModule, DropdownModule, InputTextModule],
+  imports: [ButtonModule, RouterLink, CdkDrag, CommonModule, PopoverModule, DropdownModule, InputTextModule, ListboxModule],
   templateUrl: './game-edit-field.component.html',
   styleUrl: './game-edit-field.component.css'
 })
@@ -27,6 +28,8 @@ export class GameEditFieldComponent implements OnInit{
   items: GameFieldItem[] = [];
   selectedItemIndex: number | null = null;
   sidebarExpanded = false;
+  optionsAttribute: string[] = [];
+  optionsPhase: string[] = [];
   @ViewChild('nameAttribute') nameAttribute!: ElementRef;
   @ViewChild('namePhase') namePhase!: ElementRef;
 
@@ -146,6 +149,9 @@ export class GameEditFieldComponent implements OnInit{
         {type: GameFieldItemEnum.HAND, position: {x: 0, y: 0}, nameIdentifier: 'hand'}
       );
     }
+
+    this.optionsAttribute = this.game.gameAttributes ?? [];
+    this.optionsPhase = this.game.gamePhases ?? [];
   }
 
 }
