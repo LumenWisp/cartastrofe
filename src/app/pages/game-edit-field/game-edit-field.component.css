@@ -11,6 +11,16 @@
   z-index: 1000;
 }
 
+/* Quando expandir */
+.sidebar-right.expanded {
+  width: 75vw; /* ocupa metade da tela */
+}
+
+/* Ajusta posição quando expandido */
+.sidebar-right.expanded .sidebar-toggle {
+  left: -18px;
+}
+
 .toolbox {
   display: flex;
   flex-direction: column;
