@@ -46,6 +46,16 @@ export class RuleBasedRoomComponent implements OnInit{
     private playerSubscription?: Subscription;
     private roomSubscription?: Subscription;
 
+  // Caracteristicas do jogo
+  phases = ['fase 1', 'fase 2', 'fase 3']; // dados mockados
+  currentPhaseNumber = 0;
+
+  winConditionCode: string = '';
+
+  //pilha de códigos para rodar com base em triggers
+  onPhaseStartCodeList: string[] = [];
+  onPhaseEndCodeList: string[] = [];
+
   constructor(
       private gameInfoService: GameInfoService,
       private route: ActivatedRoute,
@@ -134,7 +144,10 @@ export class RuleBasedRoomComponent implements OnInit{
         const gameId = room.state?.gameId;
         if (gameId) {
           const game = await this.gameInfoService.getGameInfoById(gameId);
-          if(game) this.game = game
+          if(game) {
+            this.game = game;
+            this.winConditionCode = this.game.winConditionCode!;
+          }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
             this.items = [...this.game.fieldItems];
@@ -169,15 +182,15 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   private runStringCode(stringCode: string) {
-    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', stringCode);
+    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', 'game', stringCode);
 
-    func(this.blockCodeGeneratorsService, this.room, this.roomService);
+    func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game);
   }
 
   async startGame(){
     // Atualizando a sala para que seja visivel que o jogo já começou
-    //if(this.room.state) this.room.state['isGameOcurring'] = true;
-    //this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
+    if(this.room.state) this.room.state['isGameOcurring'] = true;
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
 
     //Começando o jogo
     this.playGame();
@@ -189,6 +202,15 @@ export class RuleBasedRoomComponent implements OnInit{
     if(this.game.onGameStartCode){
       this.runStringCode(this.game.onGameStartCode)
       //this.runStringCode("console.log('SKIBIDI ONICHAN');")
+    }
+  }
+
+  async nextPhase(){
+    if(this.currentPhaseNumber == this.phases.length-1){
+      this.currentPhaseNumber = 0;
+    }
+    else{
+      this.currentPhaseNumber++;
     }
   }
 

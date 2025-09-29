@@ -332,7 +332,7 @@ export function registerGenerators() {
     const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `room['${text_attribute}']`;
+    const code = `game['${text_attribute}']`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
