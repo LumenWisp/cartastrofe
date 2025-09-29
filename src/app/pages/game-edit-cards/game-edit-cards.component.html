@@ -1,14 +1,30 @@
 @for (cardLayout of cardLayoutUsed; track $index) {
-  <div>
-    <span>Card Layout:</span>
+  <p-panel [toggleable]="true">
+    <ng-template #header>
+      <div>
+        <span>Card Layout:</span>
 
-    <p-select
-      [options]="cardLayouts"
-      [(ngModel)]="cardLayoutUsed[$index]"
-      optionLabel="name"
-      placeholder="Select a Card Layout"
-    ></p-select>
-  </div>
+        <p-select
+        [options]="cardLayouts"
+        [(ngModel)]="cardLayoutUsed[$index]"
+        optionLabel="name"
+        placeholder="Select a Card Layout"
+        ></p-select>
+      </div>
+    </ng-template>
+
+    @if (cardLayout) {
+      <div class="cards-container">
+        @for (card of cards[cardLayout.id]; track $index) {
+          <app-card-game-layout
+            [ngStyle]="{ 'border': cardsUsed.includes(card) ? '10px solid red' : 'none' }"
+            [cardLayout]="convert(card, cardLayout)"
+            (cardLayoutClicked)="handleCardLayoutClicked(card)"
+          />
+        }
+      </div>
+    }
+  </p-panel>
 }
 
 <p-button
@@ -22,5 +38,5 @@
   label="Salvar"
   icon="pi pi-save"
   iconPos="right"
-  (click)="saveGame()"
+  (click)="saveLayoutsAndCards()"
 />

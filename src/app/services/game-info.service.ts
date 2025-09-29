@@ -123,6 +123,23 @@ async getGameInfosPlayable() {
     return cards;
   }
 
+  async getCardsInGame(id: string) {
+    const gameInfo = await this.getGameInfoById(id);
+
+    const cardIds = gameInfo?.cardIds || [];
+
+    const cardModels = [];
+
+    for (const cardId of cardIds) {
+      const card = await this.cardService.getCardById(cardId);
+      if (card) {
+        cardModels.push(card);
+      }
+    }
+
+    return cardModels;
+  }
+
   /**
    * Adiciona um gameInfo aos gameInfos do usuário logado.
    * @param gameInfoData informações do jogo

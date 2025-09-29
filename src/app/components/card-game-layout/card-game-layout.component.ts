@@ -17,6 +17,11 @@ export class CardGameLayoutComponent<T extends CardLayout | CardGameLayout> {
   @Input() isEditing = false;
 
   @Output() cardLayoutFieldClicked = new EventEmitter<T['cardFields'][number]>()
+  @Output() cardLayoutClicked = new EventEmitter<MouseEvent>()
+
+  handleCardLayoutClicked(event: MouseEvent) {
+    this.cardLayoutClicked.emit(event)
+  }
 
   handleCardLayoutFieldClicked(cardField: T['cardFields'][number]) {
     this.cardLayoutFieldClicked.emit(cardField)

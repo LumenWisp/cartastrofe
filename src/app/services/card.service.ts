@@ -18,6 +18,14 @@ export class CardService {
     private utilsService: UtilsService,
   ) {}
 
+  async getCardById(id: string): Promise<CardModel | null> {
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('id', '==', id));
+    const snapshot = await getDocs(q);
+    const cards = snapshot.docs.map(doc => doc.data() as CardModel) || [];
+    return cards.length > 0 ? cards[0] : null;
+  }
+
   async getCardsByLayoutId(cardLayoutId: string): Promise<CardModel[]> {
     const collectionRef = collection(this.firestore, this.path);
     const q = query(collectionRef, where('layoutId', '==', cardLayoutId));

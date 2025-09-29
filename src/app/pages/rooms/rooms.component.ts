@@ -97,6 +97,7 @@ export class RoomsComponent {
         this.room = room;
 
         if (this.room.state) {
+          const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
           const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
 
           for (const cardLayout of cardLayouts) {
@@ -106,21 +107,18 @@ export class RoomsComponent {
             }
           }
 
-          const cards = await this.gameInfoService.getCards(this.room.state.gameId)
-
-          for (const cardLayout of cardLayouts) {
-            cards[cardLayout!.id].forEach(card => {
-              this.freeModeService.addCard({
-                name: card.name,
-                cardLayoutId: cardLayout!.id,
-                data: card.data,
-                freeDragPos: { x: 0, y: 0 },
-                flipped: false,
-                id: card.id,
-                label: card.name,
-                pileId: undefined,
-                zIndex: 1,
-              })
+          // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
+          for (const card of cards) {
+            this.freeModeService.addCard({
+              name: card.name,
+              cardLayoutId: card.layoutId,
+              data: card.data,
+              freeDragPos: { x: 0, y: 0 },
+              flipped: false,
+              id: card.id,
+              label: card.name,
+              pileId: undefined,
+              zIndex: 1,
             })
           }
         }
@@ -135,13 +133,13 @@ export class RoomsComponent {
             this.players = players;
           });
 
-        //ouve as mudanças feitas no documento da sala
+        // ouve as mudanças feitas no documento da sala
         this.roomSubscription = this.roomService
           .listenRoom(this.room.id)
           .subscribe((room) => {
             this.room = room;
             if(room.state?.cards){
-              this.freeModeService.cards.set(room.state.cards);
+              // this.freeModeService.cards.set(room.state.cards);
             }
             if(room.state?.piles){
               this.freeModeService.piles = room.state.piles

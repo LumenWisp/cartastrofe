@@ -13,6 +13,7 @@ export interface GameInfoModel extends GameInfoData {
   countCards: number;
   userId: string;
   cardLayoutIds?: string[];
+  cardIds?: string[];
   fieldItems?: GameFieldItem[];
 
   // ===============================================================
