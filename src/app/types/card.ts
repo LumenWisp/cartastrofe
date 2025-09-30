@@ -13,7 +13,7 @@ export interface CardGame {
   // Modo livre
   label?: string,
   flipped?: boolean,
-  pileId?: string,
+  pileId: string | null,
   zIndex: number,
   freeDragPos: {x: number, y: number},
 }

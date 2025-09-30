@@ -56,6 +56,8 @@ export class RoomService {
       ...item,
     };
 
+    console.log(item)
+
     await setDoc(ref, updatedData, { merge: true });
   }
 

@@ -117,7 +117,7 @@ export class RoomsComponent {
               flipped: false,
               id: card.id,
               label: card.name,
-              pileId: undefined,
+              pileId: null,
               zIndex: 1,
             })
           }
@@ -125,6 +125,9 @@ export class RoomsComponent {
 
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();
+
+        await this.updateRoom();
+
 
         //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
@@ -136,15 +139,16 @@ export class RoomsComponent {
         // ouve as mudanças feitas no documento da sala
         this.roomSubscription = this.roomService
           .listenRoom(this.room.id)
-          .subscribe((room) => {
+          .subscribe(async (room) => {
             this.room = room;
+
             if(room.state?.cards){
-              // this.freeModeService.cards.set(room.state.cards);
+              this.freeModeService.cards.set(room.state.cards);
             }
             if(room.state?.piles){
               this.freeModeService.piles = room.state.piles
             }
-          });
+        });
 
       }
     }
@@ -287,6 +291,6 @@ export class RoomsComponent {
 
   async updateRoom(): Promise<void>{
     const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
-    this.roomService.updateRoom(this.room.id, {state: newState});
+    this.roomService.updateRoom(this.room.id, { state: newState });
   }
 }
