@@ -1,1 +1,43 @@
-<p>game-edit-cards works!</p>
+@for (cardLayout of cardLayoutUsed; track $index) {
+  <p-panel [toggleable]="true">
+    <ng-template #header>
+      <div>
+        <span>Card Layout:</span>
+
+        <p-select
+          [options]="cardLayouts"
+          [(ngModel)]="cardLayoutUsed[$index]"
+          optionLabel="name"
+          placeholder="Select a Card Layout"
+          (onChange)="loadCardsForLayout(cardLayoutUsed[$index])"
+        ></p-select>
+      </div>
+    </ng-template>
+
+    @if (cardLayout) {
+      <div class="cards-container">
+        @for (card of cards[cardLayout.id]; track $index) {
+          <app-card-game-layout
+            [ngStyle]="{ 'border': cardsUsed.includes(card) ? '10px solid red' : 'none' }"
+            [cardLayout]="convert(card, cardLayout)"
+            (cardLayoutClicked)="handleCardLayoutClicked(card)"
+          />
+        }
+      </div>
+    }
+  </p-panel>
+}
+
+<p-button
+  label="Adicionar Card Layout"
+  icon="pi pi-plus"
+  iconPos="right"
+  (click)="cardLayoutUsed.push(null)"
+/>
+
+<p-button
+  label="Salvar"
+  icon="pi pi-save"
+  iconPos="right"
+  (click)="saveLayoutsAndCards()"
+/>

@@ -18,6 +18,10 @@
     --danger: #f64e3f;
 }
 
+.remove-pointer-events, .remove-pointer-events > * {
+  pointer-events: none;
+}
+
 a {
   color: black;
 }

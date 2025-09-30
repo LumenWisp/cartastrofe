@@ -33,4 +33,13 @@ export class AppMainComponent {
     return hiddenRoutes.some(route => this.router.url.startsWith(route));
   }
 
+  ngOnDestroy() {
+    updatePreset({
+      semantic: {
+        app: {
+          body: 'white'
+        }
+      }
+    })
+  }
 }

@@ -82,7 +82,7 @@ CSS PROVISORIO DAS CARTITAS
 .front { background: #fff; }
 .back  { background: #d64545; transform: rotateY(180deg); }
 
-.remove-pointer-events {
+.remove-pointer-events, .remove-pointer-events > * {
   pointer-events: none;
 }
 

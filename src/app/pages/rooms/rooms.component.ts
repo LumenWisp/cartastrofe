@@ -41,7 +41,7 @@ export class RoomsComponent {
   users: UserEntity[] = [];
   selectedCard: CardGame | null = null;
 
-  cardLayout: CardLayout | null = null;
+  cardLayouts: { [id: string]: CardLayout } = {};
 
   // Subscrições
   private playerSubscription?: Subscription;
@@ -97,17 +97,21 @@ export class RoomsComponent {
         this.room = room;
 
         if (this.room.state) {
-          const cardLayout = await this.gameInfoService.getCardLayout(this.room.state.gameId)
-          this.cardLayout = {
-            name: cardLayout.name,
-            cardFields: cardLayout.cardFields.map(field => ({ ...field })),
+          const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
+          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
+
+          for (const cardLayout of cardLayouts) {
+            this.cardLayouts[cardLayout!.id] = {
+              name: cardLayout!.name,
+              cardFields: cardLayout!.cardFields.map(field => ({ ...field })),
+            }
           }
 
-          const cards = await this.gameInfoService.getCards(this.room.state.gameId)
-
+          // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
           for (const card of cards) {
             this.freeModeService.addCard({
               name: card.name,
+              cardLayoutId: card.layoutId,
               data: card.data,
               freeDragPos: { x: 0, y: 0 },
               flipped: false,
@@ -129,19 +133,19 @@ export class RoomsComponent {
             this.players = players;
           });
 
-        //ouve as mudanças feitas no documento da sala
+        // ouve as mudanças feitas no documento da sala
         this.roomSubscription = this.roomService
           .listenRoom(this.room.id)
           .subscribe((room) => {
             this.room = room;
             if(room.state?.cards){
-              this.freeModeService.cards.set(room.state.cards);
+              // this.freeModeService.cards.set(room.state.cards);
             }
             if(room.state?.piles){
               this.freeModeService.piles = room.state.piles
             }
           });
-          
+
       }
     }
   }
@@ -210,7 +214,7 @@ export class RoomsComponent {
       return;
     }
 
-    if (targetElement?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
+    if ((targetElement?.classList.contains('face') || targetElement?.classList.contains('card-layout-container')) && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
       const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
 
       // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
