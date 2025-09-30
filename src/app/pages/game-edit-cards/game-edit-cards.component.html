@@ -5,10 +5,11 @@
         <span>Card Layout:</span>
 
         <p-select
-        [options]="cardLayouts"
-        [(ngModel)]="cardLayoutUsed[$index]"
-        optionLabel="name"
-        placeholder="Select a Card Layout"
+          [options]="cardLayouts"
+          [(ngModel)]="cardLayoutUsed[$index]"
+          optionLabel="name"
+          placeholder="Select a Card Layout"
+          (onChange)="loadCardsForLayout(cardLayoutUsed[$index])"
         ></p-select>
       </div>
     </ng-template>

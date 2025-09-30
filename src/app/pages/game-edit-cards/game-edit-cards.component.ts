@@ -50,6 +50,11 @@ export class GameEditCardsComponent {
     return obj;
   }
 
+  loadCardsForLayout(cardLayout: CardLayoutModel | null) {
+    if (!cardLayout) return;
+    this.fetchCards(cardLayout.id);
+  }
+
   handleCardLayoutClicked(card: CardModel) {
     const index = this.cardsUsed.findIndex(c => c.id === card.id)
 
