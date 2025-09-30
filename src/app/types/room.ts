@@ -18,7 +18,8 @@ export interface RoomState{
     gameId: string; // Id do jogo que está vinculado a sala no momento
 
     //Em relação ao momento do jogo
-    playerTurn?: string; // Id do jogador que vai jogar agora
+    currentPlayerToPlay?: string; // Id do jogador que vai jogar agora
+    currentphase?: string;
     cards?: CardGame[];
     piles?: PileModel[];
 }

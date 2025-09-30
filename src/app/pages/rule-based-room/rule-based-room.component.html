@@ -10,6 +10,7 @@
   </p-panel>
 
   <p-button (onClick)="startGame()" label="Iniciar jogo" />
+  <p-button (onClick)="endGame()" label="Terminar jogo" />
 </div>
 
 <!-- Área de jogo -->
@@ -20,6 +21,7 @@
     @if (item.type === 'passPhase') {
 
       <button 
+        (click)="nextPhase()"
         cdkDrag
         [cdkDragFreeDragPosition]="item.position"
         [cdkDragDisabled]="true"

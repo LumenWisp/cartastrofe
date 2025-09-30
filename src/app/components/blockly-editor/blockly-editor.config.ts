@@ -15,9 +15,27 @@ export const toolbox = {
       contents: [
         { kind: 'category', name: 'On Game Start' },
         { kind: 'category', name: 'Win Condition' },
-        { kind: 'category', name: 'On Move Card From To' },
-        { kind: 'category', name: 'On Phase Start' },
-        { kind: 'category', name: 'On Phase End' },
+        {
+          kind: 'category', 
+          name: 'On Move Card From To',
+          contents: [
+          { kind: 'block', type: 'onMoveCardFromTo' },
+          ]
+        },
+        {
+          kind: 'category',
+          name: 'On Phase Start',
+          contents: [
+          { kind: 'block', type: 'onPhaseStart' },
+          ]
+        },
+        {
+          kind: 'category',
+          name: 'On Phase End',
+          contents: [
+          { kind: 'block', type: 'onPhaseEnded' },
+          ]
+        },
       ]
     },
     { 
@@ -332,7 +350,7 @@ export function registerGenerators() {
     const text_attribute = block.getFieldValue('ATTRIBUTE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `room['${text_attribute}']`;
+    const code = `game['${text_attribute}']`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };

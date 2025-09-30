@@ -28,6 +28,7 @@ import { BlockCodeGeneratorsService } from '../../services/block-code-generators
 
 // ENUM
 import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-rule-based-room',
@@ -46,6 +47,18 @@ export class RuleBasedRoomComponent implements OnInit{
     private playerSubscription?: Subscription;
     private roomSubscription?: Subscription;
 
+  // Caracteristicas do jogo
+  phases: string[] = []; // dados mockados
+  currentPhaseNumber = 0;
+  currentPlayerToPlayNumber = 0;
+  currentPlayerToPlay!: PlayerEntity;
+
+  winConditionCode: string = '';
+
+  //pilha de códigos para rodar com base em triggers
+  onPhaseStartCodeList: string[] = [];
+  onPhaseEndCodeList: string[] = [];
+
   constructor(
       private gameInfoService: GameInfoService,
       private route: ActivatedRoute,
@@ -53,6 +66,7 @@ export class RuleBasedRoomComponent implements OnInit{
       private userService: UserService,
       private router: Router,
       private blockCodeGeneratorsService: BlockCodeGeneratorsService,
+      private toastService: ToastService
     ) {}
 
   ngOnInit() {
@@ -129,12 +143,32 @@ export class RuleBasedRoomComponent implements OnInit{
             this.players = players;
           });
 
+        //ouve as mudanças feitas no documento dessa sala
+        this.roomSubscription = this.roomService
+          .listenRoom(this.room.id)
+          .subscribe((room) => {
+            
+            if((this.room.state?.isGameOcurring != room.state?.isGameOcurring) && room.state?.isGameOcurring === false){
+              this.toastService.showSuccessToast('', 'Fim de jogo');
+            }
+            this.room = room;
+          });
+
 
         // Carregar o campo do jogo
         const gameId = room.state?.gameId;
         if (gameId) {
           const game = await this.gameInfoService.getGameInfoById(gameId);
-          if(game) this.game = game
+          if(game) {
+            this.game = game;
+            this.winConditionCode = this.game.winConditionCode!;
+            if(this.game.gamePhases){
+              this.phases = this.game.gamePhases;
+            }
+            else{
+              this.phases = ['fase 1', 'fase 2', 'fase 3']
+            }
+          }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
             this.items = [...this.game.fieldItems];
@@ -169,15 +203,15 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   private runStringCode(stringCode: string) {
-    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', stringCode);
+    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', 'game', stringCode);
 
-    func(this.blockCodeGeneratorsService, this.room, this.roomService);
+    func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game);
   }
 
   async startGame(){
     // Atualizando a sala para que seja visivel que o jogo já começou
-    //if(this.room.state) this.room.state['isGameOcurring'] = true;
-    //this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
+    if(this.room.state) this.room.state['isGameOcurring'] = true;
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
 
     //Começando o jogo
     this.playGame();
@@ -185,11 +219,30 @@ export class RuleBasedRoomComponent implements OnInit{
 
   async playGame(){
 
+    const playersOrderToPlay = this.players;
+    this.currentPlayerToPlay = playersOrderToPlay[this.currentPlayerToPlayNumber];
+
     //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
     if(this.game.onGameStartCode){
       this.runStringCode(this.game.onGameStartCode)
       //this.runStringCode("console.log('SKIBIDI ONICHAN');")
     }
+  }
+
+  nextPhase(){
+    this.currentPhaseNumber++;
+    if(this.currentPhaseNumber < this.phases.length){
+    }
+    else{
+      this.currentPhaseNumber = 0;
+    }
+    console.log("Fase Atual: ", this.phases[this.currentPhaseNumber]);
+    this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
+  }
+
+  endGame(){
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
   }
 
 }

@@ -1,4 +1,7 @@
-<div class="sidebar-right">
+<div class="sidebar-right" [ngClass]="{ 'expanded': sidebarExpanded }">
+
+  <!-- Botão toggle -->
+  <p-button [icon]="sidebarExpanded ? 'pi pi-angle-right' : 'pi pi-angle-left'"  class="sidebar-toggle" (click)="sidebarExpanded = !sidebarExpanded"/>
 
   <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
 
@@ -16,6 +19,31 @@
   </div>
 
   <p-button label="Salvar Campo" (click)="saveField()" />
+
+  @if (sidebarExpanded) {
+    <div>
+      <span>Atributos do jogo</span>
+
+      <div>
+        <input type="text" #nameAttribute pInputText placeholder="Nome do atributo" />
+        <p-button label="Salvar atributo" icon="pi pi-save" (click)="saveAttribute(nameAttribute.value)"/>
+      </div>
+
+      <p-listbox [options]="optionsAttribute" />
+
+      <div>
+        <span>Fases do jogo</span>
+
+        <div>
+          <input type="text" #namePhase pInputText placeholder="Nome da fase" />
+          <p-button label="Salvar fase" icon="pi pi-save" (click)="savePhase(namePhase.value)"/>
+        </div>
+      </div>
+
+      <p-listbox [options]="optionsPhase" />
+
+    </div>
+  }  
 
 </div>
 

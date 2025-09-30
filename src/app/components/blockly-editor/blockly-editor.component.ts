@@ -48,7 +48,12 @@ export class BlocklyEditorComponent implements AfterViewInit {
     this.workspace = Blockly.inject(this.blocklyDiv.nativeElement, {
       toolbox,
       trashcan: true,
-      scrollbars: false,
+      //scrollbars: true,
+      move: {
+      scrollbars: {
+        horizontal: false,
+        vertical: true
+      }}
     });
 
     // Escutar evento de seleção da toolbox

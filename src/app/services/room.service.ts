@@ -219,6 +219,8 @@ export class RoomService {
   ): Promise<PlayerEntity> {
     const currentUser = this.userService.currentUser();
 
+    console.log("SFDGBHBFSDHGBGBRSDIYBGV")
+
     if (!currentUser) throw new Error('Usuário não está logado')
 
     const refCollection = collection(
@@ -300,7 +302,7 @@ export class RoomService {
     );
 
     try {
-      let queryRef = query(refCollection, where('userID', '==', currentUser.userId));
+      let queryRef = query(refCollection, where('userId', '==', currentUser.userId));
 
       const snapshot = await getDocs(queryRef);
       const result: PlayerEntity[] = snapshot.docs.map((doc) => ({
