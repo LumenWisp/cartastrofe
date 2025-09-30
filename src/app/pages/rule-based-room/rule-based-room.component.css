@@ -74,6 +74,6 @@
   border: none;
   border-radius: 6px;
   font-weight: bold;
-  cursor: grab;
+  cursor: pointer;
   user-select: none;
 }
