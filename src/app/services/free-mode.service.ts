@@ -13,7 +13,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE CARTAS
-  */ 
+  */
 
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
@@ -118,7 +118,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE PILHAS
-  */ 
+  */
 
   // Cria uma pilha com o id passado
   createPile(pileId: string) {
@@ -171,7 +171,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE EMBARALHAMENTO
-  */ 
+  */
 
   // Embaralha uma pilha
   shufflePile(pileId: string) {

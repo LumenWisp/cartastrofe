@@ -13,6 +13,7 @@ import { CardGameLayoutFieldComponent } from '../card-game-layout-field/card-gam
   styleUrl: './card-game-layout.component.css'
 })
 export class CardGameLayoutComponent<T extends CardLayout | CardGameLayout> {
+  @Input() cardId?: string;
   @Input({ required: true }) cardLayout!: T;
   @Input() isEditing = false;
 

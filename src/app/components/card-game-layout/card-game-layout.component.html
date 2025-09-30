@@ -4,6 +4,7 @@
     width: 200 + 'px',
     height: 300 + 'px',
   }"
+  [attr.card-id]="cardId"
   (click)="handleCardLayoutClicked($event)"
 >
   @for (cardField of cardLayout.cardFields; track cardField) {

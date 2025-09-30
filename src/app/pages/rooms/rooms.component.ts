@@ -214,7 +214,7 @@ export class RoomsComponent {
       return;
     }
 
-    if (targetElement?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
+    if ((targetElement?.classList.contains('face') || targetElement?.classList.contains('card-layout-container')) && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
       const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
 
       // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
