@@ -194,8 +194,13 @@ export class RuleBasedRoomComponent implements OnInit{
           .listenRoom(this.room.id)
           .subscribe((room) => {
             
-            if((this.room.state?.isGameOcurring != room.state?.isGameOcurring) && room.state?.isGameOcurring === false){
-              this.toastService.showSuccessToast('', 'Fim de jogo');
+            if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
+              if(room.state?.isGameOcurring === false){
+                this.toastService.showSuccessToast('', 'Fim de jogo');
+              }
+              else{
+                this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
+              }
             }
             this.room = room;
           });
