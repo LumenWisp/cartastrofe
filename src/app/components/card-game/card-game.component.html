@@ -1,7 +1,7 @@
 
 
 <div
-  style="position: relative ;"
+  style="position: relative; width: min-content;"
   [class.flipped]="card.flipped"
   (dblclick)="onDoubleClick($event)"
   (contextmenu)="onContextMenu($event)"
@@ -12,7 +12,10 @@
   [attr.card-id]="card.id"
   [style.z-index]="card.zIndex"
 >
+<div class="cont">
+
   <app-card-game-layout style="display: block;" class="face" [cardLayout]="cardLayoutValues" />
-  <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px; z-index: -1;" class="face back" [attr.card-id]="card.id"></div>
+  <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px;" class="face back" [attr.card-id]="card.id"></div>
+</div>
 </div>
 
