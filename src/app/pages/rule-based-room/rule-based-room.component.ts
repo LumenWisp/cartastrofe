@@ -237,6 +237,7 @@ export class RuleBasedRoomComponent implements OnInit{
       this.currentPhaseNumber = 0;
     }
     console.log("Fase Atual: ", this.phases[this.currentPhaseNumber]);
+    this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
   }
 
