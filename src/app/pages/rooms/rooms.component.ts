@@ -128,7 +128,6 @@ export class RoomsComponent {
 
         await this.updateRoom();
 
-
         //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
           .listenPlayers(this.room.id)
