@@ -1,6 +1,9 @@
 <div data-scroll-container>
     <header>
-        <img src="assets/cartastrofeLogoText.svg" alt="Cartastrofe Logo" class="logo" height="48" />
+        <div class="group-logo">
+            <img src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo" class="logo" height="48" />
+            <span>Cartástrofe</span>
+        </div>
         <nav class="desktop-nav">
             <a routerLink="/login">{{ 'homepage.login' | translate }}</a>
         </nav>
@@ -35,7 +38,6 @@
                 <div #card3d class="card-3d" id="card3d" (mousemove)="mouseMoveCard($event, card3d)" (mouseleave)="resetCardRotation(card3d)" (click)="rotateCard(card3d)">
                     <div class="card-3d-face card-3d-front">
                         <div class="card-3d-content">
-                            <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
                             <h2>{{ 'homepage.card.card-desc-1' | translate}}</h2>
                             <h2>{{ 'homepage.card.card-desc-2' | translate}}</h2>
                             <h2>{{ 'homepage.card.card-desc-3' | translate}}</h2>
@@ -43,8 +45,8 @@
                     </div>
                     <div class="card-3d-face card-3d-back">
                         <div class="card-3d-content">
-                            <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>
-                            <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
+                            <img class="back-logo" src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo">
+                            <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>                            
                         </div>
                     </div>
                 </div>
