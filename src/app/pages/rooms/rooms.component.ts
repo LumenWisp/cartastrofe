@@ -24,6 +24,7 @@ import { Popover, PopoverModule } from 'primeng/popover';
 import { CardGameComponent } from "../../components/card-game/card-game.component";
 import { CardLayoutService } from '../../services/card-layout.service';
 import { GameInfoService } from '../../services/game-info.service';
+import { LoadingService } from '../../services/loading.service';
 import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-layout';
 
 @Component({
@@ -52,11 +53,13 @@ export class RoomsComponent {
     private roomService: RoomService,
     private router: Router,
     public freeModeService: FreeModeService,
-    private gameInfoService: GameInfoService
+    private gameInfoService: GameInfoService,
+    private loadingService: LoadingService,
   ) {}
 
   async ngOnInit() {
     await this.checkRouteParams();
+    this.loadingService.hide();
   }
 
   async ngOnDestroy() {

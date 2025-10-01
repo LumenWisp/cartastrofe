@@ -10,6 +10,7 @@ import { GameInfoService } from '../../services/game-info.service';
 import { RoomService } from '../../services/room.service';
 import { UserService } from '../../services/user-service.service';
 import { FreeModeService } from '../../services/free-mode.service';
+import { LoadingService } from '../../services/loading.service';
 
 // PRIME NG
 import { PanelModule } from 'primeng/panel';
@@ -86,11 +87,13 @@ export class RuleBasedRoomComponent implements OnInit{
       private blockCodeGeneratorsService: BlockCodeGeneratorsService,
       private toastService: ToastService,
       public freeModeService: FreeModeService,
+      private loadingService: LoadingService,
     ) {}
 
   ngOnInit() {
       this.checkQueryParamsGame();
       this.checkRouteParamsRoom();
+      // HIDE LOADING ESTÁ DENTRO DO CHECKROUTEPARAMSROOM!!!!!
   }
 
   async ngOnDestroy() {
@@ -232,6 +235,8 @@ export class RuleBasedRoomComponent implements OnInit{
           
       }
     }
+    // Para o loading que foi ativo no MODAL CREATE ROOM
+    this.loadingService.hide();
   }
 
   //pega o Jogador logado, redireciona para login se não está logado ainda

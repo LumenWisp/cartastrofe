@@ -13,6 +13,7 @@ import { GameInfoService } from '../../services/game-info.service';
 import { UserService } from '../../services/user-service.service';
 import { RoomService } from '../../services/room.service';
 import { ToastService } from '../../services/toast.service';
+import { LoadingService } from '../../services/loading.service';
 
 // ENUMS
 import { GameModesEnum } from '../../enum/game-modes.enum';
@@ -55,6 +56,7 @@ export class ModalCreateRoomComponent {
     private router: Router,
     private roomService: RoomService,
     private toastService: ToastService,
+    private loadingService: LoadingService,
   ) {
     this.loadGames();
   }
@@ -75,12 +77,15 @@ export class ModalCreateRoomComponent {
       return;
     } 
 
+    this.loadingService.show();
+
     try {
       const room = await this.roomService.createRoom(this.gameInfo()!.id);
 
       if (!room) {
         this.toastService.showErrorToast('Erro ao criar sala', 'Não há salas disponíveis')
         console.log('Não há salas disponiveis');
+        this.loadingService.hide();
       } else {
           if (this.gameInfo()!.gameMode === GameModesEnum.FREE) {
             this.goToGameRoom(room.roomLink, GameModesEnum.FREE);
