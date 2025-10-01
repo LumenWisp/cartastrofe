@@ -31,7 +31,7 @@ import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent, NgStyle],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css',
 })
@@ -103,7 +103,6 @@ export class RoomsComponent {
   resizeHandArea() {
     const mainContentWidth = this.mainContent.nativeElement.offsetWidth;
     if (this.handAreaContainer) this.handAreaContainer.nativeElement.style.width = mainContentWidth + 'px';
-    if (this.handArea) this.handArea.nativeElement.style.width = mainContentWidth + 'px';
   }
 
   onDragMoved(event: MouseEvent) {
@@ -322,6 +321,8 @@ export class RoomsComponent {
 
         this.freeModeService.changeBelongsTo(draggedCardId, null);
       }
+
+      this.resizeHandArea()
     }
 
     this.updateRoom()
