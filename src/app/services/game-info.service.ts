@@ -73,11 +73,7 @@ async getGameInfosPlayable() {
   snapshot.forEach((item) => {
     // Access the data and check for the property
     const data = item.data() as GameInfoModel;
-    
-    //if (data.cardLayoutIds !== undefined) {
-      results.push(data);
-    //}
-    
+    results.push(data);
   });
 
   return results;

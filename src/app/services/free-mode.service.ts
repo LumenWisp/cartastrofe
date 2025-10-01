@@ -15,6 +15,20 @@ export class FreeModeService {
   FUNÇÕES DE CARTAS
   */
 
+  tableCards() {
+    return this.cards().filter(card => card.belongsTo === null);
+  }
+
+  myHandCards(userId: string) {
+    return this.cards().filter(card => card.belongsTo === userId);
+  }
+
+  changeBelongsTo(cardId: string, userId: string | null) {
+    this.cards.update(cards =>
+      cards.map(c => c.id === cardId ? { ...c, belongsTo: userId } : c)
+    );
+  }
+
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
   }

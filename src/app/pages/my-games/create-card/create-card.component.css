@@ -8,3 +8,28 @@
   border: 1px solid #000000;
   background-color: #ffffff;
 }
+
+.card-layout-preview {
+  display: block;
+  width: min-content;
+  height: min-content;
+  margin-block: 20px;
+  border: 1px solid #000000;
+}
+
+.list-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-col-buttons {
+  display: flex;
+  justify-content: space-between;
+}

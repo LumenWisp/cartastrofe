@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,9 @@ import { Subscription } from 'rxjs';
 
 import {
   CdkDrag,
+  CdkDragDrop,
   CdkDragEnd,
+  CdkDragMove,
   CdkDragStart,
   DragDropModule,
 } from '@angular/cdk/drag-drop';
@@ -26,17 +28,18 @@ import { CardLayoutService } from '../../services/card-layout.service';
 import { GameInfoService } from '../../services/game-info.service';
 import { LoadingService } from '../../services/loading.service';
 import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-layout';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent, NgStyle],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css',
 })
 export class RoomsComponent {
   room!: Room;
   players: PlayerEntity[] = [];
-  currentPlayer!: PlayerEntity;
+  currentPlayer?: PlayerEntity;
 
   @ViewChild('popover') popover!: Popover;
   users: UserEntity[] = [];
@@ -47,6 +50,11 @@ export class RoomsComponent {
   // Subscrições
   private playerSubscription?: Subscription;
   private roomSubscription?: Subscription;
+
+  @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
+  @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('handArea') handArea!: ElementRef<HTMLDivElement>;
+  isOverHandArea = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -60,6 +68,10 @@ export class RoomsComponent {
   async ngOnInit() {
     await this.checkRouteParams();
     this.loadingService.hide();
+  }
+
+  ngAfterViewInit() {
+    this.resizeHandArea();
   }
 
   async ngOnDestroy() {
@@ -84,6 +96,31 @@ export class RoomsComponent {
         this.roomSubscription.unsubscribe();
       }
     }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.resizeHandArea();
+  }
+
+  resizeHandArea() {
+    const mainContentWidth = this.mainContent.nativeElement.offsetWidth;
+    if (this.handAreaContainer) this.handAreaContainer.nativeElement.style.width = mainContentWidth + 'px';
+    if (this.handArea) this.handArea.nativeElement.style.width = mainContentWidth + 'px';
+  }
+
+  onDragMoved(event: MouseEvent) {
+    if (!this.isDragging) return;
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    const rect = this.handArea.nativeElement.getBoundingClientRect();
+    this.isOverHandArea =
+      mouseX >= rect.left &&
+      mouseX <= rect.right &&
+      mouseY >= rect.top &&
+      mouseY <= rect.bottom;
   }
 
   /**
@@ -122,6 +159,7 @@ export class RoomsComponent {
               label: card.name,
               pileId: null,
               zIndex: 1,
+              belongsTo: null,
             })
           }
         }
@@ -130,7 +168,6 @@ export class RoomsComponent {
         await this.getCurrentPlayer();
 
         await this.updateRoom();
-
 
         //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
@@ -165,8 +202,11 @@ export class RoomsComponent {
     event.preventDefault();
     if (this.isDragging) return;
     this.selectedCard = card;
+
+    const cardEl = document.querySelector(`[card-id="${card.id}"] .align-popover`);
+
     if (this.freeModeService.isPartOfPile(card.id!)) {
-      popover.show(event);
+      popover.show(event, cardEl);
     }
   }
 
@@ -263,8 +303,34 @@ export class RoomsComponent {
       draggedCard!.freeDragPos = { x, y };
       this.freeModeService.updateCard(draggedCard!)
     }
+
+    if (draggedCardId) {
+      if (this.isOverHandArea) {
+        this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+      } else {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
+          this.freeModeService.cards.update(cards =>
+            cards.map(c => {
+              if (c.id === draggedCardId) {
+                const offsetX = 100 // 60 da escala + 40 para centralizar
+                const offsetY = 150 // 90 da escala + 60 para centralizar
+
+                return { ...c, freeDragPos: { x: event.dropPoint.x - offsetX, y: event.dropPoint.y - offsetY } }
+              }
+
+              return c
+            })
+          );
+        }
+
+        this.freeModeService.changeBelongsTo(draggedCardId, null);
+      }
+    }
+
     this.updateRoom()
     console.log(this.freeModeService.piles);
+
+
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {

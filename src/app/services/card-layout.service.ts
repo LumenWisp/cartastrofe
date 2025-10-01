@@ -60,12 +60,6 @@ export class CardLayoutService {
   }
 
   async getCardLayoutById(id: string) {
-    const user = await this.userService.currentUser()
-
-    if (user === undefined) return null
-
-    if (user === null) throw new Error('Usuário não está logado');
-
     const refCollection = collection(this.firestore, this.cardLayoutpath);
     const queryRef = query(refCollection, where('id', '==', id));
     const docSnapshot = await getDocs(queryRef);
