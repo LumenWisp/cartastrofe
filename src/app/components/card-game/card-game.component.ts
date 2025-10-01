@@ -38,6 +38,9 @@ export class CardGameComponent {
     this.cardContextMenu.emit(event);
   }
   onDragEnd(event: CdkDragEnd) {
+    if (this.isDisplayOnly) {
+      event.source.reset();
+    }
     this.cardDragEnd.emit(event);
   }
   onDragMoved(event: CdkDragMove) {

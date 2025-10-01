@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -27,10 +27,11 @@ import { CardGameComponent } from "../../components/card-game/card-game.componen
 import { CardLayoutService } from '../../services/card-layout.service';
 import { GameInfoService } from '../../services/game-info.service';
 import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-layout';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent, NgStyle],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css',
 })
@@ -49,6 +50,8 @@ export class RoomsComponent {
   private playerSubscription?: Subscription;
   private roomSubscription?: Subscription;
 
+  @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
+  @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('handArea') handArea!: ElementRef<HTMLDivElement>;
   isOverHandArea = false;
 
@@ -62,6 +65,10 @@ export class RoomsComponent {
 
   async ngOnInit() {
     await this.checkRouteParams();
+  }
+
+  ngAfterViewInit() {
+    this.resizeHandArea();
   }
 
   async ngOnDestroy() {
@@ -88,9 +95,23 @@ export class RoomsComponent {
     }
   }
 
-  onDragMoved(event: CdkDragMove) {
-    const mouseX = event.pointerPosition.x;
-    const mouseY = event.pointerPosition.y;
+  @HostListener('window:resize')
+  onResize() {
+    this.resizeHandArea();
+  }
+
+  resizeHandArea() {
+    const mainContentWidth = this.mainContent.nativeElement.offsetWidth;
+    if (this.handAreaContainer) this.handAreaContainer.nativeElement.style.width = mainContentWidth + 'px';
+    if (this.handArea) this.handArea.nativeElement.style.width = mainContentWidth + 'px';
+  }
+
+  onDragMoved(event: MouseEvent) {
+    if (!this.isDragging) return;
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
     const rect = this.handArea.nativeElement.getBoundingClientRect();
     this.isOverHandArea =
       mouseX >= rect.left &&
@@ -178,8 +199,11 @@ export class RoomsComponent {
     event.preventDefault();
     if (this.isDragging) return;
     this.selectedCard = card;
+
+    const cardEl = document.querySelector(`[card-id="${card.id}"] .align-popover`);
+
     if (this.freeModeService.isPartOfPile(card.id!)) {
-      popover.show(event);
+      popover.show(event, cardEl);
     }
   }
 
@@ -282,12 +306,17 @@ export class RoomsComponent {
         this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
       } else {
         if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
-          const x = draggedElement.getBoundingClientRect().left
-          const y = draggedElement.getBoundingClientRect().top
           this.freeModeService.cards.update(cards =>
-            cards.map(c =>
-              c.id === draggedCardId ? { ...c, freeDragPos: { x, y } } : c
-            )
+            cards.map(c => {
+              if (c.id === draggedCardId) {
+                const offsetX = 100 // 60 da escala + 40 para centralizar
+                const offsetY = 150 // 90 da escala + 60 para centralizar
+
+                return { ...c, freeDragPos: { x: event.dropPoint.x - offsetX, y: event.dropPoint.y - offsetY } }
+              }
+
+              return c
+            })
           );
         }
 

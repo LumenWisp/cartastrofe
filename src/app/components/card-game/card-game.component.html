@@ -1,7 +1,7 @@
 @if (isDisplayOnly) {
 <div
-  style="position: relative; width: min-content; scale: 0.8;"
-  [cdkDragScale]="0.8"
+  style="position: relative; width: min-content; scale: 0.6;"
+  [cdkDragScale]="0.6"
   [class.flipped]="card.flipped"
   (dblclick)="onDoubleClick($event)"
   (contextmenu)="onContextMenu($event)"
@@ -9,11 +9,11 @@
   (cdkDragMoved)="onDragMoved($event)"
   (cdkDragStarted)="onDragStart($event)"
   cdkDrag
+  cdkDragBoundary="body"
   [attr.card-id]="card.id"
   [style.z-index]="card.zIndex"
 >
 <div class="cont">
-
   <app-card-game-layout style="display: block;" class="face" [cardLayout]="cardLayoutValues" [cardId]="card.id" />
   <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px;" class="face back" [attr.card-id]="card.id"></div>
 </div>
@@ -22,8 +22,8 @@
 
 
 <div
-  style="position: relative; width: min-content; scale: 0.8;"
-  [cdkDragScale]="0.8"
+  style="position: relative; width: min-content; scale: 0.6;"
+  [cdkDragScale]="0.6"
   [class.flipped]="card.flipped"
   (dblclick)="onDoubleClick($event)"
   (contextmenu)="onContextMenu($event)"
@@ -31,11 +31,13 @@
   (cdkDragMoved)="onDragMoved($event)"
   (cdkDragStarted)="onDragStart($event)"
   cdkDrag
+  cdkDragBoundary="body"
   [cdkDragFreeDragPosition]="card.freeDragPos"
   [attr.card-id]="card.id"
   [style.z-index]="card.zIndex"
 >
 <div class="cont">
+  <div class="align-popover"></div>
 
   <app-card-game-layout style="display: block;" class="face" [cardLayout]="cardLayoutValues" [cardId]="card.id" />
   <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px;" class="face back" [attr.card-id]="card.id"></div>

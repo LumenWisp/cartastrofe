@@ -1,5 +1,5 @@
 .sidebar-right {
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   right: 0;
   width: 260px; /*IGUAL*/
@@ -105,14 +105,32 @@ CSS PROVISORIO DAS CARTITAS
   cursor: pointer;
 }
 
+.hand-area-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  gap: 50px;
+  align-items: end;
+  padding-bottom: 140px;
+}
 .hand-area {
   position: absolute;
-  width: 60%;
-  height: 150px;
-  background-color: lightgray;
-  z-index: 1111;
   bottom: 0;
-  left: 50%;
-  translate: -50%;
+  height: 150px;
+  width: 100%;
+  background-color: lightgray;
   border: 1px solid black;
+}
+
+.main-content {
+  width: 100%;
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.lay {
+  display: flex;
 }
