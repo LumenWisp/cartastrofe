@@ -11,6 +11,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 // services
 import { UserService } from '../../services/user-service.service';
+import { LoadingService } from '../../services/loading.service';
 // shared
 import { FormManager } from '../../shared/form-manager';
 
@@ -32,7 +33,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
   roomUrl: string = '';
 
-  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute, private loadingService: LoadingService) {
     const form = new FormGroup({
       form: new FormControl('', { nonNullable: true }),
       email: new FormControl('', {
@@ -70,6 +71,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
   ngOnInit() {
     this.checkRouteParams();
+    this.loadingService.hide();
   }
 
   ngOnDestroy() {
@@ -93,6 +95,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
       console.log('Formulário inválido');
       return;
     }
+    this.loadingService.show();
 
     const { email, password } = this.form.value;
 

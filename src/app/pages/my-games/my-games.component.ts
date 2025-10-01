@@ -18,6 +18,7 @@ import { PlaceholderGridComponent } from "../../components/placeholder-grid/plac
 // services
 import { GameInfoService } from '../../services/game-info.service';
 import { ToastService } from '../../services/toast.service';
+import { LoadingService } from '../../services/loading.service';
 // types
 import { GameInfoModel } from '../../types/game-info';
 // enums
@@ -67,10 +68,11 @@ export class MyGamesComponent {
     return games;
   });
 
-  constructor(private gameInfoService: GameInfoService, private toastService: ToastService) {}
+  constructor(private gameInfoService: GameInfoService, private toastService: ToastService, private loadingService: LoadingService) {}
 
   ngOnInit() {
     this.loadGames();
+    this.loadingService.hide();
 
     forkJoin({
       gameModeStructured: this.translateService.get('game-mode.structured'),
