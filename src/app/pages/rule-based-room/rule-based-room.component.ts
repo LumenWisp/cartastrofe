@@ -1,5 +1,5 @@
 // ANGULAR
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CdkDrag,CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -48,6 +48,7 @@ import { CardGameComponent } from "../../components/card-game/card-game.componen
 export class RuleBasedRoomComponent implements OnInit{
 
   @ViewChild('popover') popover!: Popover;
+  @ViewChild('gameField') gameField!: ElementRef<HTMLDivElement>;
 
   cardLayouts: { [id: string]: CardLayout } = {};
 
@@ -138,6 +139,8 @@ export class RuleBasedRoomComponent implements OnInit{
     }
   }
 
+  
+
 
   private async checkRouteParamsRoom() {
     const roomLink = this.route.snapshot.params['roomLink'];
@@ -186,6 +189,8 @@ export class RuleBasedRoomComponent implements OnInit{
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();
 
+        await this.updateRoom();
+
         //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
           .listenPlayers(this.room.id)
@@ -196,7 +201,7 @@ export class RuleBasedRoomComponent implements OnInit{
         //ouve as mudanças feitas no documento dessa sala
         this.roomSubscription = this.roomService
           .listenRoom(this.room.id)
-          .subscribe((room) => {
+          .subscribe(async (room) => {
             
             if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
               console.log('NOVA SALA: ', room)
@@ -223,6 +228,9 @@ export class RuleBasedRoomComponent implements OnInit{
             }
 
             this.room = room;
+            if(room.state?.cards){
+              this.freeModeService.cards.set(room.state.cards);
+            }
           });
 
 
@@ -391,59 +399,55 @@ export class RuleBasedRoomComponent implements OnInit{
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
     const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
     draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
-    const targetCardId = targetElement?.getAttribute('card-id'); // Id da carta alvo
     const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
+    const draggedCard = this.freeModeService.getCardById(draggedCardId!);
 
-    if (this.isDraggingHandle) {
-      const draggedPileId = this.freeModeService.getPileIdFromCardId(draggedCardId!)
-      this.onDropHandle(draggedPileId!, {x, y});
-      return;
+    if (targetElement?.id) {
+      // É uma pilha
+      const targetPileId = targetElement?.id; // Id da pilha
+
+      // IGUAL AO DE ELSE IF EMBAIXO
+      const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
+      if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
+        const targetRect = targetElement.getBoundingClientRect();
+        const containerRect = this.gameField.nativeElement.getBoundingClientRect();
+
+        draggedCard.freeDragPos = {
+          x: targetRect.left - containerRect.left - 40,
+          y: targetRect.top - containerRect.top - 60
+        };
+
+        draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
+        draggedCard.ruledPileId = targetPileId;
+      }
     }
 
-    if ((targetElement?.classList.contains('face') || targetElement?.classList.contains('card-layout-container')) && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
-      const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
+    else if (targetElement?.hasAttribute('card-id')) {
+      const targetCardId = targetElement?.getAttribute('card-id');
+      const targetCard = this.freeModeService.getCardById(targetCardId!);
+      const targetPileId = targetCard?.ruledPileId;
 
-      // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
-      if (pileTargetCardId) {
+      // IGUAL AO IF DE CIMA (nao me julgue)
+      const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
+      if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
+        const targetRect = targetElement.getBoundingClientRect();
+        const containerRect = this.gameField.nativeElement.getBoundingClientRect();
 
-        // Adiciona a carta à pilha para onde foi arrastada
-        this.freeModeService.addCardToPile(pileTargetCardId, draggedCardId)
+        draggedCard.freeDragPos = {
+          x: targetRect.left - containerRect.left - 40,
+          y: targetRect.top - containerRect.top - 60
+        };
+
+        draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
+        draggedCard.ruledPileId = targetPileId;
       }
-
-      // Caso contrário, cria-se uma pilha da carta alvo com seu id e a carta arrastada faz parte dela automaticamente
-      else {
-
-        // nova pilha com o id da carta alvo
-        this.freeModeService.createPile(targetCardId)
-
-        // Adiciona a carta alvo à sua própria pilha
-        this.freeModeService.addCardToPile(targetCardId, targetCardId)
-
-        // Adiciona a carta à pilha para onde foi arrastada
-        this.freeModeService.addCardToPile(targetCardId, draggedCardId)
-
-      }
-      // Atualiza o X e Y da carta arrastada
-      const targetCard = this.freeModeService.getCardById(targetCardId);
-      const draggedCard = this.freeModeService.getCardById(draggedCardId!);
-      if (targetCard && draggedCard) {
-        draggedCard.freeDragPos = { ...targetCard.freeDragPos };
-        this.freeModeService.updateCard(draggedCard);
-      }
-
     }
 
-    else {
-      this.freeModeService.updateZindex(draggedCardId!, 1)
+    
+    
 
-      // Caso a carta seja arrastada para um local vazio, atualizar seu x e y
-      const { x, y } = event.source.getFreeDragPosition();
-      const draggedCard = this.freeModeService.getCardById(draggedCardId!);
-      draggedCard!.freeDragPos = { x, y };
-      this.freeModeService.updateCard(draggedCard!)
-    }
+    console.log(targetElement);
     this.updateRoom()
-    console.log(this.freeModeService.piles);
   }
 
 }

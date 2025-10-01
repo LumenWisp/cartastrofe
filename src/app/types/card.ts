@@ -17,6 +17,10 @@ export interface CardGame {
   zIndex: number,
   freeDragPos: {x: number, y: number},
   belongsTo: string | null, // id do jogador que a carta pertence (null se for da mesa)
+
+  // Modo regrado
+  ruledPileId?: string,
+  ruledLastPileId?: string,
 }
 
 export interface CardModel {

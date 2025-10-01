@@ -39,7 +39,8 @@
         cdkDrag
         [cdkDragFreeDragPosition]="item.position"
         [cdkDragDisabled]="true"
-        class="next-phase-btn">
+        class="next-phase-btn"
+        [id]="item.nameIdentifier">
         Next Phase
       </button>
 
@@ -47,7 +48,8 @@
 
     @else if (item.type === 'hand') {
       <div 
-        [ngClass]="item.type">
+        [ngClass]="item.type"
+        [id]="item.nameIdentifier">
         {{ item.nameIdentifier }}
     </div>
     }
@@ -58,7 +60,8 @@
         cdkDrag
         [cdkDragFreeDragPosition]="item.position"
         [cdkDragDisabled]="true"
-        [ngClass]="item.type">
+        [ngClass]="item.type"
+        [id]="item.nameIdentifier">
         {{ item.nameIdentifier }}
       </div>
 
