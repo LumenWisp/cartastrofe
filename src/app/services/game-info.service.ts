@@ -73,18 +73,18 @@ async getGameInfosPlayable() {
   snapshot.forEach((item) => {
     // Access the data and check for the property
     const data = item.data() as GameInfoModel;
-
-    if (data.cardLayoutIds !== undefined) {
-      results.push(data);
-    }
-
+    results.push(data);
   });
 
   return results;
 }
 
   async getGameInfoById(id: string) {
-    console.log(id)
+    const user = await this.userService.currentUser()
+
+    if (user === undefined) return null
+    if (user === null) throw new Error('Usuário não está logado');
+
     const refCollection = collection(this.firestore, this.pathGameInfo);
     const queryRef = query(refCollection, where('id', '==', id));
     const snapshot = await getDocs(queryRef);

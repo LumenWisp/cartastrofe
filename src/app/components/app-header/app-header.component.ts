@@ -36,12 +36,12 @@ export class AppHeaderComponent {
         },
         {
           label: 'Minhas Cartas',
-          icon: 'pi pi-id-card',
+          icon: 'pi pi-clone',
           routerLink: '/my-cards'
         },
         {
           label: translations.myLayouts,
-          icon: 'pi pi-hashtag',
+          icon: 'pi pi-objects-column',
           routerLink: '/my-layouts',
         },
         {

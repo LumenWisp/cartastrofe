@@ -1,13 +1,16 @@
 // ANGULAR
-import { Component, OnInit } from '@angular/core';
-import { CdkDrag } from '@angular/cdk/drag-drop';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CdkDrag,CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Popover, PopoverModule } from 'primeng/popover';
 
 // SERVICES
 import { GameInfoService } from '../../services/game-info.service';
 import { RoomService } from '../../services/room.service';
 import { UserService } from '../../services/user-service.service';
+import { FreeModeService } from '../../services/free-mode.service';
+import { LoadingService } from '../../services/loading.service';
 
 // PRIME NG
 import { PanelModule } from 'primeng/panel';
@@ -18,6 +21,8 @@ import { GameFieldItem } from '../../types/game-field-item';
 import { GameInfoModel } from '../../types/game-info';
 import { PlayerEntity } from '../../types/player';
 import { Room, RoomState } from '../../types/room';
+import { CardLayout } from '../../types/card-layout';
+import { CardGame } from '../../types/card';
 
 // NGX TRANSLATE
 import { TranslatePipe } from '@ngx-translate/core';
@@ -30,13 +35,22 @@ import { BlockCodeGeneratorsService } from '../../services/block-code-generators
 import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
 import { ToastService } from '../../services/toast.service';
 
+// COMPONENTS
+import { CardGameComponent } from "../../components/card-game/card-game.component";
+
+
 @Component({
   selector: 'app-rule-based-room',
-  imports: [CommonModule, PanelModule, ButtonModule,CdkDrag, TranslatePipe, RouterLink],
+  imports: [CommonModule, PanelModule, ButtonModule,CdkDrag, DragDropModule, TranslatePipe, RouterLink, CardGameComponent, PopoverModule],
   templateUrl: './rule-based-room.component.html',
   styleUrl: './rule-based-room.component.css'
 })
 export class RuleBasedRoomComponent implements OnInit{
+
+  @ViewChild('popover') popover!: Popover;
+
+  cardLayouts: { [id: string]: CardLayout } = {};
+
   room!: Room;
   game!: GameInfoModel;
   items: GameFieldItem[] = [];
@@ -59,6 +73,11 @@ export class RuleBasedRoomComponent implements OnInit{
   onPhaseStartCodeList: string[] = [];
   onPhaseEndCodeList: string[] = [];
 
+  //movimentaão das cartas
+  isDragging: boolean = false;
+  isDraggingHandle: boolean = false;
+  selectedCard: CardGame | null = null;
+
   constructor(
       private gameInfoService: GameInfoService,
       private route: ActivatedRoute,
@@ -66,12 +85,15 @@ export class RuleBasedRoomComponent implements OnInit{
       private userService: UserService,
       private router: Router,
       private blockCodeGeneratorsService: BlockCodeGeneratorsService,
-      private toastService: ToastService
+      private toastService: ToastService,
+      public freeModeService: FreeModeService,
+      private loadingService: LoadingService,
     ) {}
 
   ngOnInit() {
       this.checkQueryParamsGame();
       this.checkRouteParamsRoom();
+      // HIDE LOADING ESTÁ DENTRO DO CHECKROUTEPARAMSROOM!!!!!
   }
 
   async ngOnDestroy() {
@@ -133,6 +155,33 @@ export class RuleBasedRoomComponent implements OnInit{
       if (room) {
         this.room = room;
 
+        if (this.room.state) {
+          const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
+          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
+
+          for (const cardLayout of cardLayouts) {
+            this.cardLayouts[cardLayout!.id] = {
+              name: cardLayout!.name,
+              cardFields: cardLayout!.cardFields.map(field => ({ ...field })),
+            }
+          }
+
+          // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
+          for (const card of cards) {
+            this.freeModeService.addCard({
+              name: card.name,
+              cardLayoutId: card.layoutId,
+              data: card.data,
+              freeDragPos: { x: 0, y: 0 },
+              flipped: false,
+              id: card.id,
+              label: card.name,
+              pileId: null,
+              zIndex: 1,
+            })
+          }
+        }
+
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();
 
@@ -148,9 +197,30 @@ export class RuleBasedRoomComponent implements OnInit{
           .listenRoom(this.room.id)
           .subscribe((room) => {
             
-            if((this.room.state?.isGameOcurring != room.state?.isGameOcurring) && room.state?.isGameOcurring === false){
-              this.toastService.showSuccessToast('', 'Fim de jogo');
+            if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
+              console.log('NOVA SALA: ', room)
+              if(room.state?.isGameOcurring === false){
+                this.toastService.showSuccessToast('', 'Fim de jogo');
+              }
+              else if(room.state?.isGameOcurring != undefined){
+                this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
+              }
             }
+
+            if(this.room.state?.currentphase != room.state?.currentphase){
+              this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
+            }
+
+            if(this.room.state?.currentPlayerToPlay != room.state?.currentPlayerToPlay){
+              const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
+              this.currentPlayerToPlay = currentPlayerToPlay!;
+              this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
+
+              if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
+                this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+              }
+            }
+
             this.room = room;
           });
 
@@ -181,6 +251,8 @@ export class RuleBasedRoomComponent implements OnInit{
           
       }
     }
+    // Para o loading que foi ativo no MODAL CREATE ROOM
+    this.loadingService.hide();
   }
 
   //pega o Jogador logado, redireciona para login se não está logado ainda
@@ -210,8 +282,8 @@ export class RuleBasedRoomComponent implements OnInit{
 
   async startGame(){
     // Atualizando a sala para que seja visivel que o jogo já começou
-    if(this.room.state) this.room.state['isGameOcurring'] = true;
-    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
+    //if(this.room.state) this.room.state['isGameOcurring'] = true;
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true, currentphase: this.phases[0], currentPlayerToPlay: this.players[0].playerId}});
 
     //Começando o jogo
     this.playGame();
@@ -230,19 +302,147 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   nextPhase(){
+
+    if(this.room.state?.isGameOcurring === false) return;
+
+    //Verificar se é o turno do jogador
+    if(this.currentPlayerToPlay.playerId != this.currentPlayer.playerId){
+      this.toastService.showErrorToast('Ação negada', `Turno do jogador: ${this.currentPlayerToPlay.name}`);
+      return;
+    }
+
     this.currentPhaseNumber++;
+
     if(this.currentPhaseNumber < this.phases.length){
+      this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+      this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
     }
     else{
       this.currentPhaseNumber = 0;
+
+      this.currentPlayerToPlayNumber = (this.currentPlayerToPlayNumber+1)% this.players.length;
+      const nextPlayerId = this.players[this.currentPlayerToPlayNumber].playerId;
+      this.toastService.showSuccessToast('', 'Fim do turno')
+      this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber], currentPlayerToPlay:nextPlayerId}});
     }
     console.log("Fase Atual: ", this.phases[this.currentPhaseNumber]);
-    this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
-    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
   }
 
   endGame(){
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
+  }
+
+  async updateRoom(): Promise<void>{
+      const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
+      this.roomService.updateRoom(this.room.id, { state: newState });
+    }
+
+  // =================================
+  // ==== MOVIMENTAÇÃO DAS CARTAS ====
+  // =================================
+
+  // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
+  showOptions(event: MouseEvent, card: CardGame, popover: Popover) {
+      event.preventDefault();
+      if (this.isDragging) return;
+      this.selectedCard = card;
+      if (this.freeModeService.isPartOfPile(card.id!)) {
+        popover.show(event);
+      }
+  }
+
+  // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
+  onDragStart(event: CdkDragStart<CardGame[]>) {
+    this.isDragging = true;
+    if (this.popover) {
+    this.popover.hide(); // fecha o popover quando arrastar outra carta
+  }
+
+  const dragOrigin = event.event.target as HTMLElement;
+  const fromHandle = dragOrigin.classList.contains('square-number-cards');
+
+  const cardId = event.source.element.nativeElement.getAttribute('card-id');
+  this.freeModeService.updateZindex(cardId!, 99999)
+  const card = this.freeModeService.getCardById(cardId!)
+
+  if (fromHandle) {
+    this.isDraggingHandle = true;
+
+  } else {
+    if (card?.pileId) {
+      this.freeModeService.removeCardFromPile(card?.pileId, card!);
+    }
+  }
+  }
+
+  onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
+    this.isDraggingHandle = false;
+    this.freeModeService.changexyOfPileCards(pileId, coordinates)
+    this.updateRoom();
+  }
+
+  // Evento disparado quando se solta uma carta sendo arrastada
+  onDrop(event: CdkDragEnd<CardGame[]>) {
+    setTimeout(() => this.isDragging = false, 100);
+
+    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
+    const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
+    draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
+    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
+    draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+    const targetCardId = targetElement?.getAttribute('card-id'); // Id da carta alvo
+    const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
+
+    if (this.isDraggingHandle) {
+      const draggedPileId = this.freeModeService.getPileIdFromCardId(draggedCardId!)
+      this.onDropHandle(draggedPileId!, {x, y});
+      return;
+    }
+
+    if ((targetElement?.classList.contains('face') || targetElement?.classList.contains('card-layout-container')) && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
+      const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
+
+      // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
+      if (pileTargetCardId) {
+
+        // Adiciona a carta à pilha para onde foi arrastada
+        this.freeModeService.addCardToPile(pileTargetCardId, draggedCardId)
+      }
+
+      // Caso contrário, cria-se uma pilha da carta alvo com seu id e a carta arrastada faz parte dela automaticamente
+      else {
+
+        // nova pilha com o id da carta alvo
+        this.freeModeService.createPile(targetCardId)
+
+        // Adiciona a carta alvo à sua própria pilha
+        this.freeModeService.addCardToPile(targetCardId, targetCardId)
+
+        // Adiciona a carta à pilha para onde foi arrastada
+        this.freeModeService.addCardToPile(targetCardId, draggedCardId)
+
+      }
+      // Atualiza o X e Y da carta arrastada
+      const targetCard = this.freeModeService.getCardById(targetCardId);
+      const draggedCard = this.freeModeService.getCardById(draggedCardId!);
+      if (targetCard && draggedCard) {
+        draggedCard.freeDragPos = { ...targetCard.freeDragPos };
+        this.freeModeService.updateCard(draggedCard);
+      }
+
+    }
+
+    else {
+      this.freeModeService.updateZindex(draggedCardId!, 1)
+
+      // Caso a carta seja arrastada para um local vazio, atualizar seu x e y
+      const { x, y } = event.source.getFreeDragPosition();
+      const draggedCard = this.freeModeService.getCardById(draggedCardId!);
+      draggedCard!.freeDragPos = { x, y };
+      this.freeModeService.updateCard(draggedCard!)
+    }
+    this.updateRoom()
+    console.log(this.freeModeService.piles);
   }
 
 }

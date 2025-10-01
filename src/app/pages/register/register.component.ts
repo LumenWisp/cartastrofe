@@ -12,6 +12,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 // services
 import { UserService } from '../../services/user-service.service';
+import { LoadingService } from '../../services/loading.service';
 // shared
 import { FormManager } from '../../shared/form-manager';
 
@@ -29,7 +30,7 @@ import { FormManager } from '../../shared/form-manager';
   styleUrls: ['./register.component.css', '../../shared/auth.css'],
 })
 export class RegisterComponent extends FormManager implements OnDestroy {
-  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute, private loadingService: LoadingService) {
     const form = new FormGroup({
       name: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -94,6 +95,8 @@ export class RegisterComponent extends FormManager implements OnDestroy {
       return;
     }
 
+    this.loadingService.show();
+
     const { name, email, password } = this.form.value;
 
     try {
@@ -102,6 +105,7 @@ export class RegisterComponent extends FormManager implements OnDestroy {
       console.log('Registro feito com sucesso');
       this.goToLoginPage()
     } catch (error) {
+      this.loadingService.hide();
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/email-already-in-use') {
           this.setError('email', 'auth/email-already-in-use');
