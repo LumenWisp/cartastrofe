@@ -1,2 +1,14 @@
-<p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
-<app-blockly-editor [game]="game"></app-blockly-editor>
+<p-tabs value="0">
+  <p-tablist>
+    <p-tab value="0">Regras do jogo</p-tab>
+    <p-tab value="1">Regras das cartas</p-tab>
+  </p-tablist>
+  <p-tabpanels>
+    <p-tabpanel value="0">
+      <app-game-rules />
+    </p-tabpanel>
+    <p-tabpanel value="1">
+      <app-card-rules />
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

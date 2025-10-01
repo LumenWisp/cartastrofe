@@ -1,0 +1,4 @@
+@if (game) {
+  <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+}
+<app-blockly-editor [game]="game"></app-blockly-editor>
