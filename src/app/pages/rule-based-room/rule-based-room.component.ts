@@ -198,13 +198,29 @@ export class RuleBasedRoomComponent implements OnInit{
           .subscribe((room) => {
             
             if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
+              console.log('NOVA SALA: ', room)
               if(room.state?.isGameOcurring === false){
                 this.toastService.showSuccessToast('', 'Fim de jogo');
               }
-              else{
+              else if(room.state?.isGameOcurring != undefined){
                 this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
               }
             }
+
+            if(this.room.state?.currentphase != room.state?.currentphase){
+              this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
+            }
+
+            if(this.room.state?.currentPlayerToPlay != room.state?.currentPlayerToPlay){
+              const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
+              this.currentPlayerToPlay = currentPlayerToPlay!;
+              this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
+
+              if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
+                this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+              }
+            }
+
             this.room = room;
           });
 
@@ -266,8 +282,8 @@ export class RuleBasedRoomComponent implements OnInit{
 
   async startGame(){
     // Atualizando a sala para que seja visivel que o jogo já começou
-    if(this.room.state) this.room.state['isGameOcurring'] = true;
-    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true}});
+    //if(this.room.state) this.room.state['isGameOcurring'] = true;
+    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true, currentphase: this.phases[0], currentPlayerToPlay: this.players[0].playerId}});
 
     //Começando o jogo
     this.playGame();
@@ -286,15 +302,30 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   nextPhase(){
+
+    if(this.room.state?.isGameOcurring === false) return;
+
+    //Verificar se é o turno do jogador
+    if(this.currentPlayerToPlay.playerId != this.currentPlayer.playerId){
+      this.toastService.showErrorToast('Ação negada', `Turno do jogador: ${this.currentPlayerToPlay.name}`);
+      return;
+    }
+
     this.currentPhaseNumber++;
+
     if(this.currentPhaseNumber < this.phases.length){
+      this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+      this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
     }
     else{
       this.currentPhaseNumber = 0;
+
+      this.currentPlayerToPlayNumber = (this.currentPlayerToPlayNumber+1)% this.players.length;
+      const nextPlayerId = this.players[this.currentPlayerToPlayNumber].playerId;
+      this.toastService.showSuccessToast('', 'Fim do turno')
+      this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber], currentPlayerToPlay:nextPlayerId}});
     }
     console.log("Fase Atual: ", this.phases[this.currentPhaseNumber]);
-    this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
-    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
   }
 
   endGame(){

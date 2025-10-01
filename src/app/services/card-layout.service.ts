@@ -67,7 +67,7 @@ export class CardLayoutService {
     if (user === null) throw new Error('Usuário não está logado');
 
     const refCollection = collection(this.firestore, this.cardLayoutpath);
-    const queryRef = query(refCollection, where('userId', '==', user.userId), where('id', '==', id));
+    const queryRef = query(refCollection, where('id', '==', id));
     const docSnapshot = await getDocs(queryRef);
     const cardLayoutModel: CardLayoutModel = docSnapshot.docs[0].data() as CardLayoutModel;
 
