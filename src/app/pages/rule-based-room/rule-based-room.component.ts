@@ -178,6 +178,7 @@ export class RuleBasedRoomComponent implements OnInit{
               label: card.name,
               pileId: null,
               zIndex: 1,
+              belongsTo: null,
             })
           }
         }
