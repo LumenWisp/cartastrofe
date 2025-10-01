@@ -1,11 +1,34 @@
-
-
+@if (isDisplayOnly) {
 <div
-  style="position: relative; width: min-content;"
+  style="position: relative; width: min-content; scale: 0.8;"
+  [cdkDragScale]="0.8"
   [class.flipped]="card.flipped"
   (dblclick)="onDoubleClick($event)"
   (contextmenu)="onContextMenu($event)"
   (cdkDragEnded)="onDragEnd($event)"
+  (cdkDragMoved)="onDragMoved($event)"
+  (cdkDragStarted)="onDragStart($event)"
+  cdkDrag
+  [attr.card-id]="card.id"
+  [style.z-index]="card.zIndex"
+>
+<div class="cont">
+
+  <app-card-game-layout style="display: block;" class="face" [cardLayout]="cardLayoutValues" [cardId]="card.id" />
+  <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px;" class="face back" [attr.card-id]="card.id"></div>
+</div>
+</div>
+} @else {
+
+
+<div
+  style="position: relative; width: min-content; scale: 0.8;"
+  [cdkDragScale]="0.8"
+  [class.flipped]="card.flipped"
+  (dblclick)="onDoubleClick($event)"
+  (contextmenu)="onContextMenu($event)"
+  (cdkDragEnded)="onDragEnd($event)"
+  (cdkDragMoved)="onDragMoved($event)"
   (cdkDragStarted)="onDragStart($event)"
   cdkDrag
   [cdkDragFreeDragPosition]="card.freeDragPos"
@@ -19,3 +42,4 @@
 </div>
 </div>
 
+}

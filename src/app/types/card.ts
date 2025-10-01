@@ -16,6 +16,7 @@ export interface CardGame {
   pileId: string | null,
   zIndex: number,
   freeDragPos: {x: number, y: number},
+  belongsTo: string | null, // id do jogador que a carta pertence (null se for da mesa)
 }
 
 export interface CardModel {

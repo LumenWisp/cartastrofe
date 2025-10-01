@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,9 @@ import { Subscription } from 'rxjs';
 
 import {
   CdkDrag,
+  CdkDragDrop,
   CdkDragEnd,
+  CdkDragMove,
   CdkDragStart,
   DragDropModule,
 } from '@angular/cdk/drag-drop';
@@ -35,7 +37,7 @@ import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-la
 export class RoomsComponent {
   room!: Room;
   players: PlayerEntity[] = [];
-  currentPlayer!: PlayerEntity;
+  currentPlayer?: PlayerEntity;
 
   @ViewChild('popover') popover!: Popover;
   users: UserEntity[] = [];
@@ -46,6 +48,9 @@ export class RoomsComponent {
   // Subscrições
   private playerSubscription?: Subscription;
   private roomSubscription?: Subscription;
+
+  @ViewChild('handArea') handArea!: ElementRef<HTMLDivElement>;
+  isOverHandArea = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -81,6 +86,17 @@ export class RoomsComponent {
         this.roomSubscription.unsubscribe();
       }
     }
+  }
+
+  onDragMoved(event: CdkDragMove) {
+    const mouseX = event.pointerPosition.x;
+    const mouseY = event.pointerPosition.y;
+    const rect = this.handArea.nativeElement.getBoundingClientRect();
+    this.isOverHandArea =
+      mouseX >= rect.left &&
+      mouseX <= rect.right &&
+      mouseY >= rect.top &&
+      mouseY <= rect.bottom;
   }
 
   /**
@@ -119,6 +135,7 @@ export class RoomsComponent {
               label: card.name,
               pileId: null,
               zIndex: 1,
+              belongsTo: null,
             })
           }
         }
@@ -259,8 +276,29 @@ export class RoomsComponent {
       draggedCard!.freeDragPos = { x, y };
       this.freeModeService.updateCard(draggedCard!)
     }
+
+    if (draggedCardId) {
+      if (this.isOverHandArea) {
+        this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+      } else {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
+          const x = draggedElement.getBoundingClientRect().left
+          const y = draggedElement.getBoundingClientRect().top
+          this.freeModeService.cards.update(cards =>
+            cards.map(c =>
+              c.id === draggedCardId ? { ...c, freeDragPos: { x, y } } : c
+            )
+          );
+        }
+
+        this.freeModeService.changeBelongsTo(draggedCardId, null);
+      }
+    }
+
     this.updateRoom()
     console.log(this.freeModeService.piles);
+
+
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {

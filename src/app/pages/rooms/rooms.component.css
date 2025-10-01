@@ -104,3 +104,15 @@ CSS PROVISORIO DAS CARTITAS
 
   cursor: pointer;
 }
+
+.hand-area {
+  position: absolute;
+  width: 60%;
+  height: 150px;
+  background-color: lightgray;
+  z-index: 1111;
+  bottom: 0;
+  left: 50%;
+  translate: -50%;
+  border: 1px solid black;
+}

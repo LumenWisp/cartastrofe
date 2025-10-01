@@ -11,7 +11,7 @@
 </div>
 
 <div class="grid">
-  @for (card of freeModeService.cards(); track card.id) {
+  @for (card of freeModeService.tableCards(); track card.id) {
       <app-card-game
         style="position: absolute;"
         [cardLayout]="cardLayouts[card.cardLayoutId]"
@@ -19,10 +19,12 @@
         (cardDragStart)="onDragStart($event)"
         (cardDragEnd)="onDrop($event)"
         (cardContextMenu)="showOptions($event, card, popover)"
+        (cardDragMove)="onDragMoved($event)"
         (cardDoubleClick)="freeModeService.flipCard(card.id!)"
       />
     }
 </div>
+
 
 <p-popover #popover [dismissable]="true">
   @if(selectedCard && freeModeService.isPartOfPile(selectedCard.id!)) {
@@ -35,3 +37,18 @@
   </ng-container>
   }
 </p-popover>
+
+<div class="hand-area" #handArea>
+  @for (card of freeModeService.myHandCards(this.currentPlayer?.playerId || ''); track card.id) {
+    <app-card-game
+      [isDisplayOnly]="true"
+      [cardLayout]="cardLayouts[card.cardLayoutId]"
+      [card]="card"
+      (cardDragStart)="onDragStart($event)"
+      (cardDragEnd)="onDrop($event)"
+      (cardContextMenu)="showOptions($event, card, popover)"
+      (cardDragMove)="onDragMoved($event)"
+      (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+    />
+  }
+</div>
