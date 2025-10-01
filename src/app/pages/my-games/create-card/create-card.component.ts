@@ -83,6 +83,11 @@ export class CreateCardComponent {
         'Carta deletada com sucesso.'
       );
       this.loadAllCards();
+    }).catch(() => {
+      this.toastService.showErrorToast(
+        'Erro ao deletar carta',
+        'Não foi possível deletar a carta, porque está vinculada a um jogo. Remova-a do jogo antes de tentar novamente.'
+      );
     });
   }
 

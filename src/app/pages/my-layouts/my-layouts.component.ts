@@ -68,4 +68,19 @@ export class MyLayoutsComponent implements OnInit {
       relativeTo: this.route,
     });
   }
+
+  deleteLayout(id: string) {
+    this.cardLayoutService.deleteCardLayout(id).then(() => {
+      this.toastService.showSuccessToast(
+      'Deleção de layout de carta',
+      'Layout de carta deletado com sucesso.'
+      );
+      this.loadCardLayouts();
+    }).catch(() => {
+      this.toastService.showErrorToast(
+      'Erro ao deletar layout de carta',
+      'Não foi possível deletar o layout de carta, porque está vinculado a um jogo ou a cartas. Remova o vínculo antes de tentar novamente.'
+      );
+    });
+  }
 }
