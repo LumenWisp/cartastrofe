@@ -1,37 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { GameInfoService } from '../../services/game-info.service';
-import { GameInfoModel } from '../../types/game-info';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { BlocklyEditorComponent } from '../../components/blockly-editor/blockly-editor.component';
+import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { GameRulesComponent } from "../../components/game-rules/game-rules.component"
+import { TabsModule } from 'primeng/tabs';
+import { CardRulesComponent } from "../../components/card-rules/card-rules.component";
 
 @Component({
   selector: 'app-game-edit-rules',
-  imports: [BlocklyEditorComponent, RouterLink, ButtonModule],
+  imports: [ButtonModule, GameRulesComponent, TabsModule, CardRulesComponent],
   templateUrl: './game-edit-rules.component.html',
   styleUrl: './game-edit-rules.component.css'
 })
-export class GameEditRulesComponent implements OnInit{
-  game!: GameInfoModel;
+export class GameEditRulesComponent {
 
-  ngOnInit() {
-    this.checkRouteParams();
-  }
-
-  constructor(
-    private gameInfoService: GameInfoService,
-    private route: ActivatedRoute,
-  ) {}
-
-  /**
-   * Verifica parâmetros da rota e carrega os dados relacionados
-   */
-  private async checkRouteParams() {
-    const gameId = this.route.snapshot.params['gameId'];
-    console.log('gameId: ', gameId);
-    const game = await this.gameInfoService.getGameInfoById(gameId);
-    if(game) this.game = game;
-    console.log('Jogo selecionado: ', this.game);
-  }
 
 }

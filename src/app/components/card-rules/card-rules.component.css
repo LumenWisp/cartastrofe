@@ -1,0 +1,25 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+.lateral-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+
+  app-card-game-layout {
+    border: 1px solid black;
+  }
+
+  .selected {
+    border: 5px solid red;
+  }
+}
