@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { CardModel } from '../types/card';
+import { CardGame, CardModel } from '../types/card';
 import { CardGameLayout, CardLayoutModel } from '../types/card-layout';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
@@ -109,5 +109,52 @@ export class CardService {
     }
 
     await addDoc(collectionRef, data)
+  }
+
+  // Função para atualizar os camos de stringsCodes e workspaces do blockly
+  async updateCardRules(id: string, data: Partial<CardGame>){
+    const user = this.userService.currentUser();
+    if (!user) throw new Error('Usuário não está logado');
+
+    const q = query(
+      collection(this.firestore, this.path),
+      where('id', '==', id)
+    );
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      throw new Error('Carta não encontrada');
+    }
+
+    const docId = snapshot.docs[0].id;
+    console.log("IDDDDD", docId);
+
+    const docRef = doc(this.firestore, this.path, docId);
+    await setDoc(docRef, data, { merge: true });
+  }
+
+  async getCardWorkSpaces(id: string): Promise<any>{
+    const user = this.userService.currentUser();
+    if (!user) throw new Error('Usuário não está logado');
+
+    const q = query(
+      collection(this.firestore, this.path),
+      where('id', '==', id)
+    );
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      throw new Error('Carta não encontrada');
+    }
+
+    const cardGame = snapshot.docs[0].data() as CardGame;
+
+    const workSpaceFields = {
+      onMoveCardFromTo: cardGame.onMoveCardFromTo,
+      onPhaseStart: cardGame.onPhaseStart,
+      onPhaseEnd: cardGame.onPhaseEnd,      
+    };
+
+    return workSpaceFields;
   }
 }

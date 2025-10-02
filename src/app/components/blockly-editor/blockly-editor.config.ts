@@ -86,6 +86,79 @@ export const toolbox = {
   ]
 };
 
+export const toolboxCard = {
+  kind: 'categoryToolbox',
+  contents: [
+    {
+      kind: 'category',
+      name: 'Triggers',
+      contents: [
+        { kind: 'category', name: 'On Move Card From To' },
+        {
+          kind: 'category',
+          name: 'On Phase Start',
+          contents: [
+          { kind: 'block', type: 'onPhaseStart' },
+          ]
+        },
+        {
+          kind: 'category',
+          name: 'On Phase End',
+          contents: [
+          { kind: 'block', type: 'onPhaseEnded' },
+          ]
+        },
+      ]
+    },
+    { 
+      kind: 'sep',
+    },
+    {
+      kind: 'category',
+      name: 'Variables',
+      contents: [
+        { kind: 'block', type: 'getCard' },
+        { kind: 'block', type: 'getPile' },
+        { kind: 'block', type: 'getCardAttribute' },
+        { kind: 'block', type: 'getGameAttribute' },
+        { kind: 'block', type: 'getPhase' },
+        { kind: 'block', type: 'getGeneralVariableValue' },
+        { kind: 'block', type: 'getTargetCardIdValue' },
+      ]
+    },
+    {
+      kind: 'category',
+      name: 'Actions',
+      contents: [
+        { kind: 'block', type: 'MoveCardTo' },
+        { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'nextPhase' },
+        { kind: 'block', type: 'endGame' },
+      ]
+    },
+    {
+      kind: 'category',
+      name: 'Control',
+      contents: [
+        {kind: 'block', type: 'controls_if'},
+        {kind: 'block', type: 'logic_compare'},
+        {kind: 'block', type: 'logic_operation'},
+        {"kind": "block",
+          "type": "controls_repeat_ext",
+          "inputs": {
+            "TIMES": {
+              "block": {
+                "type": "math_number",
+                "fields": { "NUM": 10 }
+              }
+            }
+          }
+        },
+      ]
+    }
+  ]
+};
+
 // ===============================================================
 // 🧱 DEFINIÇÃO DOS BLOCOS
 // ===============================================================
@@ -262,6 +335,17 @@ export function registerBlocks() {
       this.setColour(120);
     }
   };
+
+  // 🚀 GET GENERAL VARIABLE VALUE
+  Blockly.Blocks['getTargetCardIdValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('TargetCard')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(335);
+    }
+  };
 }
 
 // ===============================================================
@@ -383,7 +467,7 @@ export function registerGenerators() {
   // NEXT PHASE
   javascriptGenerator.forBlock['nextPhase'] = function() {
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = "blockCodeGeneratorsService.nextPhase(currentPhaseNumber);";
     return code;
   }
 
@@ -412,5 +496,14 @@ export function registerGenerators() {
       const code = '';
       return code;
     }
+
+  // GET GENERAL VARIABLE VALUE
+  javascriptGenerator.forBlock['getTargetCardIdValue'] = function(block, generator) {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = ""
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
 
 }

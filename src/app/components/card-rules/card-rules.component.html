@@ -4,6 +4,11 @@
   label="Voltar"
 />
 }
+<div class="blockly-container">
+<div #blocklyDiv style="height: 100%; width: 100%"></div>
+</div>
+
+<p-button (click)="saveStringCode();saveWorkSpaceState();" label="Salvar regra" />
 
 <p-drawer [(visible)]="visible" header="Cartas" position="full">
   <div class="cards">
