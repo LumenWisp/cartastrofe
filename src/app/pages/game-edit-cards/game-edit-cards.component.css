@@ -1,0 +1,7 @@
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}

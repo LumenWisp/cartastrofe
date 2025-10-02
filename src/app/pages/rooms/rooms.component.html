@@ -1,3 +1,37 @@
+<div class="lay">
+  <div class="main-content" #mainContent>
+  <div class="grid">
+    @for (card of freeModeService.tableCards(); track card.id) {
+        <app-card-game
+          style="position: absolute; width: 80px; height: 120px;"
+          [cardLayout]="cardLayouts[card.cardLayoutId]"
+          [card]="card"
+          (cardDragStart)="onDragStart($event)"
+          (cardDragEnd)="onDrop($event)"
+          (cardContextMenu)="showOptions($event, card, popover)"
+          (mousemove)="onDragMoved($event)"
+          (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+        />
+      }
+  </div>
+
+    <div class="hand-area-container" #handAreaContainer>
+      @for (card of freeModeService.myHandCards(this.currentPlayer?.playerId || ''); track card.id) {
+        <app-card-game
+          style="width: 80px; height: 120px;"
+          [isDisplayOnly]="true"
+          [cardLayout]="cardLayouts[card.cardLayoutId]"
+          [card]="card"
+          (cardDragStart)="onDragStart($event)"
+          (cardDragEnd)="onDrop($event)"
+          (cardContextMenu)="showOptions($event, card, popover)"
+          (mousemove)="onDragMoved($event)"
+          (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+        />
+      }
+    </div>
+    <div class="hand-area" #handArea></div>
+</div>
 <div class="sidebar-right">
   <p-button routerLink="/my-games" label="Sair" />
 
@@ -9,39 +43,9 @@
     }
   </p-panel>
 </div>
-
-<div class="play-area" #playArea>
-  <div class="grid">
-    @for (card of freeModeService.cards(); track $index) { @if
-    (freeModeService.isTopCard(card.id!) || !card.pileId) {
-    <div
-      class="card"
-      [class.flipped]="card.flipped"
-      (dblclick)="freeModeService.flipCard(card.id!);this.updateRoom();"
-      (contextmenu)="showOptions($event, card, popover)"
-      (cdkDragEnded)="onDrop($event)"
-      (cdkDragStarted)="onDragStart($event)"
-      cdkDrag
-      [cdkDragBoundary]="playArea"
-      [cdkDragFreeDragPosition]="card.freeDragPos"
-      [attr.card-id]="card.id"
-      [style.z-index]="card.zIndex"
-    >
-      @if (freeModeService.isPartOfPile(card.id!)) {
-      <div
-        class="square-number-cards"
-      >
-        {{ freeModeService.getNumberOfCardsFromPileId(card.pileId!) }}
-      </div>
-      }
-      <div class="card-inner">
-        <div class="face front" [attr.card-id]="card.id">{{ card.label }}</div>
-        <div class="face back" [attr.card-id]="card.id"></div>
-      </div>
-    </div>
-    } }
-  </div>
 </div>
+
+
 
 <p-popover #popover [dismissable]="true">
   @if(selectedCard && freeModeService.isPartOfPile(selectedCard.id!)) {

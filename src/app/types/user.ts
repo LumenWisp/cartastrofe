@@ -1,7 +1,7 @@
 import { CardLayoutModel } from "./card-layout"
 
 export interface UserEntity {
-    userID: string,
+    userId: string,
     name: string,
     email: string,
     password: string,

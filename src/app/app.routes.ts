@@ -12,13 +12,17 @@ import { MyLayoutsComponent } from './pages/my-layouts/my-layouts.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
 import { CreateLayoutComponent } from './pages/my-layouts/create-layout/create-layout.component';
 import { GameDescriptionComponent } from './pages/my-games/game-description/game-description.component';
-import { GameComponent } from './components/game/game.component';
+//import { GameComponent } from './components/game/game.component';
+import { GameEditCardsComponent } from './pages/game-edit-cards/game-edit-cards.component';
+import { GameEditFieldComponent } from './pages/game-edit-field/game-edit-field.component';
+import { GameEditRulesComponent } from './pages/game-edit-rules/game-edit-rules.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
 import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
 import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
 import { authGuard } from './auth.guard';
-import { MyCardsComponent } from './pages/my-cards/my-cards.component';
+import { GameEditComponent } from './pages/my-games/game-edit/game-edit.component';
+// import { MyCardsComponent } from './pages/my-cards/my-cards.component';
 
 export const routes: Routes = [
   {
@@ -37,9 +41,14 @@ export const routes: Routes = [
         title: 'My Games',
       },
       {
-        path: 'my-games/create-card',
-        component: CreateCardComponent,
-        title: 'Create Card',
+        path: 'my-games/game-description/:gameId',
+        component: GameDescriptionComponent,
+        title: 'Game Description',
+      },
+      {
+        path: 'my-games/game-edit/:gameId',
+        component: GameEditComponent,
+        title: 'Edit game'
       },
       {
         path: 'my-layouts',
@@ -52,7 +61,7 @@ export const routes: Routes = [
         title: 'Rooms',
       },
       {
-        path: 'rooms-rule-based',
+        path: 'ruled-rooms/:roomLink',
         component: RuleBasedRoomComponent,
         title: 'Rule Based Room'
       },
@@ -62,19 +71,24 @@ export const routes: Routes = [
         title: 'Create Layout',
       },
       {
-        path: 'my-games/game-description/:gameId',
-        component: GameDescriptionComponent,
-        title: 'Game Description',
-      },
-      {
-        path: 'my-games/game-edit/:gameId',
-        component: GameComponent,
-        title: 'Edit game'
-      },
-      {
         path: 'my-cards',
-        component: MyCardsComponent,
-        title: 'My Cards',
+        component: CreateCardComponent,
+        title: 'Create Card',
+      },
+      {
+        path: 'my-games/game-edit-cards/:gameId',
+        component: GameEditCardsComponent,
+        title: 'Edit cards'
+      },
+      {
+        path: 'my-games/game-edit-field/:gameId',
+        component: GameEditFieldComponent,
+        title: 'Edit field'
+      },
+      {
+        path: 'my-games/game-edit-rules/:gameId',
+        component: GameEditRulesComponent,
+        title: 'Edit rules'
       }
     ],
   },

@@ -1,59 +1,113 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Card } from '../types/card';
-import { Firestore, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { inject, Injectable } from '@angular/core';
+import { CardModel } from '../types/card';
+import { CardGameLayout, CardLayoutModel } from '../types/card-layout';
+import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
+import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UserService } from './user-service.service';
+import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  private cardsSubject = new BehaviorSubject<Card[]>([]);
-  cards$: Observable<Card[]> = this.cardsSubject.asObservable();
-  private cardIDGenerator = 1;
   private firestore = inject(Firestore);
-  private userService = inject(UserService);
+  private path = FirestoreTablesEnum.CARD;
 
-  constructor() {}
+  constructor(
+    private userService: UserService,
+    private utilsService: UtilsService,
+  ) {}
 
-  // Retorna a lista atual
-  async getCards() {
-    const user = this.userService.currentUser();
-    if (!user) {
-      this.cardsSubject.next([]);
-      return;
+  async getAllCards() {
+    const user = await this.userService.currentUser()
+
+    if (!user) return [];
+
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('userId', '==', user.userId));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as CardModel) || [];
+  }
+
+  async getCardById(id: string): Promise<CardModel | null> {
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('id', '==', id));
+    const snapshot = await getDocs(q);
+    const cards = snapshot.docs.map(doc => doc.data() as CardModel) || [];
+    return cards.length > 0 ? cards[0] : null;
+  }
+
+  async getCardsByLayoutId(cardLayoutId: string): Promise<CardModel[]> {
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('layoutId', '==', cardLayoutId));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as CardModel) || [];
+  }
+
+  async deleteCard(id: string): Promise<void> {
+    const collectionRef = collection(this.firestore, this.path);
+    const q = query(collectionRef, where('id', '==', id));
+
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) throw new Error('Carta não encontrada');
+
+    const cardDoc = snapshot.docs[0];
+    const ref = doc(this.firestore, this.path, cardDoc.id);
+    await deleteDoc(ref);
+  }
+
+  async updateCard(id: string, cardName: string, card: CardGameLayout, cardLayout: CardLayoutModel) {
+    const user = await this.userService.currentUser()
+
+    if (!user) throw new Error('Usuário não está logado');
+
+    const userId = user.userId;
+
+    const collectionRef = collection(this.firestore, this.path)
+    const q = query(collectionRef, where('id', '==', id));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) throw new Error('Carta não encontrada');
+
+    const cardDoc = snapshot.docs[0];
+    const ref = doc(this.firestore, this.path, cardDoc.id);
+
+    const data: CardModel = {
+      id,
+      userId,
+      layoutId: cardLayout.id,
+      name: cardName,
+      data: card.cardFields.reduce((acc, field) => {
+        acc[field.property] = field.value;
+        return acc;
+      }, {} as { [property: string]: string })
     }
-    const cardsRef = collection(this.firestore, 'card');
-    const q = query(cardsRef, where('userId', '==', user.userID));
-    const querySnapshot = await getDocs(q);
-    const cards: Card[] = [];
-    querySnapshot.forEach((doc) => {
-      cards.push(doc.data() as Card);
-    });
-    this.cardsSubject.next(cards);
+
+    await setDoc(ref, data, { merge: true });
   }
 
-  getCardNextID() {
+  async saveCard(cardName: string, card: CardGameLayout, cardLayout: CardLayoutModel) {
+    const user = await this.userService.currentUser()
 
-  }
+    if (user === undefined) return
+    if (user === null) throw new Error('Usuário não está logado');
 
-  // Adiciona um novo Card
-  addCard(card: Card): void {
+    const userId = user.userId;
 
-  }
+    const collectionRef = collection(this.firestore, this.path)
 
-  // Remove Card por ID
-  removeCard(id: number) {
+    const id = await this.utilsService.generateKey()
 
-  }
+    const data: CardModel = {
+      id,
+      userId,
+      layoutId: cardLayout.id,
+      name: cardName,
+      data: card.cardFields.reduce((acc, field) => {
+        acc[field.property] = field.value;
+        return acc;
+      }, {} as { [property: string]: string })
+    }
 
-  // Atualiza Card por ID
-  updateCardByID(id: number, updated: Card) {
-
-  }
-
-  // Busca todos os Cards com base no gameID
-  getCardsByGameID(gameID: number) {
-
+    await addDoc(collectionRef, data)
   }
 }

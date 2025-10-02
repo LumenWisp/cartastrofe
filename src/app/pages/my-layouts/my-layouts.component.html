@@ -1,16 +1,15 @@
 <div class="page">
-  <app-placeholder-grid>
-    <!-- <button class="btn-create-card-layout" pButton (click)="showModal()">
+      <button class="btn-create-card-layout" pButton (click)="showModal()">
       <span class="pi pi-plus" pButtonIcon></span>
       <span pButtonLabel>Criar Layout</span>
-    </button> -->
-
+    </button>
+  <app-placeholder-grid>
     @for (cardLayout of cardLayouts; track $index) {
       <div>
         <span>Layout: {{ cardLayout.name }}</span>
         <app-card-3d [cardWidth]="200" [rotate]="true" [frontTextColor]="'#000'" (click)="goToCreateLayoutPage(cardLayout.id!)">
           <ng-container cardFront>
-            <app-card-game-layout class="card-layout" [cardLayout]="cardLayout" />
+            <app-card-game-layout [cardLayout]="cardLayout" />
           </ng-container>
         </app-card-3d>
       </div>

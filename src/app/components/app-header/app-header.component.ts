@@ -36,12 +36,12 @@ export class AppHeaderComponent {
         },
         {
           label: 'Minhas Cartas',
-          icon: 'pi pi-id-card',
+          icon: 'pi pi-clone',
           routerLink: '/my-cards'
         },
         {
           label: translations.myLayouts,
-          icon: 'pi pi-hashtag',
+          icon: 'pi pi-objects-column',
           routerLink: '/my-layouts',
         },
         {
@@ -50,11 +50,6 @@ export class AppHeaderComponent {
           command: () => {
             this.openCreateRoomModal.emit(true)
           },
-        },
-        {
-          label: 'Criar Regras',
-          icon: 'pi pi-plus',
-          routerLink: '/rooms-rule-based'
         },
         {
           label: translations.logout,

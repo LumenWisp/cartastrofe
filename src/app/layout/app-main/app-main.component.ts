@@ -29,8 +29,17 @@ export class AppMainComponent {
   }
 
   isHeaderHidden() {
-    const hiddenRoutes = ['/rooms'];
+    const hiddenRoutes = ['/rooms/', '/my-games/game-edit-field', '/ruled-rooms'];
     return hiddenRoutes.some(route => this.router.url.startsWith(route));
   }
 
+  ngOnDestroy() {
+    updatePreset({
+      semantic: {
+        app: {
+          body: 'white'
+        }
+      }
+    })
+  }
 }

@@ -1,6 +1,9 @@
 <div data-scroll-container>
     <header>
-        <img src="assets/cartastrofeLogoText.svg" alt="Cartastrofe Logo" class="logo" height="48" />
+        <div class="group-logo">
+            <img src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo" class="logo" height="48" />
+            <span>Cartástrofe</span>
+        </div>
         <nav class="desktop-nav">
             <a routerLink="/login">{{ 'homepage.login' | translate }}</a>
         </nav>
@@ -47,8 +50,8 @@
                     <h2>{{ 'homepage.card.card-desc-3' | translate}}</h2>
                 </div>
                 <div cardBack>
-                    <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>
-                    <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
+                    <img class="back-logo" src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo">
+                    <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>                            
                 </div>
             </app-card-3d>
         </div>

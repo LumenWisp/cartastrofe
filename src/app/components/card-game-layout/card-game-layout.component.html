@@ -1,17 +1,19 @@
 <div
   class="card-layout-container"
+  [attr.card-id]="cardId"
+  (click)="handleCardLayoutClicked($event)"
 >
-  @for (cardField of cardLayout.cardFields; track cardField) {
-      <app-card-game-layout-field
-        [cardLayoutField]="cardField"
-        [dragBoundary]="isEditing ? '.card-layout-container' : ''"
-        [dimensions]="{
-          minWidth: 40,
-          maxWidth: 200,
-          minHeight: 40,
-          maxHeight: 300,
-        }"
-        (cardLayoutFieldClicked)="handleCardLayoutFieldClicked($event)"
-      />
+  @for (cardField of cardLayout.cardFields; track $index) {
+    <app-card-game-layout-field
+      [cardLayoutField]="cardField"
+      [dragBoundary]="isEditing ? '.card-layout-container' : ''"
+      [dimensions]="{
+        minWidth: 40,
+        maxWidth: 200,
+        minHeight: 40,
+        maxHeight: 300,
+      }"
+      (cardLayoutFieldClicked)="handleCardLayoutFieldClicked($event)"
+    />
   }
 </div>

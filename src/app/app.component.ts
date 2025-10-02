@@ -1,29 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LoadingComponent } from './components/loading/loading.component';
 import { Toast } from 'primeng/toast';
-import { UserService } from './services/user-service.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Toast],
+  imports: [RouterOutlet, Toast, LoadingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'cartastrofe';
-
-  constructor(private userService: UserService) {}
-
-  ngOnInit(): void {
-    this.userService.user$.subscribe(user => {
-      if (user) {
-        this.userService.currentUser.set({
-          email: user.email!,
-          userID: user.uid,
-        })
-      } else {
-        this.userService.currentUser.set(null)
-      }
-    })
-  }
 }

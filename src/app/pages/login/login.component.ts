@@ -11,6 +11,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 // services
 import { UserService } from '../../services/user-service.service';
+import { LoadingService } from '../../services/loading.service';
 // shared
 import { FormManager } from '../../shared/form-manager';
 
@@ -30,9 +31,9 @@ import { FormManager } from '../../shared/form-manager';
 })
 export class LoginComponent extends FormManager implements OnDestroy {
 
-  roomLink: string = '';
+  roomUrl: string = '';
 
-  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute) {
+  constructor(private router: Router, private userService: UserService, private route: ActivatedRoute, private loadingService: LoadingService) {
     const form = new FormGroup({
       form: new FormControl('', { nonNullable: true }),
       email: new FormControl('', {
@@ -70,6 +71,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
   ngOnInit() {
     this.checkRouteParams();
+    this.loadingService.hide();
   }
 
   ngOnDestroy() {
@@ -77,10 +79,10 @@ export class LoginComponent extends FormManager implements OnDestroy {
   }
 
   private async checkRouteParams() {
-    const roomLink = this.route.snapshot.queryParams['roomLink'];
-    console.log('roomLink: ', roomLink);
-    if (roomLink) {
-      this.roomLink = roomLink;
+    const roomUrl = this.route.snapshot.queryParams['roomUrl'];
+    console.log('roomUrl: ', roomUrl);
+    if (roomUrl) {
+      this.roomUrl = roomUrl;
     }
   }
 
@@ -93,13 +95,14 @@ export class LoginComponent extends FormManager implements OnDestroy {
       console.log('Formulário inválido');
       return;
     }
+    this.loadingService.show();
 
     const { email, password } = this.form.value;
 
     try{
       await this.userService.login(email, password);
-      if (this.roomLink) {
-        this.router.navigate(['/rooms', this.roomLink]);
+      if (this.roomUrl) {
+        this.router.navigate([this.roomUrl]);
       } 
       else {
         this.router.navigate(['/my-games']);
@@ -118,12 +121,12 @@ export class LoginComponent extends FormManager implements OnDestroy {
   }
   
   goToRegisterPage() {
-    if(this.roomLink){
+    if(this.roomUrl){
       const queryParams: any = {
-      roomLink: this.roomLink,
+      roomUrl: this.roomUrl,
     };
 
-      this.router.navigate(['/register'], { queryParams,});
+      this.router.navigate(['/register'], { queryParams});
     }
     else{
       this.router.navigate(['/register']);

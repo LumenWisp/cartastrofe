@@ -13,10 +13,16 @@ import { CardGameLayoutFieldComponent } from '../card-game-layout-field/card-gam
   styleUrl: './card-game-layout.component.css'
 })
 export class CardGameLayoutComponent<T extends CardLayout | CardGameLayout> {
+  @Input() cardId?: string;
   @Input({ required: true }) cardLayout!: T;
   @Input() isEditing = false;
 
   @Output() cardLayoutFieldClicked = new EventEmitter<T['cardFields'][number]>()
+  @Output() cardLayoutClicked = new EventEmitter<MouseEvent>()
+
+  handleCardLayoutClicked(event: MouseEvent) {
+    this.cardLayoutClicked.emit(event)
+  }
 
   handleCardLayoutFieldClicked(cardField: T['cardFields'][number]) {
     this.cardLayoutFieldClicked.emit(cardField)

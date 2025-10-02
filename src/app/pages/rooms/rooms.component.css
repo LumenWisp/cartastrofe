@@ -1,8 +1,8 @@
 .sidebar-right {
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   right: 0;
-  width: 220px; /*IGUAL*/
+  width: 260px; /*IGUAL*/
   height: 100vh;
   background-color: #f9f9f9;
   box-shadow: -2px 0 5px rgba(0,0,0,0.1);
@@ -31,6 +31,7 @@
   cursor: pointer;
   user-select: none;
   transition: background-color 0.3s, box-shadow 0.3s;
+  color: #d64545;
 }
 
 .menu-item:hover {
@@ -82,7 +83,7 @@ CSS PROVISORIO DAS CARTITAS
 .front { background: #fff; }
 .back  { background: #d64545; transform: rotateY(180deg); }
 
-.remove-pointer-events {
+.remove-pointer-events, .remove-pointer-events > * {
   pointer-events: none;
 }
 
@@ -103,4 +104,35 @@ CSS PROVISORIO DAS CARTITAS
   color: white;
 
   cursor: pointer;
+}
+
+.hand-area-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  gap: 50px;
+  align-items: end;
+  padding-bottom: 140px;
+}
+.hand-area {
+  position: absolute;
+  bottom: 0;
+  height: 150px;
+  width: 100%;
+  background-color: lightgray;
+  border: 1px solid black;
+  z-index: -1;
+}
+
+.main-content {
+  width: 100%;
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.lay {
+  display: flex;
 }

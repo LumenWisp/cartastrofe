@@ -1,0 +1,26 @@
+@if (game) {
+<p-button
+  [routerLink]="['/my-games/game-description', game.id]"
+  label="Voltar"
+/>
+}
+
+<p-drawer [(visible)]="visible" header="Cartas" position="full">
+  <div class="cards">
+    @for (cardObj of cards; track $index) {
+      <app-card-game-layout
+        [ngClass]="{ 'selected': cardSelected?.id === cardObj.id }"
+        [cardLayout]="cardObj.card"
+        (cardLayoutClicked)="selectCard(cardObj)"
+      />
+    }
+  </div>
+</p-drawer>
+
+<div class="lateral-menu">
+  <p-button (click)="visible = true" label="Lista de cartas" icon="pi pi-arrow-left" />
+
+  @if (cardSelected) {
+    <app-card-game-layout [cardLayout]="cardSelected.card" />
+  }
+</div>

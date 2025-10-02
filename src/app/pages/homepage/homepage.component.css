@@ -28,6 +28,16 @@ header {
     color: var(--primary);
     letter-spacing: 2px;
 }
+.group-logo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.back-logo {
+    height: 200px;
+}
 nav {
     display: flex;
     gap: 2rem;

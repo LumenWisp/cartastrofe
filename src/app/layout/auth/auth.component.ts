@@ -20,4 +20,14 @@ export class AuthComponent {
       }
     })
   }
+
+  ngOnDestroy() {
+    updatePreset({
+      semantic: {
+        app: {
+          body: 'white'
+        }
+      }
+    })
+  }
 }

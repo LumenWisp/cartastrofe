@@ -17,7 +17,7 @@
     </button>
 
     @for (gameInfo of filteredGames(); track gameInfo.id) {
-      <app-panel-game [gameInfo]="gameInfo"></app-panel-game>
+      <app-panel-game [gameInfo]="gameInfo" (removeGameInfo)="removeGameInfo($event)"></app-panel-game>
     }
   </app-placeholder-grid>
 </div>
