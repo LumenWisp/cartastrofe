@@ -93,3 +93,9 @@
   font-weight: 500;
   padding: 3rem 0;
 }
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}

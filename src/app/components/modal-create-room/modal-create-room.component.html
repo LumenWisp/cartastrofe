@@ -1,28 +1,32 @@
-<p-dialog [(visible)]="display" [modal]="true" [closable]="false" [style]="{width: '400px'}">
-  <button class="create-room-close-button" (click)="close()">×</button>
-
-  <h2 class="create-room-title">{{'modal-create-room.create-room' | translate}}</h2>
-
-  <div class="create-room-form-container">
-    <div class="create-room-form-group">
-      <label for="gameName">{{'modal-create-room.game-name' | translate}}</label>
+<p-dialog
+  header="{{ 'modal-create-room.create-room' | translate }}"
+  [(visible)]="display"
+  [modal]="true"
+  (onHide)="close()"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="form">
+    <div class="inline-input">
+      <label for="gameName">{{
+        "modal-create-room.game-name" | translate
+      }}</label>
       <p-select
         [options]="gameInfos"
         [(ngModel)]="gameInfo"
         optionLabel="name"
-        placeholder="{{'modal-create-room.game-name-placeholder' | translate}}">
-      ></p-select>
-  </div>
+        placeholder="{{
+          'modal-create-room.game-name-placeholder' | translate
+        }}"
+      >
+        ></p-select
+      >
+    </div>
 
-    <!-- <div class="create-room-form-group">
-      <label for="playerCount">Número de jogadores</label>
-      <p-dropdown
-        id="playerCount"
-        [options]="playerOptions"
-        placeholder="Selecione o nº de jogadores">
-      </p-dropdown>
-    </div> -->
-
-    <button type="button" class="create-room-button" (click)="createRoom()">{{'modal-create-room.submit-button' | translate}}</button>
+    <p-button
+      type="submit"
+      label="{{ 'modal-create-room.submit-button' | translate }}"
+      (click)="createRoom()"
+    />
   </div>
 </p-dialog>

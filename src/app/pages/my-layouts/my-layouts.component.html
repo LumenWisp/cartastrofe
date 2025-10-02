@@ -27,7 +27,8 @@
             </div>
             <div class="layout-card-info">
               <div class="layout-card-title">{{ cardLayout.name }}</div>
-              <!-- Future: description, date, actions -->
+                <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="goToCreateLayoutPage(cardLayout.id!)"></button>
+                <button pButton type="button" icon="pi pi-trash" (click)="deleteLayout(cardLayout.id!)"></button>
             </div>
           </div>
         }
