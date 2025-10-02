@@ -7,20 +7,27 @@ import { PileModel } from '../types/pile';
 })
 export class FreeModeService {
 
-  cards = signal<CardGame[]>([
-  { id: 'A', label: 'A', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'B', label: 'B', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'C', label: 'C', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'D', label: 'D', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'E', label: 'E', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-  { id: 'F', label: 'F', flipped: false, zIndex: 1, freeDragPos: {x: 0, y: 0} },
-]);
+  cards = signal<CardGame[]>([]);
 
   piles: PileModel[] = [];
 
   /*
   FUNÇÕES DE CARTAS
-  */ 
+  */
+
+  tableCards() {
+    return this.cards().filter(card => card.belongsTo === null);
+  }
+
+  myHandCards(userId: string) {
+    return this.cards().filter(card => card.belongsTo === userId);
+  }
+
+  changeBelongsTo(cardId: string, userId: string | null) {
+    this.cards.update(cards =>
+      cards.map(c => c.id === cardId ? { ...c, belongsTo: userId } : c)
+    );
+  }
 
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
@@ -125,7 +132,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE PILHAS
-  */ 
+  */
 
   // Cria uma pilha com o id passado
   createPile(pileId: string) {
@@ -178,7 +185,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE EMBARALHAMENTO
-  */ 
+  */
 
   // Embaralha uma pilha
   shufflePile(pileId: string) {

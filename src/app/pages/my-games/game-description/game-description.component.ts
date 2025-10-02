@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 // services
 import { GameInfoService } from '../../../services/game-info.service';
 // types
-import { GameInfo } from '../../../types/game-info';
+import { GameInfoModel } from '../../../types/game-info';
 // enums
 import { GameModesEnum } from '../../../enum/game-modes.enum';
 
@@ -21,7 +21,8 @@ import { GameModesEnum } from '../../../enum/game-modes.enum';
   styleUrl: './game-description.component.css'
 })
 export class GameDescriptionComponent implements OnInit {
-  gameInfo: GameInfo | null = null
+  GameModesEnum = GameModesEnum;
+  gameInfo: GameInfoModel | null = null
   ngIconGamemode = {};
 
   constructor(private route: ActivatedRoute, private gameInfoService: GameInfoService) {}
@@ -30,28 +31,24 @@ export class GameDescriptionComponent implements OnInit {
     this.getGameInfoFromRoute();
   }
 
-  getGameInfoFromRoute() {
+  async getGameInfoFromRoute() {
     const gameId = this.route.snapshot.paramMap.get('gameId');
 
     if (!gameId) return;
 
-    // buscar o jogo pelo gameId <--------------------
-
-    // dado mockado
-    this.gameInfo = {
-      id: '1',
-      name: 'Game 1',
-      description: 'Description for Game 1',
-      countPlayersMin: 2,
-      countPlayersMax: 4,
-      countCards: 0,
-      gameMode: GameModesEnum.STRUCTURED,
-      userId: 'user1',
-    }
+    // buscar o jogo pelo gameId
+    const gameInfo =  await this.gameInfoService.getGameInfoById(gameId)
+    if(gameInfo) this.gameInfo = gameInfo
 
     this.ngIconGamemode = {
-      'pi-shield': this.gameInfo.gameMode === GameModesEnum.STRUCTURED,
-      'pi-compass': this.gameInfo.gameMode === GameModesEnum.FREE,
+      'pi-shield': this.gameInfo!.gameMode === GameModesEnum.STRUCTURED,
+      'pi-compass': this.gameInfo!.gameMode === GameModesEnum.FREE,
+    }
+  }
+
+  async deleteGame(): Promise<void>{
+    if(this.gameInfo){
+      await this.gameInfoService.deleteGameInfo(this.gameInfo.id);
     }
   }
 }

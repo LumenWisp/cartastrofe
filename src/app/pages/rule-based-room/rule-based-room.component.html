@@ -1,1 +1,71 @@
-<app-blockly-editor></app-blockly-editor>
+<div class="sidebar-right">
+  <p-button routerLink="/my-games" label="Sair" />
+
+  <p-panel header="{{'rooms.header' | translate}}">
+    @for (player of players; track $index) {
+    <div class="menu-item">
+      {{ player.name }}
+    </div>
+    }
+  </p-panel>
+
+  <p-button (onClick)="startGame()" label="Iniciar jogo" />
+  <p-button (onClick)="endGame()" label="Terminar jogo" />
+</div>
+
+<div class="grid">
+  @for (card of freeModeService.cards(); track card.id) {
+      <app-card-game
+        style="position: absolute;"
+        [cardLayout]="cardLayouts[card.cardLayoutId]"
+        [card]="card"
+        (cardDragStart)="onDragStart($event)"
+        (cardDragEnd)="onDrop($event)"
+        (cardContextMenu)="showOptions($event, card, popover)"
+        (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+      />
+    }
+</div>
+
+<!-- Área de jogo -->
+<div class="game-field" #gameField>
+  
+  @for (item of items; track item; let i = $index) {
+
+    @if (item.type === 'passPhase') {
+
+      <button 
+        (click)="nextPhase()"
+        cdkDrag
+        [cdkDragFreeDragPosition]="item.position"
+        [cdkDragDisabled]="true"
+        class="next-phase-btn"
+        [id]="item.nameIdentifier">
+        Next Phase
+      </button>
+
+    }
+
+    @else if (item.type === 'hand') {
+      <div 
+        [ngClass]="item.type"
+        [id]="item.nameIdentifier">
+        {{ item.nameIdentifier }}
+    </div>
+    }
+
+    @else {
+
+      <div
+        cdkDrag
+        [cdkDragFreeDragPosition]="item.position"
+        [cdkDragDisabled]="true"
+        [ngClass]="item.type"
+        [id]="item.nameIdentifier">
+        {{ item.nameIdentifier }}
+      </div>
+
+    }
+  }
+
+</div>

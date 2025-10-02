@@ -21,4 +21,5 @@ export interface CardLayoutField extends CardFieldBase {
 
 export interface CardGameField extends CardFieldBase {
   value: string;
+  property: string;
 }

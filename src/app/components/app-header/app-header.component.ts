@@ -21,7 +21,6 @@ export class AppHeaderComponent {
   translateService = inject(TranslateService);
   menuItems: MenuItem[] = [];
 
-
   ngOnInit() {
     forkJoin({
       myGames: this.translateService.get('app-main.menu-items.my-games'),
@@ -36,8 +35,13 @@ export class AppHeaderComponent {
           routerLink: '/my-games',
         },
         {
+          label: 'Minhas Cartas',
+          icon: 'pi pi-clone',
+          routerLink: '/my-cards'
+        },
+        {
           label: translations.myLayouts,
-          icon: 'pi pi-hashtag',
+          icon: 'pi pi-objects-column',
           routerLink: '/my-layouts',
         },
         {
@@ -46,11 +50,6 @@ export class AppHeaderComponent {
           command: () => {
             this.openCreateRoomModal.emit(true)
           },
-        },
-        {
-          label: 'Criar Regras',
-          icon: 'pi pi-plus',
-          routerLink: '/rooms-rule-based'
         },
         {
           label: translations.logout,

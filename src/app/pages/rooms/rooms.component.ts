@@ -1,16 +1,17 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { UserEntity } from '../../types/user';
-import { UserService } from '../../services/user-service.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FreeModeService } from '../../services/free-mode.service';
 import { Subscription } from 'rxjs';
 
 import {
   CdkDrag,
+  CdkDragDrop,
   CdkDragEnd,
+  CdkDragMove,
   CdkDragStart,
   DragDropModule,
 } from '@angular/cdk/drag-drop';
@@ -22,36 +23,55 @@ import { PlayerEntity } from '../../types/player';
 import { CardGame } from '../../types/card';
 
 import { Popover, PopoverModule } from 'primeng/popover';
+import { CardGameComponent } from "../../components/card-game/card-game.component";
+import { CardLayoutService } from '../../services/card-layout.service';
+import { GameInfoService } from '../../services/game-info.service';
+import { LoadingService } from '../../services/loading.service';
+import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-layout';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-rooms',
-  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, CdkDrag, PopoverModule, TranslatePipe],
+  imports: [PanelModule, ButtonModule, DragDropModule, RouterModule, PopoverModule, TranslatePipe, CardGameComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css',
 })
 export class RoomsComponent {
   room!: Room;
   players: PlayerEntity[] = [];
-  currentPlayer!: PlayerEntity;
+  currentPlayer?: PlayerEntity;
 
   @ViewChild('popover') popover!: Popover;
   users: UserEntity[] = [];
   selectedCard: CardGame | null = null;
 
+  cardLayouts: { [id: string]: CardLayout } = {};
+
   // Subscrições
   private playerSubscription?: Subscription;
   private roomSubscription?: Subscription;
+
+  @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
+  @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('handArea') handArea!: ElementRef<HTMLDivElement>;
+  isOverHandArea = false;
 
   constructor(
     private route: ActivatedRoute,
     private roomService: RoomService,
     private router: Router,
-    private userService: UserService,
-    public freeModeService: FreeModeService
+    public freeModeService: FreeModeService,
+    private gameInfoService: GameInfoService,
+    private loadingService: LoadingService,
   ) {}
 
   async ngOnInit() {
     await this.checkRouteParams();
+    this.loadingService.hide();
+  }
+
+  ngAfterViewInit() {
+    this.resizeHandArea();
   }
 
   async ngOnDestroy() {
@@ -60,7 +80,7 @@ export class RoomsComponent {
       //Retirada do usuário da subcoleção após sua saída da sala
       await this.roomService.removePlayer(
         this.room.id,
-        this.currentPlayer.playerID
+        this.currentPlayer.playerId
       );
 
       // Verificar se o usuário que está saindo é o último na sala, para resetar ela
@@ -78,6 +98,30 @@ export class RoomsComponent {
     }
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.resizeHandArea();
+  }
+
+  resizeHandArea() {
+    const mainContentWidth = this.mainContent.nativeElement.offsetWidth;
+    if (this.handAreaContainer) this.handAreaContainer.nativeElement.style.width = mainContentWidth + 'px';
+  }
+
+  onDragMoved(event: MouseEvent) {
+    if (!this.isDragging) return;
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    const rect = this.handArea.nativeElement.getBoundingClientRect();
+    this.isOverHandArea =
+      mouseX >= rect.left &&
+      mouseX <= rect.right &&
+      mouseY >= rect.top &&
+      mouseY <= rect.bottom;
+  }
+
   /**
    * Verifica parâmetros da rota e carrega os dados relacionados
    */
@@ -85,43 +129,66 @@ export class RoomsComponent {
     const roomLink = this.route.snapshot.params['roomLink'];
     console.log('roomLink: ', roomLink);
     if (roomLink) {
-      //verificando se o usuário está logado
-      const user = this.userService.getUserLogged();
-      if (!user) {
-        console.log('Usuário não está logado');
-        this.goToLoginPage(roomLink);
-        return;
-      }
+
 
       const room = await this.roomService.getRoomByRoomLink(roomLink);
       if (room) {
         this.room = room;
 
+        if (this.room.state) {
+          const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
+          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
+
+          for (const cardLayout of cardLayouts) {
+            this.cardLayouts[cardLayout!.id] = {
+              name: cardLayout!.name,
+              cardFields: cardLayout!.cardFields.map(field => ({ ...field })),
+            }
+          }
+
+          // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
+          for (const card of cards) {
+            this.freeModeService.addCard({
+              name: card.name,
+              cardLayoutId: card.layoutId,
+              data: card.data,
+              freeDragPos: { x: 0, y: 0 },
+              flipped: false,
+              id: card.id,
+              label: card.name,
+              pileId: null,
+              zIndex: 1,
+              belongsTo: null,
+            })
+          }
+        }
+
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();
+
+        await this.updateRoom();
 
         //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
           .listenPlayers(this.room.id)
           .subscribe((players) => {
             this.players = players;
-            console.log('Atualização em tempo real:', players);
           });
 
-        //ouve as mudanças feitas no documento da sala
+        // ouve as mudanças feitas no documento da sala
         this.roomSubscription = this.roomService
           .listenRoom(this.room.id)
-          .subscribe((room) => {
+          .subscribe(async (room) => {
             this.room = room;
+
             if(room.state?.cards){
               this.freeModeService.cards.set(room.state.cards);
             }
             if(room.state?.piles){
               this.freeModeService.piles = room.state.piles
             }
-            console.log('Atualização em tempo real:', room);
-          });
-          
+        });
+
       }
     }
   }
@@ -134,8 +201,11 @@ export class RoomsComponent {
     event.preventDefault();
     if (this.isDragging) return;
     this.selectedCard = card;
+
+    const cardEl = document.querySelector(`[card-id="${card.id}"] .align-popover`);
+
     if (this.freeModeService.isPartOfPile(card.id!)) {
-      popover.show(event);
+      popover.show(event, cardEl);
     }
   }
 
@@ -190,7 +260,7 @@ export class RoomsComponent {
       return;
     }
 
-    if (targetElement?.classList.contains('face') && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
+    if ((targetElement?.classList.contains('face') || targetElement?.classList.contains('card-layout-container')) && targetCardId !== draggedCardId && targetCardId && draggedCardId) { // caso o alvo seja uma carta e não seja a própria carta arrastada
       const pileTargetCardId = this.freeModeService.checkCardHasPile(targetCardId);
 
       // Caso a carta alvo seja parte de uma pilha, a carta arrastada fará parte dela
@@ -232,8 +302,36 @@ export class RoomsComponent {
       draggedCard!.freeDragPos = { x, y };
       this.freeModeService.updateCard(draggedCard!)
     }
+
+    if (draggedCardId) {
+      if (this.isOverHandArea) {
+        this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+      } else {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
+          this.freeModeService.cards.update(cards =>
+            cards.map(c => {
+              if (c.id === draggedCardId) {
+                const offsetX = 100 // 60 da escala + 40 para centralizar
+                const offsetY = 150 // 90 da escala + 60 para centralizar
+
+                return { ...c, freeDragPos: { x: event.dropPoint.x - offsetX, y: event.dropPoint.y - offsetY } }
+              }
+
+              return c
+            })
+          );
+        }
+
+        this.freeModeService.changeBelongsTo(draggedCardId, null);
+      }
+
+      this.resizeHandArea()
+    }
+
     this.updateRoom()
     console.log(this.freeModeService.piles);
+
+
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
@@ -263,6 +361,6 @@ export class RoomsComponent {
 
   async updateRoom(): Promise<void>{
     const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
-    this.roomService.updateRoom(this.room.id, {state: newState});
+    this.roomService.updateRoom(this.room.id, { state: newState });
   }
 }
