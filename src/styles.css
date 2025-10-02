@@ -26,10 +26,6 @@ a {
   color: black;
 }
 
-a:hover {
-  color: #2c2c2c;
-}
-
 p-password .p-password-mask-icon:hover {
   cursor: pointer; /* mostra que o ícone de "mostrar senha" é clicável */
 }
@@ -48,5 +44,4 @@ textarea {
 
 body {
   height: 100dvh;
-  background: var(--p-app-body);
 }
