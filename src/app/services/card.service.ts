@@ -5,6 +5,7 @@ import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UserService } from './user-service.service';
 import { UtilsService } from './utils.service';
+import { BlockWorkspaceService } from './block-workspace.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class CardService {
   constructor(
     private userService: UserService,
     private utilsService: UtilsService,
+    private blockWorkspaceService: BlockWorkspaceService,
   ) {}
 
   async getAllCards() {
@@ -150,9 +152,9 @@ export class CardService {
     const cardGame = snapshot.docs[0].data() as CardGame;
 
     const workSpaceFields = {
-      onMoveCardFromTo: cardGame.onMoveCardFromTo,
-      onPhaseStart: cardGame.onPhaseStart,
-      onPhaseEnd: cardGame.onPhaseEnd,      
+      onMoveCardFromTo: cardGame.onMoveCardFromTo || this.blockWorkspaceService.onMoveCardFromToDefault,
+      onPhaseStart: cardGame.onPhaseStart || this.blockWorkspaceService.onPhaseStartDefault,
+      onPhaseEnd: cardGame.onPhaseEnd || this.blockWorkspaceService.onPhaseEndDefault,      
     };
 
     return workSpaceFields;

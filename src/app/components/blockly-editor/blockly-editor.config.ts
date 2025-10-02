@@ -124,6 +124,8 @@ export const toolboxCard = {
         { kind: 'block', type: 'getPhase' },
         { kind: 'block', type: 'getGeneralVariableValue' },
         { kind: 'block', type: 'getTargetCardIdValue' },
+        { kind: 'block', type: 'getCurrentPileIdValue' },
+        { kind: 'block', type: 'getLastPileIdValue' },
       ]
     },
     {
@@ -346,6 +348,29 @@ export function registerBlocks() {
       this.setColour(335);
     }
   };
+
+  
+  // 🚀 GET LAST PILE ID VALUE
+  Blockly.Blocks['getLastPileIdValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('LastPileIdValue')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(335);
+    }
+  };
+
+  // 🚀 GET CURRENT PILE ID VALUE
+  Blockly.Blocks['getCurrentPileIdValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('CurrentPileIdValue')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(335);
+    }
+  };
 }
 
 // ===============================================================
@@ -497,8 +522,26 @@ export function registerGenerators() {
       return code;
     }
 
-  // GET GENERAL VARIABLE VALUE
+  // GET TARGET CARD ID VALUE
   javascriptGenerator.forBlock['getTargetCardIdValue'] = function(block, generator) {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = ""
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET LAST PILE ID VALUE
+  javascriptGenerator.forBlock['getLastPileIdValue'] = function(block, generator) {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = ""
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET CURRENT PILE ID VALUE
+  javascriptGenerator.forBlock['getCurrentPileIdValue'] = function(block, generator) {
 
     // TODO: Assemble javascript into the code variable.
     const code = ""
