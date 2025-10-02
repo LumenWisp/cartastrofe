@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal, WritableSignal } from '@angular/core';
 import { CardGameLayout, CardLayoutModel } from '../../types/card-layout';
 import { GameInfoModel } from '../../types/game-info';
 import { CardLayoutService } from '../../services/card-layout.service';
@@ -13,19 +13,34 @@ import { CardModel } from '../../types/card';
 import { CardService } from '../../services/card.service';
 import { CardGameLayoutComponent } from "../../components/card-game-layout/card-game-layout.component";
 import { CommonModule } from '@angular/common';
+import { IconField } from "primeng/iconfield";
+import { InputIcon } from "primeng/inputicon";
+import { InputText } from "primeng/inputtext";
 
 @Component({
   selector: 'app-game-edit-cards',
-  imports: [SelectModule, ButtonModule, FormsModule, PanelModule, CardGameLayoutComponent, CommonModule],
+  imports: [SelectModule, ButtonModule, FormsModule, PanelModule, CardGameLayoutComponent, CommonModule, IconField, InputIcon, InputText],
   templateUrl: './game-edit-cards.component.html',
   styleUrl: './game-edit-cards.component.css'
 })
 export class GameEditCardsComponent {
-  cardLayoutUsed: (CardLayoutModel | null)[] = [];
   cardLayouts: CardLayoutModel[] = [];
-  cards: { [key: string]: CardModel[] } = {};
-  cardsUsed: CardModel[] = [];
   currentGame: GameInfoModel | null = null;
+  search = signal('');
+  layout: WritableSignal<CardLayoutModel | null> = signal(null);
+
+  filteredAllCards = computed(() => {
+    const searchValue = this.search().trim().toLowerCase();
+    const selectedLayout = this.layout();
+    return this.allCards().filter(({ cardModel }) => {
+      const matchesSearch = !searchValue || cardModel.name.toLowerCase().includes(searchValue);
+      const matchesLayout = !selectedLayout || cardModel.layoutId === selectedLayout.id;
+      return matchesSearch && matchesLayout;
+    });
+  });
+
+  cardsUsed: CardModel[] = [];
+  allCards: WritableSignal<{ cardGame: CardGameLayout, cardModel: CardModel }[]> = signal([])
 
   constructor(
     private cardLayoutService: CardLayoutService,
@@ -36,6 +51,17 @@ export class GameEditCardsComponent {
   ) {
     this.loadCardLayouts();
     this.loadCurrentGame();
+    this.loadCards();
+  }
+
+  loadCards() {
+    this.cardService.getAllCards().then(cards => {
+      this.allCards.set(cards.map(card => {
+        const layout = this.cardLayouts.find(l => l.id === card.layoutId)!;
+        const obj = this.convert(card, layout);
+        return { cardGame: obj, cardModel: card }
+      }))
+    })
   }
 
   convert(card: CardModel, cardLayout: CardLayoutModel) {
@@ -48,11 +74,6 @@ export class GameEditCardsComponent {
     };
 
     return obj;
-  }
-
-  loadCardsForLayout(cardLayout: CardLayoutModel | null) {
-    if (!cardLayout) return;
-    this.fetchCards(cardLayout.id);
   }
 
   handleCardLayoutClicked(card: CardModel) {
@@ -79,30 +100,22 @@ export class GameEditCardsComponent {
       this.currentGame = game;
 
       this.gameInfoService.getCardLayouts(gameId).then(cardLayouts => {
-        this.cardLayoutUsed = cardLayouts;
-        if (cardLayouts.length === 0) this.cardLayoutUsed.push(null);
-
         for (const cl of cardLayouts) {
-          if (!cl) continue;
-          this.fetchCards(cl.id);
+          this.cardService.getCardsByLayoutId(cl.id).then(cards => {
+            for (const card of cards) {
+              if (this.currentGame?.cardIds && this.currentGame.cardIds.includes(card.id)) {
+                this.cardsUsed.push(card);
+              }
+            }
+          });
         }
-      });
 
+      });
     });
   }
 
-  fetchCards(layoutId: string) {
-    if (this.cards[layoutId]) return;
-
-    this.cardService.getCardsByLayoutId(layoutId).then(cards => {
-      this.cards[layoutId] = cards;
-
-      for (const card of cards) {
-        if (this.currentGame?.cardIds && this.currentGame.cardIds.includes(card.id)) {
-          this.cardsUsed.push(card);
-        }
-      }
-    });
+  isCardOnGame(card: CardModel) {
+    return this.cardsUsed.some(c => c.id === card.id)
   }
 
   saveLayoutsAndCards() {
@@ -111,7 +124,7 @@ export class GameEditCardsComponent {
     this.gameInfoService.updateGameInfo(
       this.currentGame.id,
       {
-        cardLayoutIds: this.cardLayoutUsed.filter(cl => cl !== null).map(cl => cl!.id),
+        cardLayoutIds: Array.from(new Set(this.cardsUsed.map(c => c.layoutId))),
         cardIds: this.cardsUsed.map(c => c.id),
       }
     ).then(() => {

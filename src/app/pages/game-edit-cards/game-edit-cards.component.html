@@ -1,43 +1,46 @@
-@for (cardLayout of cardLayoutUsed; track $index) {
-  <p-panel [toggleable]="true">
-    <ng-template #header>
-      <div>
-        <span>Card Layout:</span>
+<div class="top-bar">
+  <p-iconfield class="search-field">
+    <p-inputicon class="pi pi-search" />
+    <input
+      type="text"
+      pInputText
+      placeholder="Search"
+      [fluid]="true"
+      [(ngModel)]="search"
+    />
+  </p-iconfield>
 
-        <p-select
-          [options]="cardLayouts"
-          [(ngModel)]="cardLayoutUsed[$index]"
-          optionLabel="name"
-          placeholder="Select a Card Layout"
-          (onChange)="loadCardsForLayout(cardLayoutUsed[$index])"
-        ></p-select>
-      </div>
-    </ng-template>
+  <p-select
+    [options]="cardLayouts"
+    [(ngModel)]="layout"
+    [showClear]="true"
+    optionLabel="name"
+    placeholder="Select a Card Layout"
+  ></p-select>
 
-    @if (cardLayout) {
-      <div class="cards-container">
-        @for (card of cards[cardLayout.id]; track $index) {
-          <app-card-game-layout
-            [ngStyle]="{ 'border': cardsUsed.includes(card) ? '10px solid red' : 'none' }"
-            [cardLayout]="convert(card, cardLayout)"
-            (cardLayoutClicked)="handleCardLayoutClicked(card)"
-          />
-        }
-      </div>
-    }
-  </p-panel>
-}
+  <p-button
+    label="Salvar"
+    icon="pi pi-save"
+    iconPos="right"
+    (click)="saveLayoutsAndCards()"
+  />
+</div>
 
-<p-button
-  label="Adicionar Card Layout"
-  icon="pi pi-plus"
-  iconPos="right"
-  (click)="cardLayoutUsed.push(null)"
-/>
+<div class="cards">
+  @for (card of filteredAllCards(); track $index) {
+  <div
+    [ngStyle]="{
+      border: isCardOnGame(card.cardModel) ? '10px solid red' : '1px solid black'
+    }"
+  >
+    <span>{{ card.cardModel.name }}</span>
 
-<p-button
-  label="Salvar"
-  icon="pi pi-save"
-  iconPos="right"
-  (click)="saveLayoutsAndCards()"
-/>
+    <app-card-game-layout
+      [cardLayout]="card.cardGame"
+      (cardLayoutClicked)="handleCardLayoutClicked(card.cardModel)"
+    />
+  </div>
+  } @empty {
+    <p>Sem cartas</p>
+  }
+</div>
