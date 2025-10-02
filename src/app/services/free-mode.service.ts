@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { CardGame } from '../types/card';
 import { PileModel } from '../types/pile';
+import { GameFieldItem } from '../types/game-field-item';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,9 @@ export class FreeModeService {
   cards = signal<CardGame[]>([]);
 
   piles: PileModel[] = [];
+
+  // pilhas do modo regrado
+  ruledPiles: GameFieldItem[] = [];
 
   /*
   FUNÇÕES DE CARTAS
@@ -31,6 +35,10 @@ export class FreeModeService {
 
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
+  }
+
+  addRuledPile(ruledPile: GameFieldItem) {
+    this.ruledPiles.push(ruledPile);
   }
 
   addCards(newCards: CardGame[]) {
@@ -108,6 +116,20 @@ export class FreeModeService {
       this.updateZindex(cardId, newZIndex);
     } else {
       console.error('Pilha não encontrada');
+    }
+  }
+
+  addCardToRuledPile(ruledPileId: string, cardId: string) {
+
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    if (ruledPile) {
+      if (!ruledPile.cardIds) {
+        ruledPile.cardIds = []
+      }
+      ruledPile.cardIds?.push(cardId);
+    }
+    else {
+      console.error('RuledPile ou carta não encontrada');
     }
   }
 

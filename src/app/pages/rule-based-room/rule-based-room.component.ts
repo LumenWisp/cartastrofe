@@ -160,7 +160,11 @@ export class RuleBasedRoomComponent implements OnInit{
 
         if (this.room.state) {
           const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
-          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
+          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId);
+          const ruledPiles = await this.gameInfoService.getRuledPiles(this.room.state.gameId);
+          for (const ruledPile of ruledPiles) {
+            this.freeModeService.addRuledPile(ruledPile);
+          }
 
           for (const cardLayout of cardLayouts) {
             this.cardLayouts[cardLayout!.id] = {
@@ -230,6 +234,10 @@ export class RuleBasedRoomComponent implements OnInit{
             this.room = room;
             if(room.state?.cards){
               this.freeModeService.cards.set(room.state.cards);
+            }
+            // podia deixar no de cima mas fds
+            if(room.state?.ruledPiles){
+              this.freeModeService.ruledPiles = room.state.ruledPiles;
             }
           });
 
@@ -342,7 +350,7 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   async updateRoom(): Promise<void>{
-      const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
+      const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
       this.roomService.updateRoom(this.room.id, { state: newState });
     }
 
@@ -419,6 +427,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;
+        this.freeModeService.addCardToRuledPile(targetPileId, draggedCardId!)
       }
     }
 
@@ -440,6 +449,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;
+        this.freeModeService.addCardToRuledPile(targetPileId!, draggedCardId!)
       }
     }
 
