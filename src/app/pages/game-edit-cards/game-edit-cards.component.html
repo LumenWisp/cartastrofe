@@ -17,30 +17,29 @@
     optionLabel="name"
     placeholder="Select a Card Layout"
   ></p-select>
-
-  <p-button
-    label="Salvar"
-    icon="pi pi-save"
-    iconPos="right"
-    (click)="saveLayoutsAndCards()"
-  />
 </div>
+
+<p-button
+  class="save-btn"
+  label="Salvar"
+  icon="pi pi-save"
+  iconPos="right"
+  (click)="saveLayoutsAndCards()"
+/>
 
 <div class="cards">
   @for (card of filteredAllCards(); track $index) {
-  <div
-    [ngStyle]="{
-      border: isCardOnGame(card.cardModel) ? '10px solid red' : '1px solid black'
-    }"
-  >
-    <span>{{ card.cardModel.name }}</span>
+  <div class="layout-container" [class.highlight]="isCardOnGame(card.cardModel)" (click)="handleCardLayoutClicked(card.cardModel)">
+    <strong>{{ card.cardModel.name }}</strong>
 
-    <app-card-game-layout
-      [cardLayout]="card.cardGame"
-      (cardLayoutClicked)="handleCardLayoutClicked(card.cardModel)"
-    />
+    <app-card-3d [cardWidth]="220" [rotate]="true" [frontTextColor]="'#000'">
+      <ng-container cardFront>
+        <app-card-game-layout [cardLayout]="card.cardGame" />
+      </ng-container>
+    </app-card-3d>
+
   </div>
   } @empty {
-    <p>Sem cartas</p>
+  <p>Sem cartas</p>
   }
 </div>

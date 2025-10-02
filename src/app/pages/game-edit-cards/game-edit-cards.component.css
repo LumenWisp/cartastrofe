@@ -1,6 +1,11 @@
+:host {
+  display: block;
+  padding: 20px;
+  background-color: #ffffe1;
+}
+
 .top-bar {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
@@ -11,8 +16,26 @@
 }
 
 .cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2.2rem;
+  margin-top: 20px;
+}
+
+.layout-container {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(166,60,26,0.10);
+  padding: 1.2rem 1rem 1.5rem 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  min-height: 320px;
+  position: relative;
+}
+.layout-container.highlight {
+  background: linear-gradient(0, #ff7e5f 0%, #feb47b 100%);
 }

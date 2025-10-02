@@ -16,10 +16,11 @@ import { CommonModule } from '@angular/common';
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputText } from "primeng/inputtext";
+import { Card3dComponent } from "../../components/card-3d/card-3d.component";
 
 @Component({
   selector: 'app-game-edit-cards',
-  imports: [SelectModule, ButtonModule, FormsModule, PanelModule, CardGameLayoutComponent, CommonModule, IconField, InputIcon, InputText],
+  imports: [SelectModule, ButtonModule, FormsModule, PanelModule, CardGameLayoutComponent, CommonModule, IconField, InputIcon, InputText, Card3dComponent],
   templateUrl: './game-edit-cards.component.html',
   styleUrl: './game-edit-cards.component.css'
 })
