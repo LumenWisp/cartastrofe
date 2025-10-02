@@ -6,13 +6,13 @@ import { GameInfoService } from '../../services/game-info.service';
 import { DrawerModule } from 'primeng/drawer';
 import { CardGameLayout, CardLayout } from '../../types/card-layout';
 import { CardGameLayoutComponent } from "../card-game-layout/card-game-layout.component";
-import { NgClass } from '@angular/common';
+import { Card3dComponent } from "../card-3d/card-3d.component";
 
-type CardListItem = { id: string, layoutId: string, card: CardGameLayout}
+type CardListItem = { id: string, layoutId: string, name: string, card: CardGameLayout}
 
 @Component({
   selector: 'app-card-rules',
-  imports: [ButtonModule, RouterLink, DrawerModule, CardGameLayoutComponent, NgClass],
+  imports: [ButtonModule, RouterLink, DrawerModule, CardGameLayoutComponent, Card3dComponent],
   templateUrl: './card-rules.component.html',
   styleUrl: './card-rules.component.css'
 })
@@ -51,6 +51,7 @@ export class CardRulesComponent {
     // Convert cards into CardGameLayout
     this.cards = cards.map(card => ({
       id: card.id,
+      name: card.name,
       layoutId: card.layoutId,
       card: {
         name: card.name,
