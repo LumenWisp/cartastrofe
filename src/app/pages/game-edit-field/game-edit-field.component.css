@@ -59,14 +59,17 @@
 }
 
 .pile {
+  position: absolute;
   width: 120px;
   height: 180px;
   background: #cce;
   border: 2px solid #99a;
   border-radius: 6px;
+  
 }
 
 .label {
+  position: absolute;
   width: 100px;
   height: 50px;
   padding: 0.5rem 1rem;
@@ -88,6 +91,7 @@
 }
 
 .next-phase-btn {
+  position: absolute;
   padding: 0.7rem 1.2rem;
   background: #4caf50;
   color: #fff;

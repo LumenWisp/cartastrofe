@@ -67,6 +67,7 @@ export class RuleBasedRoomComponent implements OnInit{
   currentPhaseNumber = 0;
   currentPlayerToPlayNumber = 0;
   currentPlayerToPlay!: PlayerEntity;
+  isGameOcurringHTML: boolean = false;
 
   winConditionCode: string = '';
 
@@ -298,6 +299,7 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   async startGame(){
+    this.isGameOcurringHTML = true;
     // Atualizando a sala para que seja visivel que o jogo já começou
     //if(this.room.state) this.room.state['isGameOcurring'] = true;
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true, currentphase: this.phases[0], currentPlayerToPlay: this.players[0].playerId}});
@@ -346,6 +348,7 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   endGame(){
+    this.isGameOcurringHTML = false;
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
   }
 
