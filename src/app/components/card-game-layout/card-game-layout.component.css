@@ -1,5 +1,7 @@
 .card-layout-container {
   position: relative;
-  background-color: #ffffff;
-  color: black;
+  width: 200px;
+  height: 300px;
+  /* background-color: #ffffff;
+  color: black; */
 }

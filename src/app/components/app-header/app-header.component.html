@@ -1,8 +1,13 @@
+
 <header class="header">
-  <p-menubar [model]="menuItems">
-    <ng-template #start>
+  <div class="header-content">
+    <div class="header-logo">
       <img class="logo" src="images/extraofficiallogo.PNG" alt="logo">
-    </ng-template>
-  </p-menubar>
+      <span class="app-title">Cartastrofe</span>
+    </div>
+    <div class="header-menu">
+      <p-menubar [model]="menuItems"></p-menubar>
+    </div>
+  </div>
 </header>
 

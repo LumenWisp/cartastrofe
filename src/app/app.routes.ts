@@ -22,6 +22,7 @@ import { CreateCardComponent } from './pages/my-games/create-card/create-card.co
 import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
 import { authGuard } from './auth.guard';
 import { GameEditComponent } from './pages/my-games/game-edit/game-edit.component';
+// import { MyCardsComponent } from './pages/my-cards/my-cards.component';
 
 export const routes: Routes = [
   {

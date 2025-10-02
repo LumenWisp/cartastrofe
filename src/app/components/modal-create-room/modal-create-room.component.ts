@@ -75,7 +75,7 @@ export class ModalCreateRoomComponent {
     if (!this.gameInfo()){
       this.toastService.showErrorToast('Erro ao criar sala', 'Selecione um jogo para criar a sala');
       return;
-    } 
+    }
 
     this.loadingService.show();
 

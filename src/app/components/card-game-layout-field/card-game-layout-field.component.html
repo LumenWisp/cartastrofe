@@ -33,7 +33,7 @@
 <ng-template #content>
   @if (hasValue(this.cardLayoutField)) {
     @if (cardLayoutField.type === 'IMAGE') {
-      <img [src]="this.cardLayoutField.value" alt="card">
+      <img class="card-image" [src]="this.cardLayoutField.value" alt="card">
     } @else if (cardLayoutField.type === 'TEXT') {
       <span>{{ this.cardLayoutField.value }}</span>
     }
