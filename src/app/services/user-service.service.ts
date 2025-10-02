@@ -12,10 +12,12 @@ import {
   Firestore,
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
   where,
+  limit
 } from '@angular/fire/firestore';
 import { UserEntity } from '../types/user';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
@@ -39,7 +41,6 @@ export class UserService {
   constructor() {}
 
   async currentUser() {
-    console.log(this._currentUser())
     if (this._currentUser()) {
       return this._currentUser()
     }
@@ -96,11 +97,34 @@ export class UserService {
    */
   async login(email: string, password: string): Promise<void> {
     // Autentica o usuário com Firebase Auth
-    await signInWithEmailAndPassword(
+    const { user } = await signInWithEmailAndPassword(
       this.auth,
       email,
       password
     );
+    const uid = user.uid;
+
+    console.log("USUÁRIO QUE LOGOU", uid)
+
+    // Busca os dados do Firestore com o UID
+    const docSnap = await getDoc(doc(this.firestore, this.path, uid));
+
+    if (docSnap.exists()) {
+      const refCollection = collection(this.firestore, this.path);
+      const queryRef = query(
+        refCollection,
+        where('email', '==', email),
+        where('password', '==', password),
+        limit(1)
+      );
+
+      const docRef = await getDocs(queryRef);
+
+      if (!docRef.empty) {
+//        this.currentUserData = docRef.docs[0].data() as UserEntity;
+//        localStorage.setItem('user', JSON.stringify(this.currentUserData));
+      }
+    }
   }
 
   forgotPassword(email: string): Promise<void> {

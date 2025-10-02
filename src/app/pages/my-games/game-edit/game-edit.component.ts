@@ -49,16 +49,16 @@ export class GameEditComponent {
   saveGame() {
     if (!this.currentGame) return;
 
-    this.gameInfoService.updateGameInfo(
-      this.currentGame.id,
-      {
-        cardLayoutId: this.cardLayout?.id
-      }
-    ).then(() => {
-      this.toastService.showSuccessToast(
-        'Edição de jogo',
-        'Jogo atualizado com sucesso.'
-      );
-    })
+    // this.gameInfoService.updateGameInfo(
+    //   this.currentGame.id,
+    //   {
+    //     cardLayoutId: this.cardLayout?.id
+    //   }
+    // ).then(() => {
+    //   this.toastService.showSuccessToast(
+    //     'Edição de jogo',
+    //     'Jogo atualizado com sucesso.'
+    //   );
+    // })
   }
 }

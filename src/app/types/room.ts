@@ -4,7 +4,7 @@ import { PileModel } from "./pile";
 
 export interface Room {
     id: string;
-    avaiable: boolean;
+    available: boolean;
     name: string;
     roomLink: string; // link da sala no momento atual, sempre muda ao criar uma nova sala
 
@@ -18,7 +18,8 @@ export interface RoomState{
     gameId: string; // Id do jogo que está vinculado a sala no momento
 
     //Em relação ao momento do jogo
-    playerTurn?: string; // Id do jogador que vai jogar agora
+    currentPlayerToPlay?: string; // Id do jogador que vai jogar agora
+    currentphase?: string;
     cards?: CardGame[];
     piles?: PileModel[];
 }

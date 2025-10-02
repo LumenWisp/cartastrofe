@@ -13,7 +13,21 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE CARTAS
-  */ 
+  */
+
+  tableCards() {
+    return this.cards().filter(card => card.belongsTo === null);
+  }
+
+  myHandCards(userId: string) {
+    return this.cards().filter(card => card.belongsTo === userId);
+  }
+
+  changeBelongsTo(cardId: string, userId: string | null) {
+    this.cards.update(cards =>
+      cards.map(c => c.id === cardId ? { ...c, belongsTo: userId } : c)
+    );
+  }
 
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
@@ -118,7 +132,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE PILHAS
-  */ 
+  */
 
   // Cria uma pilha com o id passado
   createPile(pileId: string) {
@@ -171,7 +185,7 @@ export class FreeModeService {
 
   /*
   FUNÇÕES DE EMBARALHAMENTO
-  */ 
+  */
 
   // Embaralha uma pilha
   shufflePile(pileId: string) {

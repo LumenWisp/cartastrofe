@@ -4,8 +4,10 @@
     width: 200 + 'px',
     height: 300 + 'px',
   }"
+  [attr.card-id]="cardId"
+  (click)="handleCardLayoutClicked($event)"
 >
-  @for (cardField of cardLayout.cardFields; track cardField) {
+  @for (cardField of cardLayout.cardFields; track $index) {
     <app-card-game-layout-field
       [cardLayoutField]="cardField"
       [dragBoundary]="isEditing ? '.card-layout-container' : ''"

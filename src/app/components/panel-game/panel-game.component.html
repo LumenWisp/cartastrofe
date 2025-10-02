@@ -8,8 +8,8 @@
 
   <ng-template #icons>
     <div class="gap-items">
+      <p-button icon="pi pi-trash" severity="danger" [rounded]="true" (onClick)="deleteGame()"/>
       <p-button icon="pi pi-book" severity="secondary" [rounded]="true" [routerLink]="['game-description', gameInfo.id]" />
-      <p-button icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['game-edit', gameInfo.id]" />
     </div>
   </ng-template>
 
