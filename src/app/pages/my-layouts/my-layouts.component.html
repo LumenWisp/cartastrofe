@@ -17,9 +17,9 @@
         </div>
       } @else {
         @for (cardLayout of cardLayouts; track $index) {
-          <div class="layout-card" (click)="goToCreateLayoutPage(cardLayout.id!)">
+          <div class="layout-card">
             <div class="layout-card-image">
-              <app-card-3d [cardWidth]="220" [rotate]="true" [frontTextColor]="'#000'">
+              <app-card-3d [cardWidth]="220" [rotate]="true" [frontTextColor]="'#000'" (click)="goToCreateLayoutPage(cardLayout.id!)">
                 <ng-container cardFront>
                   <app-card-game-layout [cardLayout]="cardLayout" />
                 </ng-container>
@@ -27,8 +27,11 @@
             </div>
             <div class="layout-card-info">
               <div class="layout-card-title">{{ cardLayout.name }}</div>
+
+              <div class="buttons">
                 <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="goToCreateLayoutPage(cardLayout.id!)"></button>
-                <button pButton type="button" icon="pi pi-trash" (click)="deleteLayout(cardLayout.id!)"></button>
+                <button pButton type="button" icon="pi pi-trash" label="Deletar" (click)="deleteLayout(cardLayout.id!)"></button>
+              </div>
             </div>
           </div>
         }

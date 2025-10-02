@@ -96,6 +96,6 @@
 
 .buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  justify-content: center;
+  gap: 10px;
 }
