@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-card-3d',
@@ -8,7 +8,24 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   templateUrl: './card-3d.component.html',
   styleUrls: ['./card-3d.component.css']
 })
-export class Card3dComponent {
+export class Card3dComponent implements AfterViewInit {
+  @ViewChild('card3dContainer') card3dContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('scalableContentFront') scalableContentFront!: ElementRef<HTMLDivElement>;
+  @ViewChild('scalableContentBack') scalableContentBack!: ElementRef<HTMLDivElement>;
+  ngAfterViewInit() {
+    this.applyScaling();
+    const resizeObserver = new ResizeObserver(() => {
+      this.applyScaling();
+    });
+    resizeObserver.observe(this.card3dContainer.nativeElement);
+  }
+
+  applyScaling() {
+    const container = this.card3dContainer?.nativeElement;
+
+    container.style.setProperty('--parent-client-width', `${container.clientWidth}`);
+    container.style.setProperty('--parent-client-height', `${container.clientHeight}`);
+  }
   @Input() flip: boolean = false;
   @Input() glow: boolean = false;
   @Input() rotate: boolean = false;
@@ -16,6 +33,7 @@ export class Card3dComponent {
   @Input() backColor: string = '';
   @Input() frontTextColor: string = '';
   @Input() backTextColor: string = '';
+  @Input() cardWidth: number = 200;
   
   // 3D Card Rotation Variables
   isFlipped = false;

@@ -1,13 +1,17 @@
-<div class="card-3d-container">
+<div class="card-3d-container" #card3dContainer [style.--card-width]="cardWidth">
   <div #card3d class="card-3d" [class.glow]="glow" [style.--card-back]="backColor" [style.--card-front]="frontColor" [style.--card-back-text]="backTextColor" [style.--card-front-text]="frontTextColor" (mousemove)="rotateCard($event, card3d)" (mouseleave)="resetCardRotation(card3d)" (click)="flipCard(card3d)">
-  <div class="card-3d-face card-3d-front">
-      <div class="card-3d-content">
-        <ng-content select="[cardFront]"></ng-content>
+    <div class="card-3d-face card-3d-front">
+      <div class="card-3d-content scalable-content" #scalableContentFront>
+        <div class="card-3d-projected-content">
+          <ng-content select="[cardFront]"></ng-content>
+        </div>
       </div>
     </div>
-  <div class="card-3d-face card-3d-back">
-      <div class="card-3d-content">
-        <ng-content select="[cardBack]"></ng-content>
+    <div class="card-3d-face card-3d-back">
+      <div class="card-3d-content scalable-content" #scalableContentBack>
+        <div class="card-3d-projected-content">
+          <ng-content select="[cardBack]"></ng-content>
+        </div>
       </div>
     </div>
   </div>

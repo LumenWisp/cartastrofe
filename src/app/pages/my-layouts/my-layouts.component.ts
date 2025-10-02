@@ -15,6 +15,7 @@ import { ToastService } from '../../services/toast.service';
 import { PlaceholderGridComponent } from '../../components/placeholder-grid/placeholder-grid.component';
 import { ModalCreateCardLayoutComponent } from '../../components/modal-create-card-layout/modal-create-card-layout.component';
 import { CardGameLayoutComponent } from '../../components/card-game-layout/card-game-layout.component';
+import { Card3dComponent } from "../../components/card-3d/card-3d.component";
 
 @Component({
   selector: 'app-my-layouts',
@@ -26,7 +27,8 @@ import { CardGameLayoutComponent } from '../../components/card-game-layout/card-
     PlaceholderGridComponent,
     ModalCreateCardLayoutComponent,
     CardGameLayoutComponent,
-  ],
+    Card3dComponent
+],
   templateUrl: './my-layouts.component.html',
   styleUrl: './my-layouts.component.css',
 })

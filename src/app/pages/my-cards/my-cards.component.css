@@ -1,0 +1,26 @@
+
+
+.cards-grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 2.5rem;
+	padding: 2rem;
+	justify-items: center;
+	align-items: start;
+}
+
+.card-item {
+	cursor: pointer;
+	transition: transform 0.2s, box-shadow 0.2s;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+	/* width: 100%;
+	height: 240px; */
+}
+
+.no-cards {
+	grid-column: 1 / -1;
+	text-align: center;
+	color: #888;
+	font-size: 1.2rem;
+	margin-top: 2rem;
+}

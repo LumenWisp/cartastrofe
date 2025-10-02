@@ -1,9 +1,12 @@
 .card-3d-container {
-	border-radius: 1.2rem;
-	width: 260px;
-	height: 360px;
-	perspective: 1200px;
+	--parent-client-width: 0;
+	--parent-client-height: 0;
+	--card-width: 200;
+	--border-radius: 1.2rem;
+	aspect-ratio: 2 / 3;
+	width: calc(var(--card-width) * 1px);
 	cursor: pointer;
+	perspective: 1200px;
 	user-select: none;
 }
 .card-3d {
@@ -13,7 +16,6 @@
 	position: relative;
 	transform-style: preserve-3d;
 	transition: transform 0.08s cubic-bezier(.4,0,.2,1);
-
 }
 .card-3d.glow {
 	animation: pulse-card-highlight infinite;
@@ -55,12 +57,24 @@
 	width: 100%;
 	height: 100%;
 	backface-visibility: hidden;
-	border-radius: 1.2rem;
+	border-radius: 5%;
 	box-shadow: 0 8px 32px rgba(44,62,80,0.13);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	display: grid;
+	place-items: center;
 	background: #fff;
+
+	::ng-deep > * {
+		--child-width: 200;
+		--child-height: 300;
+		
+		width: calc(var(--child-width) * 1px);
+		height: calc(var(--child-height) * 1px);
+
+		--scale-width: calc(0.9 * (var(--parent-client-width) / var(--child-width)));
+		--scale-height: calc(0.9 * (var(--parent-client-height) / var(--child-height)));
+
+		transform: scale(var(--scale-width), var(--scale-height));
+	}
 }
 .card-3d-front {
 	background: var(--card-front, #fff);
@@ -72,7 +86,12 @@
 	transform: rotateY(180deg);
 }
 .card-3d-content {
-	text-align: center;
+	position: absolute;
+	display: grid;
+	place-items: center;
+}
+.scalable-content {
+	will-change: transform;
 }
 .card-3d-content h2 {
 	font-size: 2rem;
@@ -83,13 +102,4 @@
 .card-3d-content p {
 	font-size: 1.1rem;
 	margin: 0;
-}
-@media (max-width: 600px) {
-	.card-3d-container {
-		width: 180px;
-		height: 240px;
-	}
-	.card-3d-content h2 {
-		font-size: 1.2rem;
-	}
 }
