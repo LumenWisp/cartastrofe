@@ -81,3 +81,28 @@
   cursor: pointer;
   user-select: none;
 }
+
+.hand-area-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  gap: 50px;
+  align-items: end;
+  padding-bottom: 140px;
+}
+.hand-area {
+  position: absolute;
+  bottom: 0;
+  height: 150px;
+  width: 100%;
+  background-color: lightgray;
+  border: 1px solid black;
+  z-index: -1;
+}
+
+.lay {
+  display: flex;
+}
