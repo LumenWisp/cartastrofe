@@ -27,6 +27,23 @@
     }
 </div>
 
+<div class="hand-area-container" #handAreaContainer>
+      @for (card of freeModeService.myHandCards(this.currentPlayer?.playerId || ''); track card.id) {
+        <app-card-game
+          style="width: 80px; height: 120px;"
+          [isDisplayOnly]="true"
+          [cardLayout]="cardLayouts[card.cardLayoutId]"
+          [card]="card"
+          (cardDragStart)="onDragStart($event)"
+          (cardDragEnd)="onDrop($event)"
+          (cardContextMenu)="showOptions($event, card, popover)"
+          (mousemove)="onDragMoved($event)"
+          (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+        />
+      }
+    </div>
+    <div class="hand-area" #handArea></div>
+
 <!-- Área de jogo -->
 <div class="game-field" #gameField>
   
@@ -47,11 +64,11 @@
     }
 
     @else if (item.type === 'hand') {
-      <div 
+      <!--<div 
         [ngClass]="item.type"
         [id]="item.nameIdentifier">
         {{ item.nameIdentifier }}
-    </div>
+    </div> -->
     }
 
     @else {

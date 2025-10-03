@@ -1,5 +1,5 @@
 // ANGULAR
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { CdkDrag,CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -62,6 +62,11 @@ export class RuleBasedRoomComponent implements OnInit{
     private playerSubscription?: Subscription;
     private roomSubscription?: Subscription;
 
+  @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
+  @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('handArea') handArea!: ElementRef<HTMLDivElement>;
+  isOverHandArea = false;
+
   // Caracteristicas do jogo
   phases: string[] = []; // dados mockados
   currentPhaseNumber = 0;
@@ -120,6 +125,30 @@ export class RuleBasedRoomComponent implements OnInit{
         this.roomSubscription.unsubscribe();
       }
     }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.resizeHandArea();
+  }
+
+  resizeHandArea() {
+    const mainContentWidth = this.mainContent.nativeElement.offsetWidth;
+    if (this.handAreaContainer) this.handAreaContainer.nativeElement.style.width = mainContentWidth + 'px';
+  }
+
+  onDragMoved(event: MouseEvent) {
+    if (!this.isDragging) return;
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    const rect = this.handArea.nativeElement.getBoundingClientRect();
+    this.isOverHandArea =
+      mouseX >= rect.left &&
+      mouseX <= rect.right &&
+      mouseY >= rect.top &&
+      mouseY <= rect.bottom;
   }
 
   /**
@@ -455,9 +484,6 @@ export class RuleBasedRoomComponent implements OnInit{
         this.freeModeService.addCardToRuledPile(targetPileId!, draggedCardId!)
       }
     }
-
-    
-    
 
     console.log(targetElement);
     this.updateRoom()
