@@ -13,20 +13,6 @@
   <p-button (onClick)="endGame()" label="Terminar jogo" />
 </div>
 
-<div class="grid">
-  @for (card of freeModeService.cards(); track card.id) {
-      <app-card-game
-        style="position: absolute;"
-        [cardLayout]="cardLayouts[card.cardLayoutId]"
-        [card]="card"
-        (cardDragStart)="onDragStart($event)"
-        (cardDragEnd)="onDrop($event)"
-        (cardContextMenu)="showOptions($event, card, popover)"
-        (cardDoubleClick)="freeModeService.flipCard(card.id!)"
-      />
-    }
-</div>
-
 <!-- Área de jogo -->
 <div class="game-field" #gameField>
   
@@ -64,6 +50,19 @@
         [id]="item.nameIdentifier">
         {{ item.nameIdentifier }}
       </div>
+
+      @let sigmaTopCard = getTopCard(item.nameIdentifier);
+      @if (sigmaTopCard !== null && sigmaTopCard !== undefined) {
+        <app-card-game
+          style="position: absolute;"
+          [cardLayout]="cardLayouts[sigmaTopCard.cardLayoutId]"
+          [card]="sigmaTopCard"
+          (cardDragStart)="onDragStart($event)"
+          (cardDragEnd)="onDrop($event)"
+          (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"
+          (cardDoubleClick)="freeModeService.flipCard(sigmaTopCard.id!)"
+        />
+      }
 
     }
   }

@@ -163,6 +163,9 @@ export class RuleBasedRoomComponent implements OnInit{
           const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
           const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId);
           const ruledPiles = await this.gameInfoService.getRuledPiles(this.room.state.gameId);
+          ruledPiles[0].cardIds = cards.map(c => c.id);
+          const firstRuledPileId = ruledPiles[0].nameIdentifier;
+
           for (const ruledPile of ruledPiles) {
             this.freeModeService.addRuledPile(ruledPile);
           }
@@ -187,6 +190,8 @@ export class RuleBasedRoomComponent implements OnInit{
               pileId: null,
               zIndex: 1,
               belongsTo: null,
+              ruledLastPileId: firstRuledPileId,
+              ruledPileId: firstRuledPileId
             })
           }
         }
@@ -236,7 +241,7 @@ export class RuleBasedRoomComponent implements OnInit{
             if(room.state?.cards){
               this.freeModeService.cards.set(room.state.cards);
             }
-            // podia deixar no de cima mas fds
+
             if(room.state?.ruledPiles){
               this.freeModeService.ruledPiles = room.state.ruledPiles;
             }
@@ -280,6 +285,11 @@ export class RuleBasedRoomComponent implements OnInit{
     );
     this.currentPlayer = currentPlayer;
     console.log('Jogador: ', this.currentPlayer);
+  }
+
+  getTopCard(ruledPileId: string) {
+    const topCard = this.freeModeService.getTopCardFromRuledPile(ruledPileId);
+    return topCard;
   }
 
   private goToLoginPage(roomLink: string) {
@@ -428,9 +438,11 @@ export class RuleBasedRoomComponent implements OnInit{
           y: targetRect.top - containerRect.top - 60
         };
 
+        console.log('era pra ter ido!')
+
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;
-        this.freeModeService.addCardToRuledPile(targetPileId, draggedCardId!)
+        this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
       }
     }
 
@@ -452,7 +464,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;
-        this.freeModeService.addCardToRuledPile(targetPileId!, draggedCardId!)
+        this.freeModeService.addCardToRuledPile(targetPileId!, draggedCard.ruledLastPileId!, draggedCardId!)
       }
     }
 

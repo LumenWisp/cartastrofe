@@ -119,9 +119,12 @@ export class FreeModeService {
     }
   }
 
-  addCardToRuledPile(ruledPileId: string, cardId: string) {
+  addCardToRuledPile(ruledPileId: string,  lastRuledPileId: string, cardId: string) {
+
+    if (ruledPileId === lastRuledPileId) return
 
     const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    const lastRuledPile = this.ruledPiles.find(p => p.nameIdentifier === lastRuledPileId);
     if (ruledPile) {
       if (!ruledPile.cardIds) {
         ruledPile.cardIds = []
@@ -131,6 +134,24 @@ export class FreeModeService {
     else {
       console.error('RuledPile ou carta não encontrada');
     }
+
+    if (lastRuledPile) {
+      lastRuledPile.cardIds?.pop();
+    }
+    else {
+      console.error('LastRuledPile ou carta não encontrada');
+    }
+
+  }
+
+  async setRuledPileForEachCard(ruledPileId: string) {
+    this.cards.update(cards =>
+      cards.map(c => ({
+        ...c,
+        ruledPile: ruledPileId,
+        lastRuledPile: ruledPileId
+      }))
+    );
   }
 
 
@@ -183,6 +204,14 @@ export class FreeModeService {
     const pile = this.piles.find(p => p.id === pileId);
     if (!pile?.cards) return;
     return pile?.cards[pile.cards.length - 1];
+  }
+
+  getTopCardFromRuledPile(ruledPileId: string) {
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    if (!ruledPile?.cardIds) return null;
+    const lastCardId = ruledPile.cardIds[ruledPile.cardIds.length - 1];
+    const lastCard = this.getCardById(lastCardId);
+    return lastCard;
   }
 
   // Verifica se uma carta está no topo de uma pilha
