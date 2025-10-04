@@ -152,7 +152,7 @@ export class CardService {
     const cardGame = snapshot.docs[0].data() as CardGame;
 
     const workSpaceFields = {
-      onMoveCardFromTo: cardGame.onMoveCardFromTo || this.blockWorkspaceService.onMoveCardFromToDefault,
+      onMoveCardFromTo: cardGame.onMoveCardFromTo || this.blockWorkspaceService.cardOnMoveCardFromToDefault,
       onPhaseStart: cardGame.onPhaseStart || this.blockWorkspaceService.onPhaseStartDefault,
       onPhaseEnd: cardGame.onPhaseEnd || this.blockWorkspaceService.onPhaseEndDefault,      
     };

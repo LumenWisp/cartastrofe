@@ -36,6 +36,20 @@ export class BlockWorkspaceService {
     },
   };
 
+  public readonly cardOnMoveCardFromToDefault: any = {
+    blocks: {
+      blocks: [
+        {
+          id: 'default_block_cardOnMoveCardFromTo',
+          type: 'cardOnMoveCardFromTo',
+          x: 220,
+          y: 39,
+        },
+      ],
+      languageVersion: 0,
+    },
+  };
+
   public readonly onPhaseStartDefault: any = {
     blocks: {
       blocks: [
