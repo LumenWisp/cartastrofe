@@ -47,6 +47,10 @@
 
 </div>
 
+<div class="hand-area-container" #handAreaContainer>
+    </div>
+    <div class="hand-area" #handArea></div>
+
 <!-- Área de jogo -->
 <div class="game-field" #gameField>
   
@@ -66,10 +70,11 @@
     }
 
     @else if (item.type === 'hand') {
-      <div 
-        [ngClass]="item.type">
+      <!--<div 
+        [ngClass]="item.type"
+        [id]="item.nameIdentifier">
         {{ item.nameIdentifier }}
-    </div>
+    </div> -->
     }
 
     @else {

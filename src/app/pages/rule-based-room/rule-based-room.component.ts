@@ -219,7 +219,7 @@ export class RuleBasedRoomComponent implements OnInit{
               belongsTo: null,
               ruledLastPileId: firstRuledPileId,
               ruledPileId: firstRuledPileId,
-              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode
+              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null
             })
           }
         }
