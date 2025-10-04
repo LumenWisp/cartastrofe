@@ -535,7 +535,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['getLastPileIdValue'] = function(block, generator) {
 
     // TODO: Assemble javascript into the code variable.
-    const code = ""
+    const code = "card.ruledLastPileId"
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -544,7 +544,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['getCurrentPileIdValue'] = function(block, generator) {
 
     // TODO: Assemble javascript into the code variable.
-    const code = ""
+    const code = "card.ruledPileId"
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };

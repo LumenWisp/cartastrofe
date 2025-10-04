@@ -169,9 +169,6 @@ export class RuleBasedRoomComponent implements OnInit{
     }
   }
 
-  
-
-
   private async checkRouteParamsRoom() {
     const roomLink = this.route.snapshot.params['roomLink'];
     console.log('roomLink: ', roomLink);
@@ -194,6 +191,7 @@ export class RuleBasedRoomComponent implements OnInit{
           const ruledPiles = await this.gameInfoService.getRuledPiles(this.room.state.gameId);
           ruledPiles[0].cardIds = cards.map(c => c.id);
           const firstRuledPileId = ruledPiles[0].nameIdentifier;
+          const cardStringCodes = cards as any // Deixa essa macacada, depois tem que ajeitar a tipagem no card.ts
 
           for (const ruledPile of ruledPiles) {
             this.freeModeService.addRuledPile(ruledPile);
@@ -220,7 +218,8 @@ export class RuleBasedRoomComponent implements OnInit{
               zIndex: 1,
               belongsTo: null,
               ruledLastPileId: firstRuledPileId,
-              ruledPileId: firstRuledPileId
+              ruledPileId: firstRuledPileId,
+              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode
             })
           }
         }
@@ -321,20 +320,15 @@ export class RuleBasedRoomComponent implements OnInit{
     return topCard;
   }
 
-  private goToLoginPage(roomLink: string) {
-    const queryParams: any = {
-      roomLink: roomLink,
-    };
+  private runStringCode(stringCode: string, card?: any) {
+    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', 'game', 'card', 'ruledPileId', 'ruledLastPileId', stringCode);
 
-    this.router.navigate(['/login'], {
-      queryParams,
-    });
-  }
-
-  private runStringCode(stringCode: string) {
-    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', 'game', stringCode);
-
-    func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game);
+    if(card){
+      func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game, card, card.ruledPileId, card.ruledLastPileId, stringCode);
+    }
+    else{
+      func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game, null, null, null, stringCode);
+    }
   }
 
   async startGame(){
@@ -355,7 +349,6 @@ export class RuleBasedRoomComponent implements OnInit{
     //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
     if(this.game.onGameStartCode){
       this.runStringCode(this.game.onGameStartCode)
-      //this.runStringCode("console.log('SKIBIDI ONICHAN');")
     }
   }
 
@@ -394,7 +387,17 @@ export class RuleBasedRoomComponent implements OnInit{
   async updateRoom(): Promise<void>{
       const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
       this.roomService.updateRoom(this.room.id, { state: newState });
-    }
+  }
+
+  private goToLoginPage(roomLink: string) {
+    const queryParams: any = {
+      roomLink: roomLink,
+    };
+
+    this.router.navigate(['/login'], {
+      queryParams,
+    });
+  }
 
   // =================================
   // ==== MOVIMENTAÇÃO DAS CARTAS ====
@@ -472,6 +475,10 @@ export class RuleBasedRoomComponent implements OnInit{
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;
         this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
+
+        if(draggedCard.onMoveCardFromToCode){
+          this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
+        }
       }
     }
 
