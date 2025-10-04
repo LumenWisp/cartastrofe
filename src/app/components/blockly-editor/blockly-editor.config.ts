@@ -93,7 +93,12 @@ export const toolboxCard = {
       kind: 'category',
       name: 'Triggers',
       contents: [
-        { kind: 'category', name: 'On Move Card From To' },
+        { kind: 'category',
+          name: 'On Move Card From To',
+          contents: [
+          { kind: 'block', type: 'cardOnMoveCardFromTo' },
+          ]
+        },
         {
           kind: 'category',
           name: 'On Phase Start',
@@ -237,6 +242,20 @@ export function registerBlocks() {
       this.appendValueInput('NEW_PILE').appendField('To');
       this.setInputsInline(true);
       this.setNextStatement(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 CARD ON MOVE CARD FROM TO
+  Blockly.Blocks['cardOnMoveCardFromTo'] = {
+    init: function() {
+      this.appendDummyInput().appendField('OnMoveCard')
+      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
+      .appendField('From')
+      .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
+      .appendField('To');
+      this.setInputsInline(true);
+      this.setOutput(true, null);
       this.setColour(120);
     }
   };
@@ -440,6 +459,17 @@ export function registerGenerators() {
     // TODO: Assemble javascript into the code variable.
     const code = '';
     return code;
+  };
+
+  // CARD ON MOVE CARD FROM TO
+  javascriptGenerator.forBlock['cardOnMoveCardFromTo'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_old_pile = block.getFieldValue('OLD_PILE');
+    const value_new_pile = block.getFieldValue('NEW_PILE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(card.ruledPileId == " + `'${value_new_pile}'` + ") && (card.ruledLastPileId == " + `'${value_old_pile}'` + ")";
+    return [code, Order.NONE];
   };
 
   // CHANGE ATTRIBUTE FROM CARD TO
