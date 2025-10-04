@@ -1,7 +1,9 @@
 .card-layout-container {
+  --bg-color: transparent;
   position: relative;
   width: 200px;
   height: 300px;
+  background-color: var(--bg-color);
   /* background-color: #ffffff;
   color: black; */
 }
