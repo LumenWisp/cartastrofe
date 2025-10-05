@@ -550,7 +550,7 @@ export class RuleBasedRoomComponent implements OnInit{
           this.freeModeService.removeCardFromRuledPile(draggedCardId, draggedCard?.ruledPileId, true);
         }
       } else {
-        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo  && draggedCard.ruledLastPileId !== 'hand') {
           this.freeModeService.cards.update(cards =>
             cards.map(c => {
               if (c.id === draggedCardId) {
@@ -564,8 +564,6 @@ export class RuleBasedRoomComponent implements OnInit{
             })
           );
         }
-
-        this.freeModeService.changeBelongsTo(draggedCardId, null);
       }
 
       this.resizeHandArea()

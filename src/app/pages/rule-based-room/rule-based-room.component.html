@@ -58,7 +58,8 @@
     </div>
 
     <div class="hand-area-container" #handAreaContainer>
-      @for (card of freeModeService.myHandCards(this.currentPlayer.playerId || ''); track card.id) {
+      @if (this.currentPlayer) {
+        @for (card of freeModeService.myHandCards(this.currentPlayer.playerId || ''); track card.id) {
         <app-card-game
           style="width: 80px; height: 120px;"
           [isDisplayOnly]="true"
@@ -70,7 +71,9 @@
           (mousemove)="onDragMoved($event)"
           (cardDoubleClick)="freeModeService.flipCard(card.id!)"
         />
+        }
       }
+      
     </div>
     <div class="hand-area" #handArea></div>
 
