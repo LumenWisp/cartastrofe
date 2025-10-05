@@ -329,7 +329,6 @@ export class RoomsComponent {
     }
 
     this.updateRoom()
-    console.log(this.freeModeService.piles);
 
 
   }

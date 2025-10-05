@@ -103,6 +103,10 @@ export class RuleBasedRoomComponent implements OnInit{
       // HIDE LOADING ESTÁ DENTRO DO CHECKROUTEPARAMSROOM!!!!!
   }
 
+  ngAfterViewInit() {
+    this.resizeHandArea();
+  }
+
   async ngOnDestroy() {
     // Verificar se o usuário não é um convidado que foi redirecionado para o login
     if (this.currentPlayer) {
@@ -315,14 +319,18 @@ export class RuleBasedRoomComponent implements OnInit{
     console.log('Jogador: ', this.currentPlayer);
   }
 
-  getTopCard(ruledPileId: string, position: {x: number, y:number}) {
+  getTopCard(ruledPileId: string, position: {x: number, y:number}, isDragging: boolean) {
     const topCard = this.freeModeService.getTopCardFromRuledPile(ruledPileId);
+
     if (topCard) {
-      topCard.freeDragPos = {
-        x: position.x - 40,
-        y: position.y - 60
+      if (!isDragging) {
+        topCard.freeDragPos = {
+          x: position.x - 40,
+          y: position.y - 60
+        }
       }
     }
+    
     return topCard;
   }
 
@@ -427,7 +435,7 @@ export class RuleBasedRoomComponent implements OnInit{
     }
 
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
-    this.freeModeService.updateZindex(cardId!, 99999)
+    this.freeModeService.updateZindex(cardId!, 9999999)
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
@@ -438,15 +446,17 @@ export class RuleBasedRoomComponent implements OnInit{
 
   // Evento disparado quando se solta uma carta sendo arrastada
   onDrop(event: CdkDragEnd<CardGame[]>) {
-    setTimeout(() => this.isDragging = false, 100);
+    this.isDragging = false;
 
-    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
+    const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
+    this.freeModeService.updateZindex(draggedCardId!, 99);
+    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
     const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
     draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
-    const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
+    
 
     if (targetElement?.id) {
       // É uma pilha
@@ -493,7 +503,31 @@ export class RuleBasedRoomComponent implements OnInit{
       }
     }
 
-    console.log(targetElement);
+    if (draggedCardId) {
+      if (this.isOverHandArea) {
+        this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+      } else {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
+          this.freeModeService.cards.update(cards =>
+            cards.map(c => {
+              if (c.id === draggedCardId) {
+                const offsetX = 100 // 60 da escala + 40 para centralizar
+                const offsetY = 150 // 90 da escala + 60 para centralizar
+
+                return { ...c, freeDragPos: { x: event.dropPoint.x - offsetX, y: event.dropPoint.y - offsetY } }
+              }
+
+              return c
+            })
+          );
+        }
+
+        this.freeModeService.changeBelongsTo(draggedCardId, null);
+      }
+
+      this.resizeHandArea()
+    }
+
     this.updateRoom()
   }
 

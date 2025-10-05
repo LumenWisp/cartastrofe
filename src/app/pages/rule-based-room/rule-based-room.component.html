@@ -68,7 +68,7 @@
         {{ item.nameIdentifier }}
       </div>
 
-      @let sigmaTopCard = getTopCard(item.nameIdentifier, item.position);
+      @let sigmaTopCard = getTopCard(item.nameIdentifier, item.position, isDragging);
       @if (sigmaTopCard !== null && sigmaTopCard !== undefined) {
         <app-card-game
           style="position: absolute;"
@@ -77,6 +77,7 @@
           (cardDragStart)="onDragStart($event)"
           (cardDragEnd)="onDrop($event)"
           (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"
+          (mousemove)="onDragMoved($event)"
           (cardDoubleClick)="freeModeService.flipCard(sigmaTopCard.id!)"
         />
       }
