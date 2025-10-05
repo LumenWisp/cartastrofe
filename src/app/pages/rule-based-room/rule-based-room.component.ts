@@ -248,9 +248,13 @@ export class RuleBasedRoomComponent implements OnInit{
             if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
               console.log('NOVA SALA: ', room)
               if(room.state?.isGameOcurring === false){
+                //room.state['isGameOcurring'] = false;
+                console.log("SKIBIDI 1")
                 this.toastService.showSuccessToast('', 'Fim de jogo');
               }
               else if(room.state?.isGameOcurring != undefined){
+                //room.state['isGameOcurring'] = true;
+                console.log("SKIBIDI 2")
                 this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
               }
             }
@@ -335,14 +339,35 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   private runStringCode(stringCode: string, card?: any) {
-    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', 'game', 'card', 'ruledPileId', 'ruledLastPileId', stringCode);
+    const func = new Function(
+      'blockCodeGeneratorsService',
+      'room',
+      'roomService',
+      'game',
+      'players',
+      'currentPlayerToPlayNumber',
+      'phases',
+      'currentPhaseNumber',
+      'card',
+      'ruledPileId',
+      'ruledLastPileId',
+      stringCode
+    );
 
-    if(card){
-      func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game, card, card.ruledPileId, card.ruledLastPileId, stringCode);
-    }
-    else{
-      func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game, null, null, null, stringCode);
-    }
+    func(
+      this.blockCodeGeneratorsService,
+      this.room,
+      this.roomService,
+      this.game,
+      this.players,
+      this.currentPlayerToPlayNumber,
+      this.phases,
+      this.currentPhaseNumber,
+      card ?? null,
+      card.ruledPileId ?? null,
+      card.ruledLastPileId ?? null,
+      stringCode
+    );
   }
 
   async startGame(){
@@ -399,8 +424,9 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   async updateRoom(): Promise<void>{
-      const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
-      this.roomService.updateRoom(this.room.id, { state: newState });
+    console.log("UPDATEROOM", this.room.state!.isGameOcurring);
+    const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
+    this.roomService.updateRoom(this.room.id, { state: newState });
   }
 
   private goToLoginPage(roomLink: string) {
@@ -445,7 +471,7 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
-  onDrop(event: CdkDragEnd<CardGame[]>) {
+  async onDrop(event: CdkDragEnd<CardGame[]>) {
     this.isDragging = false;
 
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada

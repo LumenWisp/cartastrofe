@@ -522,7 +522,17 @@ export function registerGenerators() {
   // NEXT PHASE
   javascriptGenerator.forBlock['nextPhase'] = function() {
     // TODO: Assemble javascript into the code variable.
-    const code = "blockCodeGeneratorsService.nextPhase(currentPhaseNumber);";
+    const code = 
+    `
+    if(room.state.currentphase == game.gamePhases[game.gamePhases.lenght-1]){
+      const nextPlayernumber = (currentPlayerToPlayNumber+1)% players.length;
+      const nextPlayerId = players[nextPlayernumber].playerId;
+      roomService.updateRoom(room.id, {state: {...room.state!, currentphase: phases[0], currentPlayerToPlay:nextPlayerId}});
+    }
+    else{
+      roomService.updateRoom(room.id, {state: {...room.state!, currentphase: phases[currentPhaseNumber+1]}});
+    }
+    `;
     return code;
   }
 
@@ -530,7 +540,7 @@ export function registerGenerators() {
 
     // TODO: Assemble javascript into the code variable.
     //const code = 'roomService.updateRoom(${this.room.id}, {state:{isGameOcurring: false, gameId: this.room.state.gameId}});';
-    const code = "console.log('pamonha');roomService.updateRoom(room.id, {state:{isGameOcurring: false, gameId: room.state.gameId}});";
+    const code = "console.log('pamonha'); room.state['isGameOcurring'] = false;";
     return code;
   }
 
