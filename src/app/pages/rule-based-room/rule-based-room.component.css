@@ -30,10 +30,9 @@
 
 .game-field {
   position: relative;
-  width: calc(100% - 260px);
-  height: 100vh;
-  background-color: transparent;
-  overflow: hidden;
+  display: block;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .pile {
@@ -101,6 +100,12 @@
   background-color: lightgray;
   border: 1px solid black;
   z-index: -1;
+}
+
+.main-content {
+  width: 100%;
+  flex-grow: 1;
+  height: 100vh;
 }
 
 .lay {

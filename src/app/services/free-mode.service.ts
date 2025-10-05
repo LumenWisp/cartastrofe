@@ -138,6 +138,9 @@ export class FreeModeService {
     if (lastRuledPile) {
       lastRuledPile.cardIds?.pop();
     }
+    else if (lastRuledPileId === 'hand') {
+      this.changeBelongsTo(cardId, null);
+    }
     else {
       console.error('LastRuledPile ou carta não encontrada');
     }
@@ -214,14 +217,18 @@ export class FreeModeService {
     return lastCard;
   }
 
-  removeCardFromRuledPile(cardId: string, ruledPileId: string) {
+  removeCardFromRuledPile(cardId: string, ruledPileId: string, isHand: boolean = false) {
     const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    const card = this.getCardById(cardId);
+    if (isHand && card) {
+      card.ruledLastPileId = card.ruledPileId
+      card.ruledPileId = 'hand'
+    }
+
     if (ruledPile?.cardIds) {
       const index = ruledPile.cardIds.indexOf(cardId);
       ruledPile.cardIds.splice(index, 1)
     }
-
-    console.log(ruledPile?.cardIds);
   }
 
   // Verifica se uma carta está no topo de uma pilha

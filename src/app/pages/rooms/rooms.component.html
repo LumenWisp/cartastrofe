@@ -31,18 +31,19 @@
       }
     </div>
     <div class="hand-area" #handArea></div>
-</div>
-<div class="sidebar-right">
-  <p-button routerLink="/my-games" label="Sair" />
+  </div>
+  
+  <div class="sidebar-right">
+    <p-button routerLink="/my-games" label="Sair" />
 
-  <p-panel header="{{'rooms.header' | translate}}">
-    @for (player of players; track $index) {
-    <div class="menu-item">
-      {{ player.name }}
-    </div>
-    }
-  </p-panel>
-</div>
+    <p-panel header="{{'rooms.header' | translate}}">
+      @for (player of players; track $index) {
+      <div class="menu-item">
+        {{ player.name }}
+      </div>
+      }
+    </p-panel>
+  </div>
 </div>
 
 

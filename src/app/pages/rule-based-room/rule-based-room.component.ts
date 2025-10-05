@@ -100,7 +100,7 @@ export class RuleBasedRoomComponent implements OnInit{
   ngOnInit() {
       this.checkQueryParamsGame();
       this.checkRouteParamsRoom();
-      // HIDE LOADING ESTÁ DENTRO DO CHECKROUTEPARAMSROOM!!!!!
+      this.loadingService.hide(); // precaucao
   }
 
   ngAfterViewInit() {
@@ -452,12 +452,25 @@ export class RuleBasedRoomComponent implements OnInit{
     const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
     this.freeModeService.updateZindex(draggedCardId!, 99);
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
+
+    // ignoramentos
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
-    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
+    const fakeTargetElement = document.elementFromPoint(x, y); // Pegar o alvo falso
+    const fakeTargetElement2 = document.elementFromPoint(x, y); // Pegar o alvo falso
+    fakeTargetElement!.classList.add("remove-pointer-events"); // Ignorar o elemento fake
+    fakeTargetElement2!.classList.add("remove-pointer-events"); // Ignorar o elemento fake 2
+
+    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo REAL!
+
+    // remover ignoramentos
     draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+    fakeTargetElement!.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+    fakeTargetElement2!.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
     
-
+    console.log(targetElement)
+    
     if (targetElement?.id) {
       // É uma pilha
       const targetPileId = targetElement?.id; // Id da pilha
@@ -471,10 +484,12 @@ export class RuleBasedRoomComponent implements OnInit{
           y: targetItem.position.y - 60
         };
 
-
-        draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
-        draggedCard.ruledPileId = targetPileId;
-        this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
+        if (draggedCard.ruledPileId !== targetPileId) {
+          draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
+          draggedCard.ruledPileId = targetPileId;
+          this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
+        }
+        
 
         if(draggedCard.onMoveCardFromToCode){
           this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
@@ -497,15 +512,22 @@ export class RuleBasedRoomComponent implements OnInit{
         };
 
 
-        draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
-        draggedCard.ruledPileId = targetPileId;
-        this.freeModeService.addCardToRuledPile(targetPileId!, draggedCard.ruledLastPileId!, draggedCardId!)
+        if (draggedCard.ruledPileId !== targetPileId && targetPileId) {
+          draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
+          draggedCard.ruledPileId = targetPileId;
+          this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
+        }
       }
     }
 
-    if (draggedCardId) {
+    else if (draggedCardId && draggedCard?.ruledPileId) {
+
+      
       if (this.isOverHandArea) {
-        this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+        if (draggedCard.ruledPileId !== 'hand') {
+          this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+          this.freeModeService.removeCardFromRuledPile(draggedCardId, draggedCard?.ruledPileId, true);
+        }
       } else {
         if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
           this.freeModeService.cards.update(cards =>
