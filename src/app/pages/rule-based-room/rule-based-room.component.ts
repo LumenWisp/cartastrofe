@@ -210,7 +210,7 @@ export class RuleBasedRoomComponent implements OnInit{
               name: card.name,
               cardLayoutId: card.layoutId,
               data: card.data,
-              freeDragPos: { x: 0, y: 0 },
+              freeDragPos: { x: -40, y: -60 },
               flipped: false,
               id: card.id,
               label: card.name,
@@ -315,8 +315,14 @@ export class RuleBasedRoomComponent implements OnInit{
     console.log('Jogador: ', this.currentPlayer);
   }
 
-  getTopCard(ruledPileId: string) {
+  getTopCard(ruledPileId: string, position: {x: number, y:number}) {
     const topCard = this.freeModeService.getTopCardFromRuledPile(ruledPileId);
+    if (topCard) {
+      topCard.freeDragPos = {
+        x: position.x - 40,
+        y: position.y - 60
+      }
+    }
     return topCard;
   }
 
@@ -418,23 +424,10 @@ export class RuleBasedRoomComponent implements OnInit{
     this.isDragging = true;
     if (this.popover) {
     this.popover.hide(); // fecha o popover quando arrastar outra carta
-  }
-
-  const dragOrigin = event.event.target as HTMLElement;
-  const fromHandle = dragOrigin.classList.contains('square-number-cards');
-
-  const cardId = event.source.element.nativeElement.getAttribute('card-id');
-  this.freeModeService.updateZindex(cardId!, 99999)
-  const card = this.freeModeService.getCardById(cardId!)
-
-  if (fromHandle) {
-    this.isDraggingHandle = true;
-
-  } else {
-    if (card?.pileId) {
-      this.freeModeService.removeCardFromPile(card?.pileId, card!);
     }
-  }
+
+    const cardId = event.source.element.nativeElement.getAttribute('card-id');
+    this.freeModeService.updateZindex(cardId!, 99999)
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
@@ -462,15 +455,12 @@ export class RuleBasedRoomComponent implements OnInit{
       // IGUAL AO DE ELSE IF EMBAIXO
       const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
       if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
-        const targetRect = targetElement.getBoundingClientRect();
-        const containerRect = this.gameField.nativeElement.getBoundingClientRect();
-
+        
         draggedCard.freeDragPos = {
-          x: targetRect.left - containerRect.left - 40,
-          y: targetRect.top - containerRect.top - 60
+          x: targetItem.position.x - 40,
+          y: targetItem.position.y - 60
         };
 
-        console.log('era pra ter ido!')
 
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;
@@ -490,13 +480,12 @@ export class RuleBasedRoomComponent implements OnInit{
       // IGUAL AO IF DE CIMA (nao me julgue)
       const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
       if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
-        const targetRect = targetElement.getBoundingClientRect();
-        const containerRect = this.gameField.nativeElement.getBoundingClientRect();
-
+        
         draggedCard.freeDragPos = {
-          x: targetRect.left - containerRect.left - 40,
-          y: targetRect.top - containerRect.top - 60
+          x: targetItem.position.x - 40,
+          y: targetItem.position.y - 60
         };
+
 
         draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
         draggedCard.ruledPileId = targetPileId;

@@ -68,7 +68,7 @@
         {{ item.nameIdentifier }}
       </div>
 
-      @let sigmaTopCard = getTopCard(item.nameIdentifier);
+      @let sigmaTopCard = getTopCard(item.nameIdentifier, item.position);
       @if (sigmaTopCard !== null && sigmaTopCard !== undefined) {
         <app-card-game
           style="position: absolute;"

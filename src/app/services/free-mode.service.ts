@@ -214,6 +214,16 @@ export class FreeModeService {
     return lastCard;
   }
 
+  removeCardFromRuledPile(cardId: string, ruledPileId: string) {
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    if (ruledPile?.cardIds) {
+      const index = ruledPile.cardIds.indexOf(cardId);
+      ruledPile.cardIds.splice(index, 1)
+    }
+
+    console.log(ruledPile?.cardIds);
+  }
+
   // Verifica se uma carta está no topo de uma pilha
   isTopCard(cardId: string) {
     const card = this.getCardById(cardId);
