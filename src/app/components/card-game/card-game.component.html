@@ -37,7 +37,7 @@
   [style.z-index]="card.zIndex"
 >
 <div class="cont">
-  <div class="align-popover"></div>
+  <div class="align-popover" [attr.card-id]="card.id"></div>
 
   <app-card-game-layout style="display: block;" class="face" [cardLayout]="cardLayoutValues" [cardId]="card.id" />
   <div style="position: absolute; top: 0; left: 0; height: 300px; width: 200px;" class="face back" [attr.card-id]="card.id"></div>

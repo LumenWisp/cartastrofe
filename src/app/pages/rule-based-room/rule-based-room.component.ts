@@ -456,19 +456,17 @@ export class RuleBasedRoomComponent implements OnInit{
     // ignoramentos
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
     const fakeTargetElement = document.elementFromPoint(x, y); // Pegar o alvo falso
-    const fakeTargetElement2 = document.elementFromPoint(x, y); // Pegar o alvo falso
     fakeTargetElement!.classList.add("remove-pointer-events"); // Ignorar o elemento fake
-    fakeTargetElement2!.classList.add("remove-pointer-events"); // Ignorar o elemento fake 2
 
     const targetElement = document.elementFromPoint(x, y); // Pegar o alvo REAL!
 
     // remover ignoramentos
     draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
     fakeTargetElement!.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
-    fakeTargetElement2!.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
-    
+
     console.log(targetElement)
     
     if (targetElement?.id) {
@@ -511,7 +509,6 @@ export class RuleBasedRoomComponent implements OnInit{
           y: targetItem.position.y - 60
         };
 
-
         if (draggedCard.ruledPileId !== targetPileId && targetPileId) {
           draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
           draggedCard.ruledPileId = targetPileId;
@@ -521,8 +518,6 @@ export class RuleBasedRoomComponent implements OnInit{
     }
 
     else if (draggedCardId && draggedCard?.ruledPileId) {
-
-      
       if (this.isOverHandArea) {
         if (draggedCard.ruledPileId !== 'hand') {
           this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
