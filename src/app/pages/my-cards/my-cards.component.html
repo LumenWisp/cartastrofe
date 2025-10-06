@@ -1,0 +1,34 @@
+<div class="layouts-page">
+    <header class="layouts-header">
+    <h1 class="layouts-title">Minhas Cartas</h1>
+    <div class="layouts-actions">
+        <button class="btn-create-card" (click)="goToCreateCardPage()">
+        <span class="pi pi-plus" pButtonIcon></span>
+        <span pButtonLabel>Criar Carta</span>
+        </button>
+    </div>
+    </header>
+    <div class="layouts-grid">
+        @for (cardObj of myAllCards; track $index) {
+            <div class="layout-container">
+                <app-card-3d [cardWidth]="220" [rotate]="true" [frontTextColor]="'#000'" (click)="goToCreateCardPage(cardObj.id!)">
+                    <ng-container cardFront>
+                        <app-card-game-layout class="card-layout-preview" [cardLayout]="cardObj.card" />
+                    </ng-container>
+                </app-card-3d>
+                <div class="card-info">
+                    <div class="card-title">{{ cardObj.name }}</div>
+
+                    <div class="buttons">
+                        <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="goToCreateCardPage(cardObj.id!)"></button>
+                        <button pButton type="button" icon="pi pi-trash" label="Deletar" (click)="deleteCard(cardObj)"></button>
+                    </div>
+                </div>
+            </div>
+        } @empty {
+            <div class="empty-message">
+                Nenhuma carta encontrada.
+            </div>
+        }
+    </div>
+</div>

@@ -48,7 +48,7 @@ export class GameEditCardsComponent {
     private gameInfoService: GameInfoService,
     private toastService: ToastService,
     private route: ActivatedRoute,
-    private cardService: CardService,
+    public cardService: CardService,
   ) {
     this.loadCardLayouts();
     this.loadCurrentGame();

@@ -186,4 +186,15 @@ export class CardService {
 
     return workSpaceFields;
   }
+  convert(card: CardModel, cardLayout: CardLayoutModel) {
+    const obj: CardGameLayout = {
+      name: cardLayout.name,
+      cardFields: cardLayout.cardFields.map(field => ({
+        ...field,
+        value: card.data[field.property] || ''
+      }))
+    };
+
+    return obj;
+    }
 }
