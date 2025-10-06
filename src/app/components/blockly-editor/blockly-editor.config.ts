@@ -524,13 +524,15 @@ export function registerGenerators() {
     // TODO: Assemble javascript into the code variable.
     const code = 
     `
-    if(room.state.currentphase == game.gamePhases[game.gamePhases.lenght-1]){
+    if(room.state.currentphase == game.gamePhases[game.gamePhases.length-1]){
       const nextPlayernumber = (currentPlayerToPlayNumber+1)% players.length;
       const nextPlayerId = players[nextPlayernumber].playerId;
-      roomService.updateRoom(room.id, {state: {...room.state, currentphase: phases[0], currentPlayerToPlay:nextPlayerId}});
+      room.state['currentphase'] = phases[0];
+      room.state['currentPlayerToPlay'] = nextPlayerId;
     }
     else{
-      roomService.updateRoom(room.id, {state: {...room.state, currentphase: phases[currentPhaseNumber+1]}});
+      room.state['currentphase'] = phases[currentPhaseNumber+1];
+      toastService.showSuccessToast('Mudamos de fase', 'Fase atual:' + phases[currentPhaseNumber+1]);
     }
     `;
     return code;

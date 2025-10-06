@@ -10,6 +10,7 @@
   (cdkDragStarted)="onDragStart($event)"
   cdkDrag
   cdkDragBoundary="body"
+  [cdkDragDisabled]="isDragDisabled"
   [attr.card-id]="card.id"
   [style.z-index]="card.zIndex"
 >
@@ -32,6 +33,7 @@
   (cdkDragStarted)="onDragStart($event)"
   cdkDrag
   cdkDragBoundary="body"
+  [cdkDragDisabled]="isDragDisabled"
   [cdkDragFreeDragPosition]="card.freeDragPos"
   [attr.card-id]="card.id"
   [style.z-index]="card.zIndex"

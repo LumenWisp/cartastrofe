@@ -55,6 +55,7 @@
               style="position: absolute;"
               [cardLayout]="cardLayouts[sigmaTopCard.cardLayoutId]"
               [card]="sigmaTopCard"
+              [isDragDisabled]="isDragDisabled"
               (cardDragStart)="onDragStart($event)"
               (cardDragEnd)="onDrop($event)"
               (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"

@@ -15,6 +15,7 @@ export class CardGameComponent {
   @Input({ required: true }) card!: CardGame;
   @Input() isDisplayOnly = false;
   @Input() bgColor = 'transparent'
+  @Input() isDragDisabled = false;
 
   @Output() cardDoubleClick = new EventEmitter<MouseEvent>();
   @Output() cardContextMenu = new EventEmitter<MouseEvent>();

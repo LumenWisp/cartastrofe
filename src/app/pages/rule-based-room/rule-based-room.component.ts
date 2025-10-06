@@ -73,6 +73,7 @@ export class RuleBasedRoomComponent implements OnInit{
   currentPlayerToPlayNumber = 0;
   currentPlayerToPlay!: PlayerEntity;
   isGameOcurringHTML: boolean = false;
+  isDragDisabled: boolean = true;
 
   winConditionCode: string = '';
 
@@ -259,17 +260,21 @@ export class RuleBasedRoomComponent implements OnInit{
               }
             }
 
-            if(this.room.state?.currentphase != room.state?.currentphase){
+            if(this.phases[this.currentPhaseNumber] != room.state?.currentphase){
               this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
             }
 
-            if(this.room.state?.currentPlayerToPlay != room.state?.currentPlayerToPlay){
+            if(this.currentPlayerToPlay && this.currentPlayerToPlay.playerId != room.state?.currentPlayerToPlay){
               const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
               this.currentPlayerToPlay = currentPlayerToPlay!;
               this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
 
               if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
                 this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+                this.isDragDisabled = false;
+              }
+              else{
+                this.isDragDisabled = true;
               }
             }
 
@@ -392,6 +397,10 @@ export class RuleBasedRoomComponent implements OnInit{
     const playersOrderToPlay = this.players;
     this.currentPlayerToPlay = playersOrderToPlay[this.currentPlayerToPlayNumber];
 
+    if(this.currentPlayer.playerId === this.currentPlayerToPlay.playerId){
+      this.isDragDisabled = false;
+    }
+
     //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
     if(this.game.onGameStartCode){
       this.runStringCode(this.game.onGameStartCode)
@@ -501,7 +510,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
 
-    console.log(targetElement)
+    //console.log(targetElement)
     
     if (targetElement?.id) {
       // É uma pilha
@@ -524,9 +533,7 @@ export class RuleBasedRoomComponent implements OnInit{
         
 
         if(draggedCard.onMoveCardFromToCode){
-          console.log("Antes do await runStringCode");
           await this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
-          console.log("Depois do await runStringCode");
         }
       }
     }
@@ -581,7 +588,6 @@ export class RuleBasedRoomComponent implements OnInit{
 
     await new Promise(resolve => setTimeout(resolve, 132));
     this.updateRoom()
-    console.log("🔥 Terminou o update!");
   }
 
 }
