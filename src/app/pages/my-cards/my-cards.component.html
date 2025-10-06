@@ -1,0 +1,24 @@
+<div class="list-cards">
+    @for (cardObj of myAllCards; track $index) {
+        <div class="card-col">
+            <app-card-game-layout
+                class="card-layout-preview"
+                [cardLayout]="cardObj.card"
+            />
+            <div class="card-col-buttons">
+                <p-button
+                label="Edit"
+                icon="pi pi-pencil"
+                class="delete-card-btn"
+                (click)="goToCreateCardPage(cardObj.id!)"
+                ></p-button>
+                <p-button
+                label="Deletar"
+                icon="pi pi-trash"
+                class="delete-card-btn"
+                (click)="deleteCard(cardObj)"
+                ></p-button>
+            </div>
+        </div>
+    }
+</div>

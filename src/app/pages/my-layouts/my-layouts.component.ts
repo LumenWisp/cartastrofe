@@ -24,7 +24,6 @@ import { Card3dComponent } from "../../components/card-3d/card-3d.component";
     ButtonModule,
     InputIconModule,
     CommonModule,
-    PlaceholderGridComponent,
     ModalCreateCardLayoutComponent,
     CardGameLayoutComponent,
     Card3dComponent

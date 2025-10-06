@@ -19,7 +19,7 @@
         @for (card of cards[cardLayout.id]; track $index) {
           <app-card-game-layout
             [ngStyle]="{ 'border': cardsUsed.includes(card) ? '10px solid red' : 'none' }"
-            [cardLayout]="convert(card, cardLayout)"
+            [cardLayout]="cardService.convert(card, cardLayout)"
             (cardLayoutClicked)="handleCardLayoutClicked(card)"
           />
         }

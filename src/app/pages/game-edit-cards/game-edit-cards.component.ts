@@ -32,22 +32,10 @@ export class GameEditCardsComponent {
     private gameInfoService: GameInfoService,
     private toastService: ToastService,
     private route: ActivatedRoute,
-    private cardService: CardService,
+    public cardService: CardService,
   ) {
     this.loadCardLayouts();
     this.loadCurrentGame();
-  }
-
-  convert(card: CardModel, cardLayout: CardLayoutModel) {
-    const obj: CardGameLayout = {
-      name: cardLayout.name,
-      cardFields: cardLayout.cardFields.map(field => ({
-        ...field,
-        value: card.data[field.property] || ''
-      }))
-    };
-
-    return obj;
   }
 
   loadCardsForLayout(cardLayout: CardLayoutModel | null) {
