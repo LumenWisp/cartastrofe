@@ -164,7 +164,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     if(game) this.game = game
 
-    if (this.game.fieldItems && this.game.fieldItems.length > 0) {
+    if (this.game && this.game.fieldItems && this.game.fieldItems.length > 0) {
       this.items = [...this.game.fieldItems];
     }
     
@@ -338,12 +338,17 @@ export class RuleBasedRoomComponent implements OnInit{
     return topCard;
   }
 
-  private runStringCode(stringCode: string, card?: any) {
-    const func = new Function(
+  private async runStringCode(stringCode: string, card?: any) {
+
+    const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
+
+    const func = new AsyncFunction(
       'blockCodeGeneratorsService',
       'room',
       'roomService',
       'game',
+      'freeModeService',
+      'toastService',
       'players',
       'currentPlayerToPlayNumber',
       'phases',
@@ -354,11 +359,13 @@ export class RuleBasedRoomComponent implements OnInit{
       stringCode
     );
 
-    func(
+    await func(
       this.blockCodeGeneratorsService,
       this.room,
       this.roomService,
       this.game,
+      this.freeModeService,
+      this.toastService,
       this.players,
       this.currentPlayerToPlayNumber,
       this.phases,
@@ -424,14 +431,13 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   async updateRoom(): Promise<void>{
-    console.log("UPDATEROOM", this.room.state!.isGameOcurring);
     const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
     this.roomService.updateRoom(this.room.id, { state: newState });
   }
 
   private goToLoginPage(roomLink: string) {
     const queryParams: any = {
-      roomLink: roomLink,
+      roomUrl: "/ruled-rooms/" + roomLink,
     };
 
     this.router.navigate(['/login'], {
@@ -495,7 +501,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
 
-    console.log(targetElement)
+    //console.log(targetElement)
     
     if (targetElement?.id) {
       // É uma pilha
@@ -518,7 +524,9 @@ export class RuleBasedRoomComponent implements OnInit{
         
 
         if(draggedCard.onMoveCardFromToCode){
-          this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
+          console.log("Antes do await runStringCode");
+          await this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
+          console.log("Depois do await runStringCode");
         }
       }
     }
@@ -571,7 +579,9 @@ export class RuleBasedRoomComponent implements OnInit{
       this.resizeHandArea()
     }
 
+    await new Promise(resolve => setTimeout(resolve, 132));
     this.updateRoom()
+    console.log("🔥 Terminou o update!");
   }
 
 }

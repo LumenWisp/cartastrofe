@@ -527,10 +527,10 @@ export function registerGenerators() {
     if(room.state.currentphase == game.gamePhases[game.gamePhases.lenght-1]){
       const nextPlayernumber = (currentPlayerToPlayNumber+1)% players.length;
       const nextPlayerId = players[nextPlayernumber].playerId;
-      roomService.updateRoom(room.id, {state: {...room.state!, currentphase: phases[0], currentPlayerToPlay:nextPlayerId}});
+      roomService.updateRoom(room.id, {state: {...room.state, currentphase: phases[0], currentPlayerToPlay:nextPlayerId}});
     }
     else{
-      roomService.updateRoom(room.id, {state: {...room.state!, currentphase: phases[currentPhaseNumber+1]}});
+      roomService.updateRoom(room.id, {state: {...room.state, currentphase: phases[currentPhaseNumber+1]}});
     }
     `;
     return code;
@@ -539,8 +539,9 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['endGame'] = function() {
 
     // TODO: Assemble javascript into the code variable.
-    //const code = 'roomService.updateRoom(${this.room.id}, {state:{isGameOcurring: false, gameId: this.room.state.gameId}});';
-    const code = "console.log('pamonha'); room.state['isGameOcurring'] = false;";
+    const code = "console.log('pamonha'); room.state['isGameOcurring'] = false;toastService.showSuccessToast('', 'Fim de jogo');";
+    //const code = "console.log('pamonha'); roomService.updateRoom(room.id, {state: {...room.state, gameId: game.id, isGameOcurring: false}});";
+    
     return code;
   }
 
