@@ -8,19 +8,44 @@
 <p-drawer [(visible)]="visible" header="Cartas" position="full">
   <div class="cards">
     @for (cardObj of cards; track $index) {
-      <app-card-game-layout
-        [ngClass]="{ 'selected': cardSelected?.id === cardObj.id }"
-        [cardLayout]="cardObj.card"
-        (cardLayoutClicked)="selectCard(cardObj)"
-      />
+    <div
+      class="layout-container"
+      [class.highlight]="cardSelected?.id === cardObj.id"
+    >
+      <strong>{{ cardObj.name }}</strong>
+
+      <app-card-3d
+        [cardWidth]="220"
+        [rotate]="true"
+        [frontTextColor]="'#000'"
+        (click)="selectCard(cardObj)"
+      >
+        <ng-container cardFront>
+          <app-card-game-layout [cardLayout]="cardObj.card" />
+        </ng-container>
+      </app-card-3d>
+    </div>
     }
   </div>
 </p-drawer>
 
 <div class="lateral-menu">
-  <p-button (click)="visible = true" label="Lista de cartas" icon="pi pi-arrow-left" />
+  <p-button
+    (click)="visible = true"
+    label="Lista de cartas"
+    icon="pi pi-arrow-left"
+  />
 
   @if (cardSelected) {
-    <app-card-game-layout [cardLayout]="cardSelected.card" />
+  <div class="layout-container highlight">
+    <strong>{{ cardSelected.name }}</strong>
+
+    <app-card-3d [cardWidth]="220" [rotate]="true" [frontTextColor]="'#000'">
+      <ng-container cardFront>
+
+        <app-card-game-layout [cardLayout]="cardSelected.card" />
+      </ng-container>
+    </app-card-3d>
+  </div>
   }
 </div>
