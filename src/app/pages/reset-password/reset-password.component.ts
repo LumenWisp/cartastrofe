@@ -37,6 +37,7 @@ export class ResetPasswordComponent extends FormManager implements OnDestroy {
   }
 
   async submit() {
+    console.log('secret... shhhiu');
     this.checkFields();
 
     if (this.form.valid) {
