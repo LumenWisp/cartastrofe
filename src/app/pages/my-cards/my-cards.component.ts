@@ -8,7 +8,7 @@ import { CardLayoutService } from '../../services/card-layout.service';
 import { CardService } from '../../services/card.service';
 import { ToastService } from '../../services/toast.service';
 import { CardGameLayoutComponent } from "../../components/card-game-layout/card-game-layout.component";
-import { Button } from "primeng/button";
+import { ButtonModule } from "primeng/button";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card3dComponent } from "../../components/card-3d/card-3d.component";
 
@@ -16,7 +16,7 @@ type CardListItem = { id: string, name: string, layout: string, card: CardGameLa
 
 @Component({
   selector: 'app-my-cards',
-  imports: [CardGameLayoutComponent, Button, Card3dComponent],
+  imports: [CardGameLayoutComponent, ButtonModule, Card3dComponent],
   templateUrl: './my-cards.component.html',
   styleUrl: './my-cards.component.css'
 })
