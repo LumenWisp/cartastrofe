@@ -20,6 +20,7 @@ import { CardService } from './card.service';
 import { BlockWorkspaceService } from './block-workspace.service';
 import { GameModesEnum } from '../enum/game-modes.enum';
 import { CardModel } from '../types/card';
+import { GameFieldItem } from '../types/game-field-item';
 
 @Injectable({
   providedIn: 'root',
@@ -118,6 +119,22 @@ async getGameInfosPlayable() {
     }
 
     return cards;
+  }
+
+  // pega apenas field items que sejam pilhas a partir de um gameinfo
+  async getRuledPiles(id: string) {
+    const gameInfo = await this.getGameInfoById(id);
+    const onlyRuledPiles: GameFieldItem[] = [];
+    const fieldItems = gameInfo?.fieldItems;
+
+    if (fieldItems) {
+      for (const fieldItem of fieldItems) {
+        if (fieldItem.type === 'pile') {
+            onlyRuledPiles.push(fieldItem);
+        }
+      }
+    }
+    return onlyRuledPiles;
   }
 
   async getCardsInGame(id: string) {

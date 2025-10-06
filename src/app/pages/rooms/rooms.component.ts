@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -29,6 +29,7 @@ import { GameInfoService } from '../../services/game-info.service';
 import { LoadingService } from '../../services/loading.service';
 import { CardGameLayout, CardLayout, CardLayoutModel } from '../../types/card-layout';
 import { NgStyle } from '@angular/common';
+import { RoomRolesEnum } from '../../enum/room-roles.enum';
 
 @Component({
   selector: 'app-rooms',
@@ -136,7 +137,6 @@ export class RoomsComponent {
         this.room = room;
 
         if (this.room.state) {
-          const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
           const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
 
           for (const cardLayout of cardLayouts) {
@@ -145,28 +145,11 @@ export class RoomsComponent {
               cardFields: cardLayout!.cardFields.map(field => ({ ...field })),
             }
           }
-
-          // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
-          for (const card of cards) {
-            this.freeModeService.addCard({
-              name: card.name,
-              cardLayoutId: card.layoutId,
-              data: card.data,
-              freeDragPos: { x: 0, y: 0 },
-              flipped: false,
-              id: card.id,
-              label: card.name,
-              pileId: null,
-              zIndex: 1,
-              belongsTo: null,
-            })
-          }
         }
 
         //Verifica se o usuário está logado e pega ele
         await this.getCurrentPlayer();
 
-        await this.updateRoom();
 
         //ouve as mudanças feitas na subcoleção de usuários
         this.playerSubscription = this.roomService
@@ -249,8 +232,13 @@ export class RoomsComponent {
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
     draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
-    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
+    let targetElement = document.elementFromPoint(x, y); // Pegar o alvo
     draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+
+    while (targetElement && !targetElement.getAttribute('card-id')) {
+      targetElement = targetElement.parentElement;
+    }
+
     const targetCardId = targetElement?.getAttribute('card-id'); // Id da carta alvo
     const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
 
@@ -329,7 +317,6 @@ export class RoomsComponent {
     }
 
     this.updateRoom()
-    console.log(this.freeModeService.piles);
 
 
   }
@@ -357,6 +344,48 @@ export class RoomsComponent {
     this.router.navigate(['/login'], {
       queryParams,
     });
+  }
+
+  async flipCard(card: CardGame) {
+    this.freeModeService.flipCard(card.id)
+    await this.updateRoom()
+  }
+
+  cardsInHand = computed(() => {
+    const m : { [key: string]: number } = {}
+    this.freeModeService.cards().forEach(({ belongsTo }) => m[belongsTo || 'table'] = (m[belongsTo || 'table'] || 0) + 1)
+    return m
+  })
+
+  async startGame() {
+    this.freeModeService.cards.set([])
+    this.updateRoom();
+
+    if (this.room.state) {
+      const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
+
+
+      // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
+      for (const card of cards) {
+        this.freeModeService.addCard({
+          name: card.name,
+          cardLayoutId: card.layoutId,
+          data: card.data,
+          freeDragPos: { x: 0, y: 0 },
+          flipped: false,
+          id: card.id,
+          label: card.name,
+          pileId: null,
+          zIndex: 1,
+          belongsTo: null,
+        })
+      }
+      await this.updateRoom();
+    }
+  }
+
+  isAdmin() {
+    return this.currentPlayer?.role == RoomRolesEnum.ADMIN
   }
 
   async updateRoom(): Promise<void>{

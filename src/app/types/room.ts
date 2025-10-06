@@ -1,6 +1,7 @@
 import { User } from "@angular/fire/auth"
 import { CardGame } from "./card";
 import { PileModel } from "./pile";
+import { GameFieldItem } from "./game-field-item";
 
 export interface Room {
     id: string;
@@ -22,4 +23,5 @@ export interface RoomState{
     currentphase?: string;
     cards?: CardGame[];
     piles?: PileModel[];
+    ruledPiles?: GameFieldItem[];
 }

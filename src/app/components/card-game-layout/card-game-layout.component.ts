@@ -14,6 +14,7 @@ import { CardGameLayoutFieldComponent } from '../card-game-layout-field/card-gam
 })
 export class CardGameLayoutComponent<T extends CardLayout | CardGameLayout> {
   @Input() cardId?: string;
+  @Input() bgColor = 'transparent'
   @Input({ required: true }) cardLayout!: T;
   @Input() isEditing = false;
 

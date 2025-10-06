@@ -36,7 +36,7 @@ export class GameEditFieldComponent implements OnInit{
   addPile() {
     this.items.push({
       type: GameFieldItemEnum.PILE,
-      position: {x: 100, y: 100},
+      position: {x: 0, y: 0},
       nameIdentifier: `item_${this.items.length}`
     });
   }
@@ -44,7 +44,7 @@ export class GameEditFieldComponent implements OnInit{
   addLabel() {
     this.items.push({
       type: GameFieldItemEnum.LABEL,
-      position: {x: 100, y: 100},
+      position: {x: 0, y: 0},
       nameIdentifier: `item_${this.items.length}`
     });
   }

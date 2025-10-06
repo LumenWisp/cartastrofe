@@ -37,3 +37,9 @@
 .layout-container.highlight {
   background: linear-gradient(0, #ff7e5f 0%, #feb47b 100%);
 }
+
+.blockly-container {
+  height: 500px;
+  width: 100%;
+  border: 2px solid #ccc;
+}
