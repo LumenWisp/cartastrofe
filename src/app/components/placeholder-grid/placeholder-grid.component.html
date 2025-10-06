@@ -1,7 +1,3 @@
-<div class="grid" [style.--min-column-size]="minColumnSize" #grid>
+<div class="grid" #grid>
   <ng-content></ng-content>
-
-  @for (_ of placeholders; track $index) {
-    <div class="grid-placeholder"></div>
-  }
 </div>

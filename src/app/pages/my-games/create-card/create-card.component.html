@@ -56,15 +56,20 @@
         (cardLayoutFieldClicked)="clickCardField($event)"
       />
       } @if (selectedField) {
-      <p-floatlabel variant="on" class="floatlabel">
-        <input
-          type="text"
-          pInputText
-          [(ngModel)]="selectedField.value"
-          id="cardFieldName"
-        />
-        <label for="cardFieldName">Card Field Name</label>
-      </p-floatlabel>
+
+        <p-floatlabel variant="on" class="floatlabel">
+            @if (isFieldImage()) {
+              <p-fileupload mode="basic" chooseLabel="Escolha a imagem" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onSelect($event)" />
+          } @else {
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="selectedField.value"
+              id="cardFieldName"
+            />
+            <label for="cardFieldName">Card Field Name</label>
+          }
+          </p-floatlabel>
       }
 
       <p-button

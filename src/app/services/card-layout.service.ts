@@ -15,10 +15,13 @@ import {
   arrayUnion,
   addDoc,
   getDoc,
+  deleteDoc,
 } from '@angular/fire/firestore';
 import { UserService } from './user-service.service';
 import { CardLayoutField } from '../types/card-layout-field';
 import { UtilsService } from './utils.service';
+import { GameInfoModel } from '../types/game-info';
+import { CardService } from './card.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,10 +31,12 @@ export class CardLayoutService {
 
   cardLayoutpath = FirestoreTablesEnum.CARD_LAYOUT;
   userpath = FirestoreTablesEnum.USER;
+  private pathGameInfo = FirestoreTablesEnum.GAME_INFO;
 
   constructor(
     private userService: UserService,
     private utilsService: UtilsService,
+    private cardService: CardService
   ) {}
 
   /**
@@ -127,4 +132,43 @@ export class CardLayoutService {
     cardLayouts: arrayUnion(cardLayoutId)
   });
   }
+
+  async deleteCardLayout(id: string) {
+    const gameInfos = await this.getGameInfos()
+
+    if (gameInfos.some(game => game.cardLayoutIds?.includes(id))) throw new Error('Este layout pertence a um jogo')
+
+    const cards = await this.cardService.getCardsByLayoutId(id)
+
+    if (cards.length) throw new Error('Este layout tem cartas associadas')
+
+    const collectionRef = collection(this.firestore, this.cardLayoutpath);
+    const q = query(collectionRef, where('id', '==', id));
+
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) throw new Error('CardLayout não encontrado');
+
+    const cardLayoutDoc = snapshot.docs[0];
+    const ref = doc(this.firestore, this.cardLayoutpath, cardLayoutDoc.id);
+    await deleteDoc(ref);
+  }
+
+  // copiado do gameInfo, pq dava dependência circular
+    async getGameInfos() {
+      const user = await this.userService.currentUser();
+
+      if (user === undefined) return []
+      if (user === null) throw new Error('Usuário não está logado');
+
+      const userId = user.userId;
+      const refCollection = collection(this.firestore, this.pathGameInfo);
+      const queryRef = query(refCollection, where('userId', '==', userId));
+      const snapshot = await getDocs(queryRef);
+      const results: GameInfoModel[] = [];
+      snapshot.forEach((item) => {
+        results.push(item.data() as GameInfoModel);
+      });
+
+      return results;
+    }
 }

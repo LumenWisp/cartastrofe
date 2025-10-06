@@ -4,24 +4,38 @@
 }
 
 .lateral-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   position: absolute;
   top: 0;
   right: 0;
-  width: 200px;
+  min-width: 200px;
 }
 
 .cards {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
+}
 
-  app-card-game-layout {
-    border: 1px solid black;
-  }
-
-  .selected {
-    border: 5px solid red;
-  }
+.layout-container {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(166,60,26,0.10);
+  padding: 1.2rem 1rem 1.5rem 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  min-height: 320px;
+  position: relative;
+}
+.layout-container.highlight {
+  background: linear-gradient(0, #ff7e5f 0%, #feb47b 100%);
 }
 
 .blockly-container {

@@ -5,6 +5,7 @@ import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UserService } from './user-service.service';
 import { UtilsService } from './utils.service';
+import { GameInfoModel } from '../types/game-info';
 import { BlockWorkspaceService } from './block-workspace.service';
 
 @Injectable({
@@ -13,6 +14,7 @@ import { BlockWorkspaceService } from './block-workspace.service';
 export class CardService {
   private firestore = inject(Firestore);
   private path = FirestoreTablesEnum.CARD;
+  private pathGameInfo = FirestoreTablesEnum.GAME_INFO;
 
   constructor(
     private userService: UserService,
@@ -46,7 +48,32 @@ export class CardService {
     return snapshot.docs.map(doc => doc.data() as CardModel) || [];
   }
 
+  // método copiado do gameinfo pq tava dando dependência circular
+  async getGameInfos() {
+    const user = await this.userService.currentUser();
+
+    if (user === undefined) return []
+    if (user === null) throw new Error('Usuário não está logado');
+
+    const userId = user.userId;
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+    const queryRef = query(refCollection, where('userId', '==', userId));
+    const snapshot = await getDocs(queryRef);
+    const results: GameInfoModel[] = [];
+    snapshot.forEach((item) => {
+      results.push(item.data() as GameInfoModel);
+    });
+
+    return results;
+  }
+
   async deleteCard(id: string): Promise<void> {
+    const gameInfos = await this.getGameInfos()
+
+    if (gameInfos.some(game => game.cardIds?.includes(id))) {
+      throw new Error('Esta carta pertence a um jogo')
+    }
+
     const collectionRef = collection(this.firestore, this.path);
     const q = query(collectionRef, where('id', '==', id));
 

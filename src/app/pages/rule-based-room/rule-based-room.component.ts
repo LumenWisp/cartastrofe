@@ -501,7 +501,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
 
-    //console.log(targetElement)
+    console.log(targetElement)
     
     if (targetElement?.id) {
       // É uma pilha

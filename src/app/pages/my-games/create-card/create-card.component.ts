@@ -13,12 +13,14 @@ import { CardService } from '../../../services/card.service';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { CardModel } from '../../../types/card';
+import { CardFieldTypesEnum } from '../../../enum/card-field-types.enum';
+import { FileSelectEvent, FileUploadModule } from 'primeng/fileupload';
 
 type CardListItem = { id: string, name: string, layout: string, card: CardGameLayout}
 
 @Component({
   selector: 'app-create-card',
-  imports: [FormsModule, InputTextModule, SelectModule, FloatLabelModule, CardGameLayoutComponent, ButtonModule, TabsModule],
+  imports: [FormsModule, InputTextModule, SelectModule, FloatLabelModule, CardGameLayoutComponent, ButtonModule, TabsModule, FileUploadModule],
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.css'
 })
@@ -54,11 +56,30 @@ export class CreateCardComponent {
     this.loadAllCards();
   }
 
+  isFieldImage() {
+    return this.selectedField?.type === CardFieldTypesEnum.IMAGE
+  }
+
+  onSelect(event: FileSelectEvent) {
+    const file = event.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      if (this.selectedField) {
+      this.selectedField.value = base64;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
   onTabChange(event: string | number) {
     event = event.toString();
     this.tab = event;
     this.editingCard = null;
     this.cardId = '';
+    this.selectedField = null;
 
     if (event === '0') {
       this.loadAllCards();
@@ -83,6 +104,11 @@ export class CreateCardComponent {
         'Carta deletada com sucesso.'
       );
       this.loadAllCards();
+    }).catch(() => {
+      this.toastService.showErrorToast(
+        'Erro ao deletar carta',
+        'Não foi possível deletar a carta, porque está vinculada a um jogo. Remova-a do jogo antes de tentar novamente.'
+      );
     });
   }
 

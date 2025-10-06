@@ -1,0 +1,105 @@
+.card-3d-container {
+	--parent-client-width: 0;
+	--parent-client-height: 0;
+	--card-width: 200;
+	--border-radius: 1.2rem;
+	aspect-ratio: 2 / 3;
+	width: calc(var(--card-width) * 1px);
+	cursor: pointer;
+	perspective: 1200px;
+	user-select: none;
+}
+.card-3d {
+	border-radius: inherit;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	transform-style: preserve-3d;
+	transition: transform 0.08s cubic-bezier(.4,0,.2,1);
+}
+.card-3d.glow {
+	animation: pulse-card-highlight infinite;
+	animation-duration: 975ms;
+}
+.card-3d.glow:hover {
+	animation: pulse-card-highlight infinite;
+	animation-duration: 500ms;
+}
+.card-3d.flipped {
+	animation: card-flip-rotate 0.6s cubic-bezier(.4,0,.2,1);
+}
+.card-3d.unflipped {
+	animation: card-unflip-rotate 0.6s cubic-bezier(.4,0,.2,1);
+}
+@keyframes pulse-card-highlight {
+	50% {
+		box-shadow: 0 0 48px 0px var(--card-back, var(--primary));
+	}
+}
+@keyframes card-flip-rotate {
+	0% {
+		rotate: 0deg;
+	}
+	100% {
+		rotate: 180deg;
+	}
+}
+@keyframes card-unflip-rotate {
+	0% {
+		rotate: 180deg;
+	}
+	100% {
+		rotate: 360deg;
+	}
+}
+.card-3d-face {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	backface-visibility: hidden;
+	border-radius: 5%;
+	box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+	display: grid;
+	place-items: center;
+	background: #fff;
+
+	::ng-deep > * {
+		--child-width: 200;
+		--child-height: 300;
+		
+		width: calc(var(--child-width) * 1px);
+		height: calc(var(--child-height) * 1px);
+
+		--scale-width: calc(0.9 * (var(--parent-client-width) / var(--child-width)));
+		--scale-height: calc(0.9 * (var(--parent-client-height) / var(--child-height)));
+
+		transform: scale(var(--scale-width), var(--scale-height));
+	}
+}
+.card-3d-front {
+	background: var(--card-front, #fff);
+	color: var(--card-front-text, #fff);
+}
+.card-3d-back {
+	background: var(--card-back, var(--primary));
+	color: var(--card-back-text, var(--secondary));
+	transform: rotateY(180deg);
+}
+.card-3d-content {
+	position: absolute;
+	display: grid;
+	place-items: center;
+}
+.scalable-content {
+	will-change: transform;
+}
+.card-3d-content h2 {
+	font-size: 2rem;
+	margin-bottom: 0.5rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+.card-3d-content p {
+	font-size: 1.1rem;
+	margin: 0;
+}

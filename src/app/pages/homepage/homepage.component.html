@@ -34,23 +34,26 @@
                 <button routerLink="/login" class="cta-btn" id="cta-btn">{{ 'homepage.hero-button' | translate }}</button>
             </div>
             <!-- 3D Rotating Card -->
-            <div class="card-3d-container">
-                <div #card3d class="card-3d" id="card3d" (mousemove)="mouseMoveCard($event, card3d)" (mouseleave)="resetCardRotation(card3d)" (click)="rotateCard(card3d)">
-                    <div class="card-3d-face card-3d-front">
-                        <div class="card-3d-content">
-                            <h2>{{ 'homepage.card.card-desc-1' | translate}}</h2>
-                            <h2>{{ 'homepage.card.card-desc-2' | translate}}</h2>
-                            <h2>{{ 'homepage.card.card-desc-3' | translate}}</h2>
-                        </div>
-                    </div>
-                    <div class="card-3d-face card-3d-back">
-                        <div class="card-3d-content">
-                            <img class="back-logo" src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo">
-                            <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>                            
-                        </div>
-                    </div>
+            <app-card-3d 
+                [rotate]="true"
+                [flip]="true"
+                [glow]="true"
+                [backColor]="'#f4d35e'"
+                [frontColor]="'#ff6f61'"
+                [backTextColor]="'#2d3142'"
+                [frontTextColor]="'#ffffff'"
+            >
+                <div cardFront>
+                    <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
+                    <h2>{{ 'homepage.card.card-desc-1' | translate}}</h2>
+                    <h2>{{ 'homepage.card.card-desc-2' | translate}}</h2>
+                    <h2>{{ 'homepage.card.card-desc-3' | translate}}</h2>
                 </div>
-            </div>
+                <div cardBack>
+                    <img class="back-logo" src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo">
+                    <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>                            
+                </div>
+            </app-card-3d>
         </div>
     </section>
     <section class="features">
