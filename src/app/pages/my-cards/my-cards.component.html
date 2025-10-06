@@ -1,24 +1,40 @@
-<div class="list-cards">
-    @for (cardObj of myAllCards; track $index) {
-        <div class="card-col">
-            <app-card-game-layout
-                class="card-layout-preview"
-                [cardLayout]="cardObj.card"
-            />
-            <div class="card-col-buttons">
-                <p-button
-                label="Edit"
-                icon="pi pi-pencil"
-                class="delete-card-btn"
-                (click)="goToCreateCardPage(cardObj.id!)"
-                ></p-button>
-                <p-button
-                label="Deletar"
-                icon="pi pi-trash"
-                class="delete-card-btn"
-                (click)="deleteCard(cardObj)"
-                ></p-button>
+<div class="layouts-page">
+    <header class="layouts-header">
+    <h1 class="layouts-title">Minhas Cartas</h1>
+    <div class="layouts-actions">
+        <button class="btn-create-card-layout" (click)="goToCreateCardPage()">
+        <span class="pi pi-plus" pButtonIcon></span>
+        <span pButtonLabel>Criar Nova Carta</span>
+        </button>
+    </div>
+    </header>
+    <div class="layouts-grid">
+        @for (cardObj of myAllCards; track $index) {
+            <div class="layout-container">
+                <app-card-3d [cardWidth]="220" [rotate]="true" [frontTextColor]="'#000'" (click)="goToCreateCardPage(cardObj.id!)">
+                    <ng-container cardFront>
+                        <app-card-game-layout class="card-layout-preview" [cardLayout]="cardObj.card" />
+                    </ng-container>
+                </app-card-3d>
+                <div class="card-col-buttons">
+                    <p-button
+                    label="Edit"
+                    icon="pi pi-pencil"
+                    class="delete-card-btn"
+                    (click)="goToCreateCardPage(cardObj.id!)"
+                    ></p-button>
+                    <p-button
+                    label="Deletar"
+                    icon="pi pi-trash"
+                    class="delete-card-btn"
+                    (click)="deleteCard(cardObj)"
+                    ></p-button>
+                </div>
             </div>
-        </div>
-    }
+        } @empty {
+            <div class="empty-message">
+                Nenhuma carta encontrada.
+            </div>
+        }
+    </div>
 </div>

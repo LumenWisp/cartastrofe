@@ -10,12 +10,13 @@ import { ToastService } from '../../services/toast.service';
 import { CardGameLayoutComponent } from "../../components/card-game-layout/card-game-layout.component";
 import { Button } from "primeng/button";
 import { ActivatedRoute, Router } from '@angular/router';
+import { Card3dComponent } from "../../components/card-3d/card-3d.component";
 
 type CardListItem = { id: string, name: string, layout: string, card: CardGameLayout}
 
 @Component({
   selector: 'app-my-cards',
-  imports: [CardGameLayoutComponent, Button],
+  imports: [CardGameLayoutComponent, Button, Card3dComponent],
   templateUrl: './my-cards.component.html',
   styleUrl: './my-cards.component.css'
 })
@@ -80,7 +81,7 @@ cardName = '';
     this.cardLayout.set(this.cardLayouts.find(layout => layout.id === cardObj.layout)!);
   }
 
-  goToCreateCardPage(id: string) {
+  goToCreateCardPage(id: string = '') {
     this.router.navigate(['create-card', id], {
       relativeTo: this.route,
     });
