@@ -79,6 +79,7 @@
   font-weight: bold;
   cursor: pointer;
   user-select: none;
+  z-index: 9999999999;
 }
 
 .hand-area-container {

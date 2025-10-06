@@ -2,6 +2,17 @@
   <div class="main-content" #mainContent>
     <!-- Área de jogo -->
     <div class="game-field" #gameField>
+
+      @if (isDragging) {
+        @let card_dragging = freeModeService.getNextCard(isDragging);
+        @if (card_dragging) {
+          <app-card-game
+          style="position: absolute;"
+          [cardLayout]="cardLayouts[card_dragging.cardLayoutId]"
+          [card]="card_dragging"
+        />
+        }
+      }
       
       @for (item of items; track item; let i = $index) {
 

@@ -202,6 +202,22 @@ export class FreeModeService {
     return pile?.cards.length;
   }
 
+  getNextCard(cardId: string) {
+    const card = this.getCardById(cardId);
+    if (card?.ruledPileId) {
+      const nextCard = this.getSecondTopCardFromRuledPile(card.ruledPileId);
+      const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === nextCard?.ruledPileId);
+      if (nextCard && ruledPile) {
+        nextCard.freeDragPos = {
+          x: ruledPile.position.x -40,
+          y: ruledPile.position.y - 60
+        }
+      }
+      return nextCard
+    }
+    return null
+  }
+
   // Retorna a carta no topo de uma pilha
   getTopCard(pileId: string) {
     const pile = this.piles.find(p => p.id === pileId);
@@ -215,6 +231,15 @@ export class FreeModeService {
     const lastCardId = ruledPile.cardIds[ruledPile.cardIds.length - 1];
     const lastCard = this.getCardById(lastCardId);
     return lastCard;
+  }
+
+  getSecondTopCardFromRuledPile(ruledPiledId: string) {
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPiledId);
+    if (!ruledPile?.cardIds) return null
+    if (ruledPile.cardIds.length < 2) return null
+    const secondLastCardId = ruledPile.cardIds[ruledPile.cardIds.length - 2]
+    const secondLastCard = this.getCardById(secondLastCardId);
+    return secondLastCard;
   }
 
   removeCardFromRuledPile(cardId: string, ruledPileId: string, isHand: boolean = false) {

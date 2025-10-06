@@ -81,7 +81,7 @@ export class RuleBasedRoomComponent implements OnInit{
   onPhaseEndCodeList: string[] = [];
 
   //movimentaão das cartas
-  isDragging: boolean = false;
+  isDragging: string = "";
   isDraggingHandle: boolean = false;
   selectedCard: CardGame | null = null;
 
@@ -142,7 +142,7 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   onDragMoved(event: MouseEvent) {
-    if (!this.isDragging) return;
+    if (this.isDragging == null) return;
 
     const mouseX = event.clientX;
     const mouseY = event.clientY;
@@ -323,7 +323,7 @@ export class RuleBasedRoomComponent implements OnInit{
     console.log('Jogador: ', this.currentPlayer);
   }
 
-  getTopCard(ruledPileId: string, position: {x: number, y:number}, isDragging: boolean) {
+  getTopCard(ruledPileId: string, position: {x: number, y:number}, isDragging: string) {
     const topCard = this.freeModeService.getTopCardFromRuledPile(ruledPileId);
 
     if (topCard) {
@@ -455,13 +455,15 @@ export class RuleBasedRoomComponent implements OnInit{
 
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardGame[]>) {
-    this.isDragging = true;
+    const cardId = event.source.element.nativeElement.getAttribute('card-id');
+    if (cardId) {
+       this.isDragging = cardId;
+    }
     if (this.popover) {
     this.popover.hide(); // fecha o popover quando arrastar outra carta
     }
 
-    const cardId = event.source.element.nativeElement.getAttribute('card-id');
-    this.freeModeService.updateZindex(cardId!, 9999999)
+    this.freeModeService.updateZindex(cardId!, 999999999)
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
@@ -472,7 +474,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
   // Evento disparado quando se solta uma carta sendo arrastada
   async onDrop(event: CdkDragEnd<CardGame[]>) {
-    this.isDragging = false;
+    this.isDragging = "";
 
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
     const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
