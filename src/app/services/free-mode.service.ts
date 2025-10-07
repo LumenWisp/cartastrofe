@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { CardGame } from '../types/card';
 import { PileModel } from '../types/pile';
+import { GameFieldItem } from '../types/game-field-item';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,9 @@ export class FreeModeService {
   cards = signal<CardGame[]>([]);
 
   piles: PileModel[] = [];
+
+  // pilhas do modo regrado
+  ruledPiles: GameFieldItem[] = [];
 
   /*
   FUNÇÕES DE CARTAS
@@ -31,6 +35,10 @@ export class FreeModeService {
 
   addCard(card: CardGame) {
     this.cards.update(cards => [...cards, card]);
+  }
+
+  addRuledPile(ruledPile: GameFieldItem) {
+    this.ruledPiles.push(ruledPile);
   }
 
   addCards(newCards: CardGame[]) {
@@ -111,6 +119,44 @@ export class FreeModeService {
     }
   }
 
+  addCardToRuledPile(ruledPileId: string,  lastRuledPileId: string, cardId: string) {
+
+    if (ruledPileId === lastRuledPileId) return
+
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    const lastRuledPile = this.ruledPiles.find(p => p.nameIdentifier === lastRuledPileId);
+    if (ruledPile) {
+      if (!ruledPile.cardIds) {
+        ruledPile.cardIds = []
+      }
+      ruledPile.cardIds?.push(cardId);
+    }
+    else {
+      console.error('RuledPile ou carta não encontrada');
+    }
+
+    if (lastRuledPile) {
+      lastRuledPile.cardIds?.pop();
+    }
+    else if (lastRuledPileId === 'hand') {
+      this.changeBelongsTo(cardId, null);
+    }
+    else {
+      console.error('LastRuledPile ou carta não encontrada');
+    }
+
+  }
+
+  async setRuledPileForEachCard(ruledPileId: string) {
+    this.cards.update(cards =>
+      cards.map(c => ({
+        ...c,
+        ruledPile: ruledPileId,
+        lastRuledPile: ruledPileId
+      }))
+    );
+  }
+
 
   // Remove uma carta de uma pilha
   removeCardFromPile(pileId: string, card: CardGame) {
@@ -156,11 +202,58 @@ export class FreeModeService {
     return pile?.cards.length;
   }
 
+  getNextCard(cardId: string) {
+    const card = this.getCardById(cardId);
+    if (card?.ruledPileId) {
+      const nextCard = this.getSecondTopCardFromRuledPile(card.ruledPileId);
+      const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === nextCard?.ruledPileId);
+      if (nextCard && ruledPile) {
+        nextCard.freeDragPos = {
+          x: ruledPile.position.x -40,
+          y: ruledPile.position.y - 60
+        }
+      }
+      return nextCard
+    }
+    return null
+  }
+
   // Retorna a carta no topo de uma pilha
   getTopCard(pileId: string) {
     const pile = this.piles.find(p => p.id === pileId);
     if (!pile?.cards) return;
     return pile?.cards[pile.cards.length - 1];
+  }
+
+  getTopCardFromRuledPile(ruledPileId: string) {
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    if (!ruledPile?.cardIds) return null;
+    const lastCardId = ruledPile.cardIds[ruledPile.cardIds.length - 1];
+    const lastCard = this.getCardById(lastCardId);
+    return lastCard;
+  }
+
+  getSecondTopCardFromRuledPile(ruledPiledId: string) {
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPiledId);
+    if (!ruledPile?.cardIds) return null
+    if (ruledPile.cardIds.length < 2) return null
+    const secondLastCardId = ruledPile.cardIds[ruledPile.cardIds.length - 2]
+    const secondLastCard = this.getCardById(secondLastCardId);
+    return secondLastCard;
+  }
+
+  removeCardFromRuledPile(cardId: string, ruledPileId: string, isHand: boolean = false) {
+    const ruledPile = this.ruledPiles.find(p => p.nameIdentifier === ruledPileId);
+    const card = this.getCardById(cardId);
+    if (isHand && card) {
+      card.ruledLastPileId = card.ruledPileId
+      card.ruledPileId = 'hand'
+    }
+
+    if (ruledPile?.cardIds) {
+      const index = ruledPile.cardIds.indexOf(cardId);
+      ruledPile.cardIds.splice(index, 1)
+    }
   }
 
   // Verifica se uma carta está no topo de uma pilha

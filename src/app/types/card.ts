@@ -21,6 +21,27 @@ export interface CardGame {
   // Modo regrado
   ruledPileId?: string,
   ruledLastPileId?: string,
+
+  //No modo regrado, ao mover a carta para umcampo com uma carta, esse atributo guarda o valor do id dessa carta alvo
+  targetCardId?: string | null;
+
+  // ===============================================================
+  // Campos que representam o estado do workSpace das regras do jogo
+  // ===============================================================
+
+  // Triggers
+  onMoveCardFromTo?: any;
+  onPhaseStart?: any;
+  onPhaseEnd?: any;
+
+  // ===============================================================
+  // Campos que representam o código em string das regras do jogo
+  // ===============================================================
+
+  // Triggers
+  onMoveCardFromToCode?: string;
+  onPhaseStartCode?: string;
+  onPhaseEndCode?: string;
 }
 
 export interface CardModel {

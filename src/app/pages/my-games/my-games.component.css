@@ -20,3 +20,9 @@
   font-size: 1.5rem;
   --p-icon-size: 1.5rem;
 }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}

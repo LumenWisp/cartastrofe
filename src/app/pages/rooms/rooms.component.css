@@ -5,7 +5,7 @@
   width: 260px; /*IGUAL*/
   height: 100vh;
   background-color: #f9f9f9;
-  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   box-sizing: border-box;
   z-index: 1000;
@@ -21,7 +21,6 @@
   overflow: hidden;
 }
 
-
 .menu-item {
   background-color: #fff;
   border-radius: 0.3rem;
@@ -36,13 +35,18 @@
 
 .menu-item:hover {
   background-color: #e0e0e0;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 /*
 CSS PROVISORIO DAS CARTITAS
 */
-.grid { position: relative; display: block; gap: 16px; flex-wrap: wrap; }
+.grid {
+  position: relative;
+  display: block;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 
 .card {
   position: absolute;
@@ -60,8 +64,8 @@ CSS PROVISORIO DAS CARTITAS
   position: relative;
   perspective: 1000px;
   transform-style: preserve-3d;
-  transition: transform .3s ease;
-  box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 
@@ -80,10 +84,16 @@ CSS PROVISORIO DAS CARTITAS
   backface-visibility: hidden;
 }
 
-.front { background: #fff; }
-.back  { background: #d64545; transform: rotateY(180deg); }
+.front {
+  background: #fff;
+}
+.back {
+  background: #d64545;
+  transform: rotateY(180deg);
+}
 
-.remove-pointer-events, .remove-pointer-events > * {
+.remove-pointer-events,
+.remove-pointer-events > * {
   pointer-events: none;
 }
 

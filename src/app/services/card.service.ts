@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { CardModel } from '../types/card';
+import { CardGame, CardModel } from '../types/card';
 import { CardGameLayout, CardLayoutModel } from '../types/card-layout';
 import { FirestoreTablesEnum } from '../enum/firestore-tables.enum';
 import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { UserService } from './user-service.service';
 import { UtilsService } from './utils.service';
+import { GameInfoModel } from '../types/game-info';
+import { BlockWorkspaceService } from './block-workspace.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +14,12 @@ import { UtilsService } from './utils.service';
 export class CardService {
   private firestore = inject(Firestore);
   private path = FirestoreTablesEnum.CARD;
+  private pathGameInfo = FirestoreTablesEnum.GAME_INFO;
 
   constructor(
     private userService: UserService,
     private utilsService: UtilsService,
+    private blockWorkspaceService: BlockWorkspaceService,
   ) {}
 
   async getAllCards() {
@@ -44,7 +48,32 @@ export class CardService {
     return snapshot.docs.map(doc => doc.data() as CardModel) || [];
   }
 
+  // método copiado do gameinfo pq tava dando dependência circular
+  async getGameInfos() {
+    const user = await this.userService.currentUser();
+
+    if (user === undefined) return []
+    if (user === null) throw new Error('Usuário não está logado');
+
+    const userId = user.userId;
+    const refCollection = collection(this.firestore, this.pathGameInfo);
+    const queryRef = query(refCollection, where('userId', '==', userId));
+    const snapshot = await getDocs(queryRef);
+    const results: GameInfoModel[] = [];
+    snapshot.forEach((item) => {
+      results.push(item.data() as GameInfoModel);
+    });
+
+    return results;
+  }
+
   async deleteCard(id: string): Promise<void> {
+    const gameInfos = await this.getGameInfos()
+
+    if (gameInfos.some(game => game.cardIds?.includes(id))) {
+      throw new Error('Esta carta pertence a um jogo')
+    }
+
     const collectionRef = collection(this.firestore, this.path);
     const q = query(collectionRef, where('id', '==', id));
 
@@ -110,4 +139,62 @@ export class CardService {
 
     await addDoc(collectionRef, data)
   }
+
+  // Função para atualizar os camos de stringsCodes e workspaces do blockly
+  async updateCardRules(id: string, data: Partial<CardGame>){
+    const user = this.userService.currentUser();
+    if (!user) throw new Error('Usuário não está logado');
+
+    const q = query(
+      collection(this.firestore, this.path),
+      where('id', '==', id)
+    );
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      throw new Error('Carta não encontrada');
+    }
+
+    const docId = snapshot.docs[0].id;
+    console.log("IDDDDD", docId);
+
+    const docRef = doc(this.firestore, this.path, docId);
+    await setDoc(docRef, data, { merge: true });
+  }
+
+  async getCardWorkSpaces(id: string): Promise<any>{
+    const user = this.userService.currentUser();
+    if (!user) throw new Error('Usuário não está logado');
+
+    const q = query(
+      collection(this.firestore, this.path),
+      where('id', '==', id)
+    );
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      throw new Error('Carta não encontrada');
+    }
+
+    const cardGame = snapshot.docs[0].data() as CardGame;
+
+    const workSpaceFields = {
+      onMoveCardFromTo: cardGame.onMoveCardFromTo || this.blockWorkspaceService.cardOnMoveCardFromToDefault,
+      onPhaseStart: cardGame.onPhaseStart || this.blockWorkspaceService.onPhaseStartDefault,
+      onPhaseEnd: cardGame.onPhaseEnd || this.blockWorkspaceService.onPhaseEndDefault,      
+    };
+
+    return workSpaceFields;
+  }
+  convert(card: CardModel, cardLayout: CardLayoutModel) {
+    const obj: CardGameLayout = {
+      name: cardLayout.name,
+      cardFields: cardLayout.cardFields.map(field => ({
+        ...field,
+        value: card.data[field.property] || ''
+      }))
+    };
+
+    return obj;
+    }
 }

@@ -18,10 +18,11 @@ import { GameEditFieldComponent } from './pages/game-edit-field/game-edit-field.
 import { GameEditRulesComponent } from './pages/game-edit-rules/game-edit-rules.component';
 
 import { HomepageComponent } from './pages/homepage/homepage.component';
-import { CreateCardComponent } from './pages/my-games/create-card/create-card.component';
+import { CreateCardComponent } from './pages/my-cards/create-card/create-card.component';
 import { RuleBasedRoomComponent } from './pages/rule-based-room/rule-based-room.component';
 import { authGuard } from './auth.guard';
 import { GameEditComponent } from './pages/my-games/game-edit/game-edit.component';
+import { MyCardsComponent } from './pages/my-cards/my-cards.component';
 
 export const routes: Routes = [
   {
@@ -71,8 +72,18 @@ export const routes: Routes = [
       },
       {
         path: 'my-cards',
+          component: MyCardsComponent,
+          title: 'Minhas Cartas',
+      },
+      {
+        path: 'my-cards/create-card',
         component: CreateCardComponent,
-        title: 'Create Card',
+        title: 'Criar Carta',
+      },
+      {
+        path: 'my-cards/create-card/:cardId',
+        component: CreateCardComponent,
+        title: 'Editar Carta',
       },
       {
         path: 'my-games/game-edit-cards/:gameId',

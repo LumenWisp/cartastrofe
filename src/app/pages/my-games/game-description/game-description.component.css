@@ -24,7 +24,7 @@
   padding: 10px 20px;
   border-radius: 20px;
   background-color: #ffffff71;
-  box-shadow: inset 0 0 20px #00000033;
+  box-shadow: 0 0 20px #00000080;
   font-size: 2rem;
 }
 
@@ -33,6 +33,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
+  font-size: 6rem;
+  color: rgb(255, 255, 255);
+  text-transform: capitalize;
 }
 
 .content-wrapper {

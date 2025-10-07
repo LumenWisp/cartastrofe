@@ -1,5 +1,5 @@
 // ANGULAR
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { CdkDrag,CdkDragEnd, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -62,11 +62,18 @@ export class RuleBasedRoomComponent implements OnInit{
     private playerSubscription?: Subscription;
     private roomSubscription?: Subscription;
 
+  @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
+  @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('handArea') handArea!: ElementRef<HTMLDivElement>;
+  isOverHandArea = false;
+
   // Caracteristicas do jogo
   phases: string[] = []; // dados mockados
   currentPhaseNumber = 0;
   currentPlayerToPlayNumber = 0;
   currentPlayerToPlay!: PlayerEntity;
+  isGameOcurringHTML: boolean = false;
+  isDragDisabled: boolean = true;
 
   winConditionCode: string = '';
 
@@ -75,7 +82,7 @@ export class RuleBasedRoomComponent implements OnInit{
   onPhaseEndCodeList: string[] = [];
 
   //movimentaão das cartas
-  isDragging: boolean = false;
+  isDragging: string = "";
   isDraggingHandle: boolean = false;
   selectedCard: CardGame | null = null;
 
@@ -94,7 +101,11 @@ export class RuleBasedRoomComponent implements OnInit{
   ngOnInit() {
       this.checkQueryParamsGame();
       this.checkRouteParamsRoom();
-      // HIDE LOADING ESTÁ DENTRO DO CHECKROUTEPARAMSROOM!!!!!
+      this.loadingService.hide(); // precaucao
+  }
+
+  ngAfterViewInit() {
+    this.resizeHandArea();
   }
 
   async ngOnDestroy() {
@@ -121,6 +132,30 @@ export class RuleBasedRoomComponent implements OnInit{
     }
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.resizeHandArea();
+  }
+
+  resizeHandArea() {
+    const mainContentWidth = this.mainContent.nativeElement.offsetWidth;
+    if (this.handAreaContainer) this.handAreaContainer.nativeElement.style.width = mainContentWidth + 'px';
+  }
+
+  onDragMoved(event: MouseEvent) {
+    if (this.isDragging == null) return;
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    const rect = this.handArea.nativeElement.getBoundingClientRect();
+    this.isOverHandArea =
+      mouseX >= rect.left &&
+      mouseX <= rect.right &&
+      mouseY >= rect.top &&
+      mouseY <= rect.bottom;
+  }
+
   /**
    * Verifica parâmetros da rota e carrega os dados relacionados
    */
@@ -130,7 +165,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     if(game) this.game = game
 
-    if (this.game.fieldItems && this.game.fieldItems.length > 0) {
+    if (this.game && this.game.fieldItems && this.game.fieldItems.length > 0) {
       this.items = [...this.game.fieldItems];
     }
     
@@ -138,9 +173,6 @@ export class RuleBasedRoomComponent implements OnInit{
       this.items.push({type: GameFieldItemEnum.PASSPHASE, position: {x: 0, y: 0}, nameIdentifier: 'passPhase'}, {type: GameFieldItemEnum.HAND, position: {x: 0, y: 0}, nameIdentifier: 'hand'});
     }
   }
-
-  
-
 
   private async checkRouteParamsRoom() {
     const roomLink = this.route.snapshot.params['roomLink'];
@@ -160,7 +192,15 @@ export class RuleBasedRoomComponent implements OnInit{
 
         if (this.room.state) {
           const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
-          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId)
+          const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId);
+          const ruledPiles = await this.gameInfoService.getRuledPiles(this.room.state.gameId);
+          ruledPiles[0].cardIds = cards.map(c => c.id);
+          const firstRuledPileId = ruledPiles[0].nameIdentifier;
+          const cardStringCodes = cards as any // Deixa essa macacada, depois tem que ajeitar a tipagem no card.ts
+
+          for (const ruledPile of ruledPiles) {
+            this.freeModeService.addRuledPile(ruledPile);
+          }
 
           for (const cardLayout of cardLayouts) {
             this.cardLayouts[cardLayout!.id] = {
@@ -175,13 +215,16 @@ export class RuleBasedRoomComponent implements OnInit{
               name: card.name,
               cardLayoutId: card.layoutId,
               data: card.data,
-              freeDragPos: { x: 0, y: 0 },
+              freeDragPos: { x: -40, y: -60 },
               flipped: false,
               id: card.id,
               label: card.name,
               pileId: null,
               zIndex: 1,
               belongsTo: null,
+              ruledLastPileId: firstRuledPileId,
+              ruledPileId: firstRuledPileId,
+              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null
             })
           }
         }
@@ -206,30 +249,42 @@ export class RuleBasedRoomComponent implements OnInit{
             if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
               console.log('NOVA SALA: ', room)
               if(room.state?.isGameOcurring === false){
+                //room.state['isGameOcurring'] = false;
+                console.log("SKIBIDI 1")
                 this.toastService.showSuccessToast('', 'Fim de jogo');
               }
               else if(room.state?.isGameOcurring != undefined){
+                //room.state['isGameOcurring'] = true;
+                console.log("SKIBIDI 2")
                 this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
               }
             }
 
-            if(this.room.state?.currentphase != room.state?.currentphase){
+            if(this.phases[this.currentPhaseNumber] != room.state?.currentphase){
               this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
             }
 
-            if(this.room.state?.currentPlayerToPlay != room.state?.currentPlayerToPlay){
+            if(this.currentPlayerToPlay && this.currentPlayerToPlay.playerId != room.state?.currentPlayerToPlay){
               const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
               this.currentPlayerToPlay = currentPlayerToPlay!;
               this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
 
               if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
                 this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+                this.isDragDisabled = false;
+              }
+              else{
+                this.isDragDisabled = true;
               }
             }
 
             this.room = room;
             if(room.state?.cards){
               this.freeModeService.cards.set(room.state.cards);
+            }
+
+            if(room.state?.ruledPiles){
+              this.freeModeService.ruledPiles = room.state.ruledPiles;
             }
           });
 
@@ -273,23 +328,62 @@ export class RuleBasedRoomComponent implements OnInit{
     console.log('Jogador: ', this.currentPlayer);
   }
 
-  private goToLoginPage(roomLink: string) {
-    const queryParams: any = {
-      roomLink: roomLink,
-    };
+  getTopCard(ruledPileId: string, position: {x: number, y:number}, isDragging: string) {
+    const topCard = this.freeModeService.getTopCardFromRuledPile(ruledPileId);
 
-    this.router.navigate(['/login'], {
-      queryParams,
-    });
+    if (topCard) {
+      if (!isDragging) {
+        topCard.freeDragPos = {
+          x: position.x - 40,
+          y: position.y - 60
+        }
+      }
+    }
+    
+    return topCard;
   }
 
-  private runStringCode(stringCode: string) {
-    const func = new Function('blockCodeGeneratorsService', 'room', 'roomService', 'game', stringCode);
+  private async runStringCode(stringCode: string, card?: any) {
 
-    func(this.blockCodeGeneratorsService, this.room, this.roomService, this.game);
+    const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
+
+    const func = new AsyncFunction(
+      'blockCodeGeneratorsService',
+      'room',
+      'roomService',
+      'game',
+      'freeModeService',
+      'toastService',
+      'players',
+      'currentPlayerToPlayNumber',
+      'phases',
+      'currentPhaseNumber',
+      'card',
+      'ruledPileId',
+      'ruledLastPileId',
+      stringCode
+    );
+
+    await func(
+      this.blockCodeGeneratorsService,
+      this.room,
+      this.roomService,
+      this.game,
+      this.freeModeService,
+      this.toastService,
+      this.players,
+      this.currentPlayerToPlayNumber,
+      this.phases,
+      this.currentPhaseNumber,
+      card ?? null,
+      card.ruledPileId ?? null,
+      card.ruledLastPileId ?? null,
+      stringCode
+    );
   }
 
   async startGame(){
+    this.isGameOcurringHTML = true;
     // Atualizando a sala para que seja visivel que o jogo já começou
     //if(this.room.state) this.room.state['isGameOcurring'] = true;
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true, currentphase: this.phases[0], currentPlayerToPlay: this.players[0].playerId}});
@@ -303,10 +397,13 @@ export class RuleBasedRoomComponent implements OnInit{
     const playersOrderToPlay = this.players;
     this.currentPlayerToPlay = playersOrderToPlay[this.currentPlayerToPlayNumber];
 
+    if(this.currentPlayer.playerId === this.currentPlayerToPlay.playerId){
+      this.isDragDisabled = false;
+    }
+
     //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
     if(this.game.onGameStartCode){
       this.runStringCode(this.game.onGameStartCode)
-      //this.runStringCode("console.log('SKIBIDI ONICHAN');")
     }
   }
 
@@ -338,13 +435,24 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   endGame(){
+    this.isGameOcurringHTML = false;
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
   }
 
   async updateRoom(): Promise<void>{
-      const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
-      this.roomService.updateRoom(this.room.id, { state: newState });
-    }
+    const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
+    this.roomService.updateRoom(this.room.id, { state: newState });
+  }
+
+  private goToLoginPage(roomLink: string) {
+    const queryParams: any = {
+      roomUrl: "/ruled-rooms/" + roomLink,
+    };
+
+    this.router.navigate(['/login'], {
+      queryParams,
+    });
+  }
 
   // =================================
   // ==== MOVIMENTAÇÃO DAS CARTAS ====
@@ -362,26 +470,15 @@ export class RuleBasedRoomComponent implements OnInit{
 
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardGame[]>) {
-    this.isDragging = true;
+    const cardId = event.source.element.nativeElement.getAttribute('card-id');
+    if (cardId) {
+       this.isDragging = cardId;
+    }
     if (this.popover) {
     this.popover.hide(); // fecha o popover quando arrastar outra carta
-  }
-
-  const dragOrigin = event.event.target as HTMLElement;
-  const fromHandle = dragOrigin.classList.contains('square-number-cards');
-
-  const cardId = event.source.element.nativeElement.getAttribute('card-id');
-  this.freeModeService.updateZindex(cardId!, 99999)
-  const card = this.freeModeService.getCardById(cardId!)
-
-  if (fromHandle) {
-    this.isDraggingHandle = true;
-
-  } else {
-    if (card?.pileId) {
-      this.freeModeService.removeCardFromPile(card?.pileId, card!);
     }
-  }
+
+    this.freeModeService.updateZindex(cardId!, 999999999)
   }
 
   onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
@@ -391,17 +488,30 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
-  onDrop(event: CdkDragEnd<CardGame[]>) {
-    setTimeout(() => this.isDragging = false, 100);
+  async onDrop(event: CdkDragEnd<CardGame[]>) {
+    this.isDragging = "";
 
-    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
     const draggedElement = event.source.element.nativeElement; // Pega a carta arrastada
-    draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
-    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo
-    draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
     const draggedCardId = draggedElement.getAttribute('card-id') // Id da carta arrastada
+    this.freeModeService.updateZindex(draggedCardId!, 99);
+    const { x, y } = event.dropPoint; // posição do mouse no fim do drag
+
+    // ignoramentos
+    draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
+    const fakeTargetElement = document.elementFromPoint(x, y); // Pegar o alvo falso
+    fakeTargetElement!.classList.add("remove-pointer-events"); // Ignorar o elemento fake
+
+    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo REAL!
+
+    // remover ignoramentos
+    draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+    fakeTargetElement!.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
+
+
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
 
+    //console.log(targetElement)
+    
     if (targetElement?.id) {
       // É uma pilha
       const targetPileId = targetElement?.id; // Id da pilha
@@ -409,16 +519,22 @@ export class RuleBasedRoomComponent implements OnInit{
       // IGUAL AO DE ELSE IF EMBAIXO
       const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
       if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
-        const targetRect = targetElement.getBoundingClientRect();
-        const containerRect = this.gameField.nativeElement.getBoundingClientRect();
-
+        
         draggedCard.freeDragPos = {
-          x: targetRect.left - containerRect.left - 40,
-          y: targetRect.top - containerRect.top - 60
+          x: targetItem.position.x - 40,
+          y: targetItem.position.y - 60
         };
 
-        draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
-        draggedCard.ruledPileId = targetPileId;
+        if (draggedCard.ruledPileId !== targetPileId) {
+          draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
+          draggedCard.ruledPileId = targetPileId;
+          this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
+        }
+        
+
+        if(draggedCard.onMoveCardFromToCode){
+          await this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
+        }
       }
     }
 
@@ -430,23 +546,47 @@ export class RuleBasedRoomComponent implements OnInit{
       // IGUAL AO IF DE CIMA (nao me julgue)
       const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
       if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
-        const targetRect = targetElement.getBoundingClientRect();
-        const containerRect = this.gameField.nativeElement.getBoundingClientRect();
-
+        
         draggedCard.freeDragPos = {
-          x: targetRect.left - containerRect.left - 40,
-          y: targetRect.top - containerRect.top - 60
+          x: targetItem.position.x - 40,
+          y: targetItem.position.y - 60
         };
 
-        draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
-        draggedCard.ruledPileId = targetPileId;
+        if (draggedCard.ruledPileId !== targetPileId && targetPileId) {
+          draggedCard.ruledLastPileId = draggedCard.ruledPileId ?? targetPileId;
+          draggedCard.ruledPileId = targetPileId;
+          this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
+        }
       }
     }
 
-    
-    
+    else if (draggedCardId && draggedCard?.ruledPileId) {
+      if (this.isOverHandArea) {
+        if (draggedCard.ruledPileId !== 'hand') {
+          this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
+          this.freeModeService.removeCardFromRuledPile(draggedCardId, draggedCard?.ruledPileId, true);
+        }
+      } else {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo  && draggedCard.ruledLastPileId !== 'hand') {
+          this.freeModeService.cards.update(cards =>
+            cards.map(c => {
+              if (c.id === draggedCardId) {
+                const offsetX = 100 // 60 da escala + 40 para centralizar
+                const offsetY = 150 // 90 da escala + 60 para centralizar
 
-    console.log(targetElement);
+                return { ...c, freeDragPos: { x: event.dropPoint.x - offsetX, y: event.dropPoint.y - offsetY } }
+              }
+
+              return c
+            })
+          );
+        }
+      }
+
+      this.resizeHandArea()
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 132));
     this.updateRoom()
   }
 

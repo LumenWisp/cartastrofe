@@ -30,13 +30,13 @@
 
 .game-field {
   position: relative;
-  width: calc(100% - 260px);
-  height: 100vh;
-  background-color: transparent;
-  overflow: hidden;
+  display: block;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .pile {
+  position: absolute;
   width: 120px;
   height: 180px;
   background: #cce;
@@ -46,6 +46,7 @@
 }
 
 .label {
+  position: absolute;
   width: 100px;
   height: 50px;
   padding: 0.5rem 1rem;
@@ -69,6 +70,7 @@
 }
 
 .next-phase-btn {
+  position: absolute;
   padding: 0.7rem 1.2rem;
   background: #4caf50;
   color: #fff;
@@ -77,4 +79,36 @@
   font-weight: bold;
   cursor: pointer;
   user-select: none;
+  z-index: 9999999999;
+}
+
+.hand-area-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  gap: 50px;
+  align-items: end;
+  padding-bottom: 140px;
+}
+.hand-area {
+  position: absolute;
+  bottom: 0;
+  height: 150px;
+  width: 100%;
+  background-color: lightgray;
+  border: 1px solid black;
+  z-index: -1;
+}
+
+.main-content {
+  width: 100%;
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.lay {
+  display: flex;
 }

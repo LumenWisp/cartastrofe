@@ -86,6 +86,86 @@ export const toolbox = {
   ]
 };
 
+export const toolboxCard = {
+  kind: 'categoryToolbox',
+  contents: [
+    {
+      kind: 'category',
+      name: 'Triggers',
+      contents: [
+        { kind: 'category',
+          name: 'On Move Card From To',
+          contents: [
+          { kind: 'block', type: 'cardOnMoveCardFromTo' },
+          ]
+        },
+        {
+          kind: 'category',
+          name: 'On Phase Start',
+          contents: [
+          { kind: 'block', type: 'onPhaseStart' },
+          ]
+        },
+        {
+          kind: 'category',
+          name: 'On Phase End',
+          contents: [
+          { kind: 'block', type: 'onPhaseEnded' },
+          ]
+        },
+      ]
+    },
+    { 
+      kind: 'sep',
+    },
+    {
+      kind: 'category',
+      name: 'Variables',
+      contents: [
+        { kind: 'block', type: 'getCard' },
+        { kind: 'block', type: 'getPile' },
+        { kind: 'block', type: 'getCardAttribute' },
+        { kind: 'block', type: 'getGameAttribute' },
+        { kind: 'block', type: 'getPhase' },
+        { kind: 'block', type: 'getGeneralVariableValue' },
+        { kind: 'block', type: 'getTargetCardIdValue' },
+        { kind: 'block', type: 'getCurrentPileIdValue' },
+        { kind: 'block', type: 'getLastPileIdValue' },
+      ]
+    },
+    {
+      kind: 'category',
+      name: 'Actions',
+      contents: [
+        { kind: 'block', type: 'MoveCardTo' },
+        { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'nextPhase' },
+        { kind: 'block', type: 'endGame' },
+      ]
+    },
+    {
+      kind: 'category',
+      name: 'Control',
+      contents: [
+        {kind: 'block', type: 'controls_if'},
+        {kind: 'block', type: 'logic_compare'},
+        {kind: 'block', type: 'logic_operation'},
+        {"kind": "block",
+          "type": "controls_repeat_ext",
+          "inputs": {
+            "TIMES": {
+              "block": {
+                "type": "math_number",
+                "fields": { "NUM": 10 }
+              }
+            }
+          }
+        },
+      ]
+    }
+  ]
+};
+
 // ===============================================================
 // 🧱 DEFINIÇÃO DOS BLOCOS
 // ===============================================================
@@ -162,6 +242,20 @@ export function registerBlocks() {
       this.appendValueInput('NEW_PILE').appendField('To');
       this.setInputsInline(true);
       this.setNextStatement(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 CARD ON MOVE CARD FROM TO
+  Blockly.Blocks['cardOnMoveCardFromTo'] = {
+    init: function() {
+      this.appendDummyInput().appendField('OnMoveCard')
+      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
+      .appendField('From')
+      .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
+      .appendField('To');
+      this.setInputsInline(true);
+      this.setOutput(true, null);
       this.setColour(120);
     }
   };
@@ -262,6 +356,40 @@ export function registerBlocks() {
       this.setColour(120);
     }
   };
+
+  // 🚀 GET GENERAL VARIABLE VALUE
+  Blockly.Blocks['getTargetCardIdValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('TargetCard')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(335);
+    }
+  };
+
+  
+  // 🚀 GET LAST PILE ID VALUE
+  Blockly.Blocks['getLastPileIdValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('LastPileIdValue')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(335);
+    }
+  };
+
+  // 🚀 GET CURRENT PILE ID VALUE
+  Blockly.Blocks['getCurrentPileIdValue'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('CurrentPileIdValue')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(335);
+    }
+  };
 }
 
 // ===============================================================
@@ -333,6 +461,17 @@ export function registerGenerators() {
     return code;
   };
 
+  // CARD ON MOVE CARD FROM TO
+  javascriptGenerator.forBlock['cardOnMoveCardFromTo'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_old_pile = block.getFieldValue('OLD_PILE');
+    const value_new_pile = block.getFieldValue('NEW_PILE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(card.ruledPileId == " + `'${value_new_pile}'` + ") && (card.ruledLastPileId == " + `'${value_old_pile}'` + ")";
+    return [code, Order.NONE];
+  };
+
   // CHANGE ATTRIBUTE FROM CARD TO
   javascriptGenerator.forBlock['ChangeAttributeFromCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
@@ -383,15 +522,28 @@ export function registerGenerators() {
   // NEXT PHASE
   javascriptGenerator.forBlock['nextPhase'] = function() {
     // TODO: Assemble javascript into the code variable.
-    const code = '...';
+    const code = 
+    `
+    if(room.state.currentphase == game.gamePhases[game.gamePhases.length-1]){
+      const nextPlayernumber = (currentPlayerToPlayNumber+1)% players.length;
+      const nextPlayerId = players[nextPlayernumber].playerId;
+      room.state['currentphase'] = phases[0];
+      room.state['currentPlayerToPlay'] = nextPlayerId;
+    }
+    else{
+      room.state['currentphase'] = phases[currentPhaseNumber+1];
+      toastService.showSuccessToast('Mudamos de fase', 'Fase atual:' + phases[currentPhaseNumber+1]);
+    }
+    `;
     return code;
   }
 
   javascriptGenerator.forBlock['endGame'] = function() {
 
     // TODO: Assemble javascript into the code variable.
-    //const code = 'roomService.updateRoom(${this.room.id}, {state:{isGameOcurring: false, gameId: this.room.state.gameId}});';
-    const code = "console.log('pamonha');roomService.updateRoom(room.id, {state:{isGameOcurring: false, gameId: room.state.gameId}});";
+    const code = "console.log('pamonha'); room.state['isGameOcurring'] = false;toastService.showSuccessToast('', 'Fim de jogo');";
+    //const code = "console.log('pamonha'); roomService.updateRoom(room.id, {state: {...room.state, gameId: game.id, isGameOcurring: false}});";
+    
     return code;
   }
 
@@ -412,5 +564,32 @@ export function registerGenerators() {
       const code = '';
       return code;
     }
+
+  // GET TARGET CARD ID VALUE
+  javascriptGenerator.forBlock['getTargetCardIdValue'] = function(block, generator) {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = ""
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET LAST PILE ID VALUE
+  javascriptGenerator.forBlock['getLastPileIdValue'] = function(block, generator) {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "card.ruledLastPileId"
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET CURRENT PILE ID VALUE
+  javascriptGenerator.forBlock['getCurrentPileIdValue'] = function(block, generator) {
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "card.ruledPileId"
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
 
 }

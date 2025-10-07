@@ -1,71 +1,108 @@
-<div class="sidebar-right">
-  <p-button routerLink="/my-games" label="Sair" />
+<div class="lay">
+  <div class="main-content" #mainContent>
+    <!-- Área de jogo -->
+    <div class="game-field" #gameField>
 
-  <p-panel header="{{'rooms.header' | translate}}">
-    @for (player of players; track $index) {
-    <div class="menu-item">
-      {{ player.name }}
+      @if (isDragging) {
+        @let card_dragging = freeModeService.getNextCard(isDragging);
+        @if (card_dragging) {
+          <app-card-game
+          style="position: absolute;"
+          [cardLayout]="cardLayouts[card_dragging.cardLayoutId]"
+          [card]="card_dragging"
+        />
+        }
+      }
+      
+      @for (item of items; track item; let i = $index) {
+
+        @if (item.type === 'passPhase') {
+
+          <button 
+            (click)="nextPhase()"
+            cdkDrag
+            [cdkDragFreeDragPosition]="item.position"
+            [cdkDragDisabled]="true"
+            class="next-phase-btn"
+            [id]="item.nameIdentifier">
+            Next Phase
+          </button>
+
+        }
+
+        @else if (item.type === 'hand') {
+          <!--<div 
+            [ngClass]="item.type"
+            [id]="item.nameIdentifier">
+            {{ item.nameIdentifier }}
+        </div> -->
+        }
+
+        @else {
+
+          <div
+            cdkDrag
+            [cdkDragFreeDragPosition]="item.position"
+            [cdkDragDisabled]="true"
+            [ngClass]="item.type"
+            [id]="item.nameIdentifier">
+            {{ item.nameIdentifier }}
+          </div>
+
+          @let sigmaTopCard = getTopCard(item.nameIdentifier, item.position, isDragging);
+          @if (sigmaTopCard !== null && sigmaTopCard !== undefined) {
+            <app-card-game
+              style="position: absolute;"
+              [cardLayout]="cardLayouts[sigmaTopCard.cardLayoutId]"
+              [card]="sigmaTopCard"
+              [isDragDisabled]="isDragDisabled"
+              (cardDragStart)="onDragStart($event)"
+              (cardDragEnd)="onDrop($event)"
+              (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"
+              (mousemove)="onDragMoved($event)"
+              (cardDoubleClick)="freeModeService.flipCard(sigmaTopCard.id!)"
+            />
+          }
+
+        }
+      }
+
     </div>
-    }
-  </p-panel>
 
-  <p-button (onClick)="startGame()" label="Iniciar jogo" />
-  <p-button (onClick)="endGame()" label="Terminar jogo" />
-</div>
-
-<div class="grid">
-  @for (card of freeModeService.cards(); track card.id) {
-      <app-card-game
-        style="position: absolute;"
-        [cardLayout]="cardLayouts[card.cardLayoutId]"
-        [card]="card"
-        (cardDragStart)="onDragStart($event)"
-        (cardDragEnd)="onDrop($event)"
-        (cardContextMenu)="showOptions($event, card, popover)"
-        (cardDoubleClick)="freeModeService.flipCard(card.id!)"
-      />
-    }
-</div>
-
-<!-- Área de jogo -->
-<div class="game-field" #gameField>
-  
-  @for (item of items; track item; let i = $index) {
-
-    @if (item.type === 'passPhase') {
-
-      <button 
-        (click)="nextPhase()"
-        cdkDrag
-        [cdkDragFreeDragPosition]="item.position"
-        [cdkDragDisabled]="true"
-        class="next-phase-btn"
-        [id]="item.nameIdentifier">
-        Next Phase
-      </button>
-
-    }
-
-    @else if (item.type === 'hand') {
-      <div 
-        [ngClass]="item.type"
-        [id]="item.nameIdentifier">
-        {{ item.nameIdentifier }}
+    <div class="hand-area-container" #handAreaContainer>
+      @if (this.currentPlayer) {
+        @for (card of freeModeService.myHandCards(this.currentPlayer.playerId || ''); track card.id) {
+        <app-card-game
+          style="width: 80px; height: 120px;"
+          [isDisplayOnly]="true"
+          [cardLayout]="cardLayouts[card.cardLayoutId]"
+          [card]="card"
+          (cardDragStart)="onDragStart($event)"
+          (cardDragEnd)="onDrop($event)"
+          (cardContextMenu)="showOptions($event, card, popover)"
+          (mousemove)="onDragMoved($event)"
+          (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+        />
+        }
+      }
+      
     </div>
-    }
+    <div class="hand-area" #handArea></div>
 
-    @else {
+  </div>
 
-      <div
-        cdkDrag
-        [cdkDragFreeDragPosition]="item.position"
-        [cdkDragDisabled]="true"
-        [ngClass]="item.type"
-        [id]="item.nameIdentifier">
-        {{ item.nameIdentifier }}
+  <div class="sidebar-right">
+    <p-button routerLink="/my-games" label="Sair" />
+
+    <p-panel header="{{'rooms.header' | translate}}">
+      @for (player of players; track $index) {
+      <div class="menu-item">
+        {{ player.name }}
       </div>
+      }
+    </p-panel>
 
-    }
-  }
-
+    <p-button (onClick)="startGame()" label="Iniciar jogo" />
+    <p-button (onClick)="endGame()" label="Terminar jogo" />
+  </div>
 </div>
