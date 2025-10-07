@@ -10,7 +10,7 @@
     <p-button icon="pi pi-trash" (onClick)="resetFilter()" />
   </div>
 
-  <app-placeholder-grid>
+  <div class="games-grid">
     <button class="btn-create-game" pButton (click)="showModal()">
       <span class="pi pi-plus" pButtonIcon></span>
       <span pButtonLabel>{{'my-games.create-game' | translate}}</span>
@@ -19,7 +19,7 @@
     @for (gameInfo of filteredGames(); track gameInfo.id) {
       <app-panel-game [gameInfo]="gameInfo" (removeGameInfo)="removeGameInfo($event)"></app-panel-game>
     }
-  </app-placeholder-grid>
+  </div>
 </div>
 
 <app-modal-create-game [(showModal)]="showCreateGameModal" (gameCreated)="loadGames()" />
