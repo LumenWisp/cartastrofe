@@ -1,9 +1,17 @@
-<div class="sidebar-right" [ngClass]="{ 'expanded': sidebarExpanded }">
+<div class="sidebar-right" [ngClass]="{ expanded: sidebarExpanded }">
+  <div class="top-bar">
+    <p-button
+      [routerLink]="['/my-games/game-description', game.id]"
+      label="Voltar"
+    />
 
-  <!-- Botão toggle -->
-  <p-button [icon]="sidebarExpanded ? 'pi pi-angle-right' : 'pi pi-angle-left'"  class="sidebar-toggle" (click)="sidebarExpanded = !sidebarExpanded"/>
-
-  <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+    <!-- Botão toggle -->
+    <p-button
+      [icon]="sidebarExpanded ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+      class="sidebar-toggle"
+      (click)="sidebarExpanded = !sidebarExpanded"
+    />
+  </div>
 
   <div class="toolbox">
     <!-- Botão para adicionar pilha -->
@@ -17,84 +25,91 @@
       <div class="label-preview">Label Attribute</div>
     </div>
   </div>
-
-  <p-button label="Salvar Campo" (click)="saveField()" />
-
   @if (sidebarExpanded) {
-    <div>
-      <span>Atributos do jogo</span>
+  <div class="options">
+    <span>Atributos do jogo</span>
 
-      <div>
-        <input type="text" #nameAttribute pInputText placeholder="Nome do atributo" />
-        <p-button label="Salvar atributo" icon="pi pi-save" (click)="saveAttribute(nameAttribute.value)"/>
-      </div>
-
-      <p-listbox [options]="optionsAttribute" />
-
-      <div>
-        <span>Fases do jogo</span>
-
-        <div>
-          <input type="text" #namePhase pInputText placeholder="Nome da fase" />
-          <p-button label="Salvar fase" icon="pi pi-save" (click)="savePhase(namePhase.value)"/>
-        </div>
-      </div>
-
-      <p-listbox [options]="optionsPhase" />
-
+    <div class="option-input-btn">
+      <input
+        type="text"
+        #nameAttribute
+        pInputText
+        placeholder="Nome do atributo"
+      />
+      <p-button
+        class="add-btn-options"
+        label="Salvar atributo"
+        icon="pi pi-save"
+        (click)="saveAttribute(nameAttribute.value)"
+      />
     </div>
-  }  
 
+    <p-listbox [options]="optionsAttribute" />
+  </div>
+
+  <div class="options">
+    <span>Fases do jogo</span>
+
+    <div class="option-input-btn">
+      <input type="text" #namePhase pInputText placeholder="Nome da fase" />
+      <p-button
+        class="add-btn-options"
+        label="Salvar fase"
+        icon="pi pi-save"
+        (click)="savePhase(namePhase.value)"
+      />
+    </div>
+
+    <p-listbox [options]="optionsPhase" />
+  </div>
+  }
+
+  <p-button class="btn-save-field" label="Salvar Campo" (click)="saveField()" />
 </div>
 
 <!-- Área de jogo -->
 <div class="game-field" #gameField>
-  
-  @for (item of items; track item; let i = $index) {
+  @for (item of items; track item; let i = $index) { @if (item.type ===
+  'passPhase') {
 
-    @if (item.type === 'passPhase') {
+  <button
+    cdkDrag
+    cdkDragBoundary=".game-field"
+    (cdkDragEnded)="onDragEnd($event, 0)"
+    [cdkDragFreeDragPosition]="item.position"
+    class="next-phase-btn"
+  >
+    Next Phase
+  </button>
 
-      <button 
-        cdkDrag 
-        cdkDragBoundary=".game-field"
-        (cdkDragEnded)="onDragEnd($event, 0)"
-        [cdkDragFreeDragPosition]="item.position"
-        class="next-phase-btn">
-        Next Phase
-      </button>
+  } @else if (item.type === 'hand') {
+  <div [ngClass]="item.type">
+    {{ item.nameIdentifier }}
+  </div>
+  } @else {
 
-    }
+  <div
+    cdkDrag
+    cdkDragBoundary=".game-field"
+    (cdkDragEnded)="onDragEnd($event, i)"
+    [cdkDragFreeDragPosition]="item.position"
+    [ngClass]="item.type"
+    (contextmenu)="onItemClick($event, i, popover)"
+  >
+    {{ item.nameIdentifier }}
+  </div>
 
-    @else if (item.type === 'hand') {
-      <div 
-        [ngClass]="item.type">
-        {{ item.nameIdentifier }}
-    </div>
-    }
-
-    @else {
-
-      <div 
-        cdkDrag
-        cdkDragBoundary=".game-field"
-        (cdkDragEnded)="onDragEnd($event, i)"
-        [cdkDragFreeDragPosition]="item.position"
-        [ngClass]="item.type"
-        (contextmenu)="onItemClick($event, i, popover)">
-        {{ item.nameIdentifier }}
-      </div>
-
-    }
-  }
+  } }
   <!-- Popover para menu -->
-   <p-popover #popover>
-      <div class="menu-options">
-        <button pButton type="button" 
-                icon="pi pi-trash" 
-                label="Deletar" 
-                (click)="deleteItem(selectedItemIndex!, popover)">
-        </button>
-      </div>
-    </p-popover>
-
+  <p-popover #popover>
+    <div class="menu-options">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        label="Deletar"
+        (click)="deleteItem(selectedItemIndex!, popover)"
+      ></button>
+    </div>
+  </p-popover>
 </div>
