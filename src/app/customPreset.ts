@@ -59,12 +59,12 @@ export const themePreset = definePreset(Aura, {
     },
     panel: {
       root: {
-        background: '{primary-400}',
+        background: 'white',
         borderColor: '{primary-400}',
-        color: 'white',
+        color: 'black',
       },
       header: {
-        color: 'white',
+        color: 'black',
       },
     },
   },
