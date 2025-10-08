@@ -60,7 +60,7 @@
               (cardDragEnd)="onDrop($event)"
               (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"
               (mousemove)="onDragMoved($event)"
-              (cardDoubleClick)="freeModeService.flipCard(sigmaTopCard.id!)"
+              (cardDoubleClick)="doubleClick(sigmaTopCard.id!)"
             />
           }
 

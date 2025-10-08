@@ -156,9 +156,7 @@ export class RuleBasedRoomComponent implements OnInit{
       mouseY <= rect.bottom;
   }
 
-  /**
-   * Verifica parâmetros da rota e carrega os dados relacionados
-   */
+  //Verifica parâmetros da rota e carrega os dados relacionados
   private async checkQueryParamsGame() {
     const gameId = this.route.snapshot.queryParams['gameId'];
     const game = await this.gameInfoService.getGameInfoById(gameId);
@@ -457,6 +455,12 @@ export class RuleBasedRoomComponent implements OnInit{
   // =================================
   // ==== MOVIMENTAÇÃO DAS CARTAS ====
   // =================================
+
+  // flipar a carta
+  doubleClick(cardId: string){
+    this.freeModeService.flipCard(cardId);
+    this.updateRoom();
+  }
 
   // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
   showOptions(event: MouseEvent, card: CardGame, popover: Popover) {
