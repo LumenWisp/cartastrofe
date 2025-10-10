@@ -4,10 +4,13 @@
             <img src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo" class="logo" height="48" />
             <span>Cartástrofe</span>
         </div>
-        <nav class="desktop-nav">
-            <a routerLink="/login">{{ 'homepage.login' | translate }}</a>
-        </nav>
-        <button id="lang-toggle" class="desktop-lang" (click)="changeLanguage()">{{ currentLanguage }}</button>
+        <div class="menu-group">
+            <nav class="desktop-nav">
+                <a routerLink="/login">{{ 'homepage.login' | translate }}</a>
+                <a routerLink="/register">{{ 'homepage.register' | translate}}</a>
+            </nav>
+            <button id="lang-toggle" class="desktop-lang" (click)="changeLanguage()">{{ currentLanguage }}</button>
+        </div>
         <button id="hamburger-btn" aria-label="Open menu" (click)="openSidebar()">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
             <rect y="7" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
@@ -21,6 +24,7 @@
         <button id="close-sidebar" aria-label="Close menu" (click)="closeSidebar()">&times;</button>
         <nav class="sidebar-nav">
             <a routerLink="/login">{{ 'homepage.login' | translate}}</a>
+            <a routerLink="/register">{{ 'homepage.register' | translate}}</a>
         </nav>
         <button id="sidebar-lang-toggle" (click)="changeLanguage()">{{ currentLanguage }}</button>
         </div>

@@ -13,10 +13,11 @@ import { GameInfoService } from '../../../services/game-info.service';
 import { GameInfoModel } from '../../../types/game-info';
 // enums
 import { GameModesEnum } from '../../../enum/game-modes.enum';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game-description',
-  imports: [SplitterModule, InputTextModule, CardModule, ButtonModule, RouterLink, CommonModule],
+  imports: [SplitterModule, InputTextModule, CardModule, ButtonModule, RouterLink, CommonModule, TranslatePipe],
   templateUrl: './game-description.component.html',
   styleUrl: './game-description.component.css'
 })

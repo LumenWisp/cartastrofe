@@ -4,7 +4,7 @@
     <input
       type="text"
       pInputText
-      placeholder="Search"
+  [placeholder]="'game-edit-cards.search-placeholder' | translate"
       [fluid]="true"
       [(ngModel)]="search"
     />
@@ -15,13 +15,13 @@
     [(ngModel)]="layout"
     [showClear]="true"
     optionLabel="name"
-    placeholder="Select a Card Layout"
+    [placeholder]="'game-edit-cards.card-layout-placeholder' | translate"
   ></p-select>
 </div>
 
 <p-button
   class="save-btn"
-  label="Salvar"
+  [label]="'game-edit-cards.save-button' | translate"
   icon="pi pi-save"
   iconPos="right"
   (click)="saveLayoutsAndCards()"
@@ -40,6 +40,6 @@
 
   </div>
   } @empty {
-  <p>Sem cartas</p>
+    <p>{{'game-edit-cards.empty-message' | translate}}</p>
   }
 </div>

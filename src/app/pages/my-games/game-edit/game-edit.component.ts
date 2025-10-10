@@ -9,10 +9,11 @@ import { GameInfoService } from '../../../services/game-info.service';
 import { ActivatedRoute } from '@angular/router';
 import { GameInfoModel } from '../../../types/game-info';
 import { ToastService } from '../../../services/toast.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game-edit',
-  imports: [TabsModule, SelectModule, FormsModule, ButtonModule],
+  imports: [TabsModule, SelectModule, FormsModule, ButtonModule, TranslatePipe],
   templateUrl: './game-edit.component.html',
   styleUrl: './game-edit.component.css'
 })

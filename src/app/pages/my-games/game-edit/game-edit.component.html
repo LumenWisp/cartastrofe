@@ -1,23 +1,23 @@
 @if (currentGame) {
   <p-tabs value="game-info">
     <p-tablist>
-      <p-tab value="game-info">Jogo</p-tab>
+      <p-tab value="game-info">{{'game' | translate}}</p-tab>
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="game-info">
         <div>
-          <span>Card Layout:</span>
+          <span>{{'card-layout' | translate}}</span>
 
           <p-select
             [options]="cardLayouts"
             [(ngModel)]="cardLayout"
             optionLabel="name"
-            placeholder="Select a Card Layout"
+            placeholder="{{'card-layout-selection-placeholder' | translate}}"
           ></p-select>
         </div>
 
         <p-button
-          label="Salvar"
+          label="{{'save-button' | translate}}"
           icon="pi pi-save"
           iconPos="right"
           (click)="saveGame()"
@@ -26,5 +26,5 @@
     </p-tabpanels>
   </p-tabs>
 } @else {
-  <p>Nenhum jogo encontrado</p>
+  <p>{{'game-edit-page.empty-message' | translate}}</p>
 }

@@ -11,12 +11,14 @@ import { CardGameLayoutComponent } from "../../components/card-game-layout/card-
 import { ButtonModule } from "primeng/button";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card3dComponent } from "../../components/card-3d/card-3d.component";
+import { TranslatePipe } from '@ngx-translate/core';
+import { LoadingService } from '../../services/loading.service';
 
 type CardListItem = { id: string, name: string, layout: string, card: CardGameLayout}
 
 @Component({
   selector: 'app-my-cards',
-  imports: [CardGameLayoutComponent, ButtonModule, Card3dComponent],
+  imports: [CardGameLayoutComponent, ButtonModule, Card3dComponent, TranslatePipe],
   templateUrl: './my-cards.component.html',
   styleUrl: './my-cards.component.css'
 })
@@ -53,6 +55,7 @@ cardName = '';
     private toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute,
+    private loadingService: LoadingService,
   ) {}
 
   isFieldImage() {
@@ -103,14 +106,25 @@ cardName = '';
   }
 
   loadAllCards() {
-    this.cardService.getAllCards().then(cards => {
+    this.loadingService.show();
+
+    this.cardService.getAllCards()
+    .then(cards => {
       this.myAllCards = cards.map(card => ({
         id: card.id,
         name: card.name,
         layout: card.layoutId,
         card: this.cardService.convert(card, this.cardLayouts.find(layout => layout.id === card.layoutId)!)
       }));
-    });
+      this.loadingService.hide();
+    })
+    .catch(() => {
+        this.toastService.showErrorToast(
+          'Erro ao carregar as cartas',
+          'Houve um erro ao carregar as cartas!'
+        );
+        this.loadingService.hide();
+      });;
   }
 
   loadCardLayouts() {

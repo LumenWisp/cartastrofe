@@ -3,20 +3,20 @@
   <aside class="sidebar">
     <div class="sidebar-content">
       <p-floatlabel variant="on" class="floatlabel">
-        <input type="text" pInputText [(ngModel)]="cardName" id="cardName" />
-        <label for="cardName">Card name</label>
+          <input type="text" pInputText [(ngModel)]="cardName" id="cardName" />
+          <label for="cardName">{{'create-card.card-name-label' | translate}}</label>
       </p-floatlabel>
       <div>
-        <span>Card Layout:</span>
+          <span>{{'create-card.card-layout-label' | translate}}</span>
         <p-select
           [options]="cardLayouts"
           [(ngModel)]="cardLayout"
           optionLabel="name"
-          placeholder="Select a Card Layout"
+            [placeholder]="'create-card.card-layout-placeholder' | translate"
         ></p-select>
       </div>
       <p-button
-        [label]="editingCard ? 'Atualizar' : 'Salvar'"
+          [label]="editingCard ? ('create-card.update-button' | translate) : ('create-card.save-button' | translate)"
         icon="pi pi-save"
         iconPos="right"
         (click)="saveCard()"
@@ -34,7 +34,7 @@
     @if (selectedField) {
       <p-floatlabel variant="on" class="floatlabel">
         @if (isFieldImage()) {
-          <p-fileupload mode="basic" chooseLabel="Escolha a imagem" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onSelect($event)" />
+            <p-fileupload mode="basic" [chooseLabel]="'create-card.choose-image-label' | translate" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onSelect($event)" />
         } @else {
           <input
             type="text"
@@ -42,7 +42,7 @@
             [(ngModel)]="selectedField.value"
             id="cardFieldName"
           />
-          <label for="cardFieldName">Card Field Name</label>
+            <label for="cardFieldName">{{'create-card.card-field-name-label' | translate}}</label>
         }
       </p-floatlabel>
     }

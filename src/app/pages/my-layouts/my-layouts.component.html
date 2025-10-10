@@ -1,11 +1,11 @@
 
 <div class="layouts-page">
   <header class="layouts-header">
-    <h1 class="layouts-title">Meus Layouts</h1>
+    <h1 class="layouts-title">{{'my-layouts-page.my-layouts' | translate}}</h1>
     <div class="layouts-actions">
       <button class="btn-create-card-layout" (click)="showModal()">
         <span class="pi pi-plus" pButtonIcon></span>
-        <span pButtonLabel>Criar Layout</span>
+        <span pButtonLabel>{{'my-layouts-page.button-create-layout' | translate}}</span>
       </button>
     </div>
   </header>
@@ -13,7 +13,7 @@
     <div class="layouts-grid">
       @if (cardLayouts.length === 0) {
         <div class="empty-message">
-          Nenhum layout encontrado.
+          {{'layouts-grid.empty-message' | translate}}
         </div>
       } @else {
         @for (cardLayout of cardLayouts; track $index) {
@@ -29,8 +29,8 @@
               <div class="layout-card-title">{{ cardLayout.name }}</div>
 
               <div class="buttons">
-                <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="goToCreateLayoutPage(cardLayout.id!)"></button>
-                <button pButton type="button" icon="pi pi-trash" label="Deletar" (click)="deleteLayout(cardLayout.id!)"></button>
+                <button pButton type="button" icon="pi pi-pencil" label="{{'panel-game.button-edit' | translate}}" (click)="goToCreateLayoutPage(cardLayout.id!)"></button>
+                <button pButton type="button" icon="pi pi-trash" label="{{'panel-game.button-delete' | translate}}" (click)="deleteLayout(cardLayout.id!)"></button>
               </div>
             </div>
           </div>

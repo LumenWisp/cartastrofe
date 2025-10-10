@@ -17,10 +17,12 @@ import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputText } from "primeng/inputtext";
 import { Card3dComponent } from "../../components/card-3d/card-3d.component";
+import { TranslatePipe } from '@ngx-translate/core';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-game-edit-cards',
-  imports: [SelectModule, ButtonModule, FormsModule, PanelModule, CardGameLayoutComponent, CommonModule, IconField, InputIcon, InputText, Card3dComponent],
+  imports: [SelectModule, ButtonModule, FormsModule, PanelModule, CardGameLayoutComponent, CommonModule, IconField, InputIcon, InputText, Card3dComponent, TranslatePipe],
   templateUrl: './game-edit-cards.component.html',
   styleUrl: './game-edit-cards.component.css'
 })
@@ -49,6 +51,7 @@ export class GameEditCardsComponent {
     private toastService: ToastService,
     private route: ActivatedRoute,
     public cardService: CardService,
+    private loadingService: LoadingService,
   ) {
     this.loadCardLayouts();
     this.loadCurrentGame();
@@ -56,13 +59,24 @@ export class GameEditCardsComponent {
   }
 
   loadCards() {
-    this.cardService.getAllCards().then(cards => {
-      this.allCards.set(cards.map(card => {
-        const layout = this.cardLayouts.find(l => l.id === card.layoutId)!;
-        const obj = this.convert(card, layout);
-        return { cardGame: obj, cardModel: card }
-      }))
-    })
+    this.loadingService.show();
+
+    this.cardService.getAllCards()
+      .then(cards => {
+        this.allCards.set(cards.map(card => {
+          const layout = this.cardLayouts.find(l => l.id === card.layoutId)!;
+          const obj = this.convert(card, layout);
+          return { cardGame: obj, cardModel: card }
+        }))
+      this.loadingService.hide();
+      })
+      .catch(() => {
+        this.toastService.showErrorToast(
+          'Erro ao carregar cartas',
+          'Não foi possível carregar as cartas. Tente novamente mais tarde.'
+        );
+      this.loadingService.hide();
+      });
   }
 
   convert(card: CardModel, cardLayout: CardLayoutModel) {

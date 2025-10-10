@@ -2,7 +2,7 @@
   <div class="top-bar">
     <p-iconfield class="search-field">
       <p-inputicon class="pi pi-search" />
-      <input type="text" pInputText placeholder="Search" [fluid]="true" [(ngModel)]="search" />
+      <input type="text" pInputText placeholder="{{'search-field-placeholder' | translate}}" [fluid]="true" [(ngModel)]="search" />
     </p-iconfield>
 
     <p-selectbutton [options]="modes" [(ngModel)]="gameMode" />

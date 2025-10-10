@@ -22,6 +22,7 @@ import { ToastService } from '../../../services/toast.service';
 // components
 import { CardLayoutFieldInfoComponent } from '../../../components/card-layout-field-info/card-layout-field-info.component';
 import { CardGameLayoutComponent } from '../../../components/card-game-layout/card-game-layout.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-layout',
@@ -36,6 +37,7 @@ import { CardGameLayoutComponent } from '../../../components/card-game-layout/ca
     CommonModule,
     CardLayoutFieldInfoComponent,
     CardGameLayoutComponent,
+    TranslatePipe
   ],
   templateUrl: './create-layout.component.html',
   styleUrl: './create-layout.component.css',

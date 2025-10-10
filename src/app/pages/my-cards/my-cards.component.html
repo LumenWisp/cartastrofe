@@ -1,10 +1,10 @@
 <div class="layouts-page">
     <header class="layouts-header">
-    <h1 class="layouts-title">Minhas Cartas</h1>
+    <h1 class="layouts-title">{{'my-cards-page.my-cards' | translate}}</h1>
     <div class="layouts-actions">
         <button class="btn-create-card" (click)="goToCreateCardPage()">
         <span class="pi pi-plus" pButtonIcon></span>
-        <span pButtonLabel>Criar Carta</span>
+        <span pButtonLabel>{{'my-cards-page.button-create-card' | translate}}</span>
         </button>
     </div>
     </header>
@@ -20,14 +20,14 @@
                     <div class="card-title">{{ cardObj.name }}</div>
 
                     <div class="buttons">
-                        <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="goToCreateCardPage(cardObj.id!)"></button>
-                        <button pButton type="button" icon="pi pi-trash" label="Deletar" (click)="deleteCard(cardObj)"></button>
+                        <button pButton type="button" icon="pi pi-pencil" label="{{'panel-game.button-edit' | translate}}" (click)="goToCreateCardPage(cardObj.id!)"></button>
+                        <button pButton type="button" icon="pi pi-trash" label="{{'panel-game.button-delete' | translate}}" (click)="deleteCard(cardObj)"></button>
                     </div>
                 </div>
             </div>
         } @empty {
             <div class="empty-message">
-                Nenhuma carta encontrada.
+                {{'cards-grid.empty-message' | translate}}
             </div>
         }
     </div>
