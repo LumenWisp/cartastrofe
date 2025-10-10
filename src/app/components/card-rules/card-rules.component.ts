@@ -49,6 +49,7 @@ export class CardRulesComponent {
 
   private workspace!: Blockly.WorkspaceSvg;
   selectedCategory: string = '';
+  selectedCategoryTitle: string = '';
 
   //Lista de categorias do blockly que não devem carregar um workspace
   // Ou seja, são categorias utilitárias
@@ -78,6 +79,8 @@ export class CardRulesComponent {
       },
     });
 
+    this.workspace.cardId = '';
+
     // Escutar evento de seleção da toolbox
     this.workspace.addChangeListener((event) => {
       if (event.type === Blockly.Events.TOOLBOX_ITEM_SELECT) {
@@ -87,11 +90,12 @@ export class CardRulesComponent {
 
         if (
           categoryName &&
-          categoryName != this.selectedCategory &&
+          categoryName != this.selectedCategoryTitle &&
           !this.utilsFields.includes(categoryName) &&
           !this.generalFields.includes(categoryName)
         ) {
           // Nome da categoria clicada
+          this.selectedCategoryTitle = categoryName;
           this.selectedCategory = categoryName.replace(/\s+/g, '');
           this.selectedCategory =
             this.selectedCategory.charAt(0).toLowerCase() +
@@ -112,7 +116,12 @@ export class CardRulesComponent {
   async selectCard(cardObj: CardListItem) {
     this.cardSelected = cardObj;
     if(this.cardSelected){
+      this.workspace.cardId = this.cardSelected.id;
       await this.getCardSelectedWorkSpace();
+
+      if(this.selectedCategory){
+        this.loadWorkSpaceState();
+      }
     }
   }
 
@@ -174,14 +183,23 @@ export class CardRulesComponent {
 
   async saveStringCode(): Promise<void> {
     const code = javascriptGenerator.workspaceToCode(this.workspace);
-    console.log(code);
-    console.log(code.length);
 
     if (this.game && this.cardSelected) {
       const key: string = this.selectedCategory + 'Code';
-      await this.cardService.updateCardRules(this.cardSelected.id, {
-        [key]: code,
-      });
+
+      if(!this.selectedCategory.startsWith('onPhase')){
+        console.log(code);
+        await this.cardService.updateCardRules(this.cardSelected.id, {
+          [key]: code,
+        });
+      }
+      else{
+        const codes = code.split('\n\n');
+        console.log(codes);
+        await this.cardService.updateCardRules(this.cardSelected.id, {
+          [key]: codes,
+        });
+      }
 
       console.log('String do código salvo com sucesso!');
     }

@@ -401,7 +401,6 @@ export function registerBlocks() {
       this.setColour(335);
     }
   };
-
   
   // 🚀 GET LAST PILE ID VALUE
   Blockly.Blocks['getLastPileIdValue'] = {
@@ -596,8 +595,11 @@ export function registerGenerators() {
     const value_phase = block.getFieldValue('PHASE');
     const value_pile = block.getFieldValue('PILE');
 
+    const cardId =  (block.workspace as Blockly.WorkspaceSvg).cardId;
+
     // TODO: Assemble javascript into the code variable.
-    const code = "(card.ruledPileId == " + `'${value_pile}'` + ") && (room.state.currentphase == " + `'${value_phase}'` + ")";
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards())";
     return [code, Order.NONE];
   };
 

@@ -81,7 +81,7 @@
           (cardDragEnd)="onDrop($event)"
           (cardContextMenu)="showOptions($event, card, popover)"
           (mousemove)="onDragMoved($event)"
-          (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+          (cardDoubleClick)="doubleClick(card.id!)"
         />
         }
       }

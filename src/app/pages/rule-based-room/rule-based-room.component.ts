@@ -78,8 +78,8 @@ export class RuleBasedRoomComponent implements OnInit{
   winConditionCode: string = '';
 
   //pilha de códigos para rodar com base em triggers
-  onPhaseStartCodeList: string[] = [];
-  onPhaseEndCodeList: string[] = [];
+  onPhaseStartCodeList!: TriggersList;
+  onPhaseEndCodeList!: TriggersList;
 
   //movimentaão das cartas
   isDragging: string = "";
@@ -222,7 +222,8 @@ export class RuleBasedRoomComponent implements OnInit{
               belongsTo: null,
               ruledLastPileId: firstRuledPileId,
               ruledPileId: firstRuledPileId,
-              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null
+              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null,
+              onPhaseStartCode: cardStringCodes.find((item: any) => item.id == card.id).onPhaseStartCode || null
             })
           }
         }
@@ -269,6 +270,14 @@ export class RuleBasedRoomComponent implements OnInit{
 
               if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
                 this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+                if(this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]]){
+                  this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]].forEach((code) => {
+                    if(code){
+                      this.runStringCode(code);
+                    }
+                  });
+                  //this.roomService.updateRoom(this.room.id, {state: {...this.room.state!}});
+                }
                 this.isDragDisabled = false;
               }
               else{
@@ -300,6 +309,15 @@ export class RuleBasedRoomComponent implements OnInit{
             else{
               this.phases = ['fase 1', 'fase 2', 'fase 3']
             }
+
+            this.phases.forEach((phase) => {
+              this.onPhaseStartCodeList = {...this.onPhaseStartCodeList, [phase]: []};
+              this.onPhaseEndCodeList = {...this.onPhaseEndCodeList, [phase]: []};
+            });
+
+            this.loadOnPhaseStartTriggers();
+
+            console.log(this.onPhaseStartCodeList);
           }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
@@ -374,8 +392,8 @@ export class RuleBasedRoomComponent implements OnInit{
       this.phases,
       this.currentPhaseNumber,
       card ?? null,
-      card.ruledPileId ?? null,
-      card.ruledLastPileId ?? null,
+      card?.ruledPileId ?? null,
+      card?.ruledLastPileId ?? null,
       stringCode
     );
   }
@@ -418,7 +436,15 @@ export class RuleBasedRoomComponent implements OnInit{
     this.currentPhaseNumber++;
 
     if(this.currentPhaseNumber < this.phases.length){
+      this.room.state!['currentphase'] = this.phases[this.currentPhaseNumber];
       this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+      if(this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]]){
+        this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]].forEach((code) => {
+          if(code){
+            this.runStringCode(code);
+          }
+        });
+      }
       this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
     }
     else{
@@ -435,6 +461,26 @@ export class RuleBasedRoomComponent implements OnInit{
   endGame(){
     this.isGameOcurringHTML = false;
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
+  }
+
+  loadOnPhaseStartTriggers(){
+    this.freeModeService.cards().forEach((card) => {
+      if(card.onPhaseStartCode){
+
+        card.onPhaseStartCode.forEach((cardOnPhaseStart) => {
+          if(cardOnPhaseStart.startsWith("if ((room.state.currentphase == ")){
+
+            const finalPhaseIndex = cardOnPhaseStart.indexOf("'", 33);
+            const phaseName = cardOnPhaseStart.substring(33, finalPhaseIndex);
+
+            console.log("KKKKK", phaseName);
+            if(this.phases.includes(phaseName)){
+              this.onPhaseStartCodeList[phaseName].push(cardOnPhaseStart);
+            }
+          }
+        })
+      }
+    });
   }
 
   async updateRoom(): Promise<void>{
@@ -594,4 +640,12 @@ export class RuleBasedRoomComponent implements OnInit{
     this.updateRoom()
   }
 
+}
+
+// =================================
+// ==== TIPAGENS PARA FACILITAR ====
+// =================================
+
+interface TriggersList{
+  [key: string]: string[];
 }
