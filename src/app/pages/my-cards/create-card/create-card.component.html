@@ -1,48 +1,50 @@
 
-<div>
-<p-floatlabel variant="on" class="floatlabel">
-  <input type="text" pInputText [(ngModel)]="cardName" id="cardName" />
-  <label for="cardName">Card name</label>
-</p-floatlabel>
-
-<div>
-  <span>Card Layout:</span>
-
-  <p-select
-    [options]="cardLayouts"
-    [(ngModel)]="cardLayout"
-    optionLabel="name"
-    placeholder="Select a Card Layout"
-  ></p-select>
-</div>
-</div>
-
-@if (cardGame()) {
-<app-card-game-layout
-  class="card-layout-preview"
-  [cardLayout]="cardGame()!"
-  (cardLayoutFieldClicked)="clickCardField($event)"
-/>
-} @if (selectedField) {
-
-  <p-floatlabel variant="on" class="floatlabel">
-      @if (isFieldImage()) {
-        <p-fileupload mode="basic" chooseLabel="Escolha a imagem" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onSelect($event)" />
-    } @else {
-      <input
-        type="text"
-        pInputText
-        [(ngModel)]="selectedField.value"
-        id="cardFieldName"
+<div class="create-card-layout">
+  <aside class="sidebar">
+    <div class="sidebar-content">
+      <p-floatlabel variant="on" class="floatlabel">
+        <input type="text" pInputText [(ngModel)]="cardName" id="cardName" />
+        <label for="cardName">Card name</label>
+      </p-floatlabel>
+      <div>
+        <span>Card Layout:</span>
+        <p-select
+          [options]="cardLayouts"
+          [(ngModel)]="cardLayout"
+          optionLabel="name"
+          placeholder="Select a Card Layout"
+        ></p-select>
+      </div>
+      <p-button
+        [label]="editingCard ? 'Atualizar' : 'Salvar'"
+        icon="pi pi-save"
+        iconPos="right"
+        (click)="saveCard()"
       />
-      <label for="cardFieldName">Card Field Name</label>
+    </div>
+  </aside>
+  <main class="main-content">
+    @if (cardGame()) {
+      <app-card-game-layout
+        class="card-layout-preview"
+        [cardLayout]="cardGame()!"
+        (cardLayoutFieldClicked)="clickCardField($event)"
+      />
     }
-    </p-floatlabel>
-}
-
-<p-button
-  [label]="editingCard ? 'Atualizar' : 'Salvar'"
-  icon="pi pi-save"
-  iconPos="right"
-  (click)="saveCard()"
-/>
+    @if (selectedField) {
+      <p-floatlabel variant="on" class="floatlabel">
+        @if (isFieldImage()) {
+          <p-fileupload mode="basic" chooseLabel="Escolha a imagem" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onSelect($event)" />
+        } @else {
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="selectedField.value"
+            id="cardFieldName"
+          />
+          <label for="cardFieldName">Card Field Name</label>
+        }
+      </p-floatlabel>
+    }
+  </main>
+</div>

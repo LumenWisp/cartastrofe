@@ -1,12 +1,49 @@
-.card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  width: 200px;
-  height: 300px;
-  border: 1px solid #000000;
-  background-color: #ffffff;
+.create-card-layout {
+  display: flex;
+}
+
+.sidebar {
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(44,62,80,0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: fixed;
+  left: 0;
+  height: 100%;
+  z-index: 10;
+  border-right: none;
+}
+.sidebar-content {
+  padding: 40px 28px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sidebar-content .floatlabel {
+  margin-bottom: 18px;
+}
+.sidebar-content > div {
+  margin-bottom: 18px;
+}
+.sidebar-content span {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+.sidebar-content p-select {
+  margin-bottom: 18px;
+}
+
+.main-content {
+  margin-left: 320px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .card-layout-preview {
@@ -15,21 +52,7 @@
   height: min-content;
   margin-block: 20px;
   border: 1px solid #000000;
-}
-
-.list-cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.card-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.card-col-buttons {
-  display: flex;
-  justify-content: space-between;
+  background-color: #ffffff;
+  box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+  padding: 1rem;
 }
