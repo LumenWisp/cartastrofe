@@ -84,8 +84,6 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   async saveStringCode(): Promise<void> {
     const code = javascriptGenerator.workspaceToCode(this.workspace);
-    console.log(code);
-    console.log(code.length);
 
     if(this.game){
       const key: string = this.selectedCategory + 'Code';
@@ -100,7 +98,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
         const codes = code.split('\n\n');
         console.log(codes);
         await this.gameInfoService.updateGameInfo(this.game.id, {
-          [key]: code,
+          [key]: codes,
         });
       }
 
