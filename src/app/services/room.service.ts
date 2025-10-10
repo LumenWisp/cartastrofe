@@ -29,6 +29,8 @@ import { PlayerEntity } from '../types/player';
 import { UserEntity } from '../types/user';
 import { RoomRolesEnum } from '../enum/room-roles.enum';
 import { FreeModeService } from './free-mode.service';
+import { CardGame } from '../types/card';
+import { GameFieldItem } from '../types/game-field-item';
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +45,9 @@ export class RoomService {
     private freeModeService: FreeModeService
   ) {}
 
-  //==================== MÉTODOS PARA ROOM
+  // =================================
+  // ======= MÉTODOS PARA ROOM =======
+  // =================================
 
   async updateRoom(id: string, item: Partial<Room>): Promise<void> {
     if (!id) {
@@ -79,7 +83,7 @@ export class RoomService {
       const roomState: RoomState = {
         isGameOcurring: false,
         gameId: gameId,
-        cards: this.freeModeService.cards() //DADOS MOCKADOS.
+        //cards: this.freeModeService.cards() //DADOS MOCKADOS.
       };
 
       const updatedRoom: Room = {
@@ -193,7 +197,9 @@ export class RoomService {
     }
   }
 
-  //==================== MÉTODOS PARA JOGADORES
+  // ==================================
+  // ===== MÉTODOS PARA JOGADORES =====
+  // ==================================
 
   // Observa a subcoleção de jogadores esperando uma mudança para atualizar para todos
   listenPlayers(roomId: string): Observable<PlayerEntity[]> {
@@ -218,8 +224,6 @@ export class RoomService {
     role: RoomRolesEnum
   ): Promise<PlayerEntity> {
     const currentUser = this.userService.currentUser();
-
-    console.log("SFDGBHBFSDHGBGBRSDIYBGV")
 
     if (!currentUser) throw new Error('Usuário não está logado')
 
@@ -316,6 +320,145 @@ export class RoomService {
       }
 
       return result[0];
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+
+  // ======================================
+  // == MÉTODOS PARA DEMAIS SUB COLEÇÕES ==
+  // ======================================
+
+  //==================== MÉTODOS PARA CARDS
+
+  // Observa a subcoleção de cartas esperando uma mudança para atualizar para todos
+  listenCards(roomId: string): Observable<CardGame[]> {
+    const refCollection = collection(
+      this.firestore,
+      this.path,
+      roomId,
+      'cards'
+    );
+
+    try {
+      return collectionData(refCollection) as Observable<CardGame[]>;
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async createCard(
+    roomId: string,
+    card: CardGame
+  ): Promise<CardGame> {
+    const currentUser = this.userService.currentUser();
+
+    if (!currentUser) throw new Error('Usuário não está logado')
+
+    const refCollection = collection(
+      this.firestore,
+      this.path,
+      roomId,
+      'cards'
+    );
+
+    try {
+      const cardId: string = card.id;
+
+      await setDoc(doc(refCollection, cardId), card);
+
+      return card;
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async updateCard(
+    roomId: string,
+    cardId: string,
+    card: Partial<CardGame>
+  ): Promise<void> {
+    const cardRef = doc(
+      this.firestore,
+      this.path,
+      roomId,
+      'cards',
+      cardId
+    );
+
+    try {
+      await setDoc(cardRef, card, { merge: true });
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  //==================== MÉTODOS PARA RULEDPILES
+
+  // Observa a subcoleção de ruledPiles esperando uma mudança para atualizar para todos
+  listenRuledPiles(roomId: string): Observable<GameFieldItem[]> {
+    const refCollection = collection(
+      this.firestore,
+      this.path,
+      roomId,
+      'ruledPiles'
+    );
+
+    try {
+      return collectionData(refCollection) as Observable<GameFieldItem[]>;
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async createRuledPile(
+    roomId: string,
+    ruledPile: GameFieldItem
+  ): Promise<GameFieldItem> {
+    const currentUser = this.userService.currentUser();
+
+    if (!currentUser) throw new Error('Usuário não está logado')
+
+    const refCollection = collection(
+      this.firestore,
+      this.path,
+      roomId,
+      'ruledPiles'
+    );
+
+    try {
+      const ruledPileId: string = ruledPile.nameIdentifier;
+
+      await setDoc(doc(refCollection, ruledPileId), ruledPile);
+
+      return ruledPile;
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
+  async updateRuledPile(
+    roomId: string,
+    ruledPileId: string,
+    ruledPile: Partial<GameFieldItem>
+  ): Promise<void> {
+    const ruledPileRef = doc(
+      this.firestore,
+      this.path,
+      roomId,
+      'ruledPiles',
+      ruledPileId
+    );
+
+    try {
+      await setDoc(ruledPileRef, ruledPile, { merge: true });
     } catch (error) {
       console.error(' Firestore Error:', error);
       throw error;

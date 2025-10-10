@@ -61,6 +61,7 @@ export class RuleBasedRoomComponent implements OnInit{
   // Subscrições
     private playerSubscription?: Subscription;
     private roomSubscription?: Subscription;
+    private cardSubscription?: Subscription;
 
   @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
   @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
@@ -130,6 +131,9 @@ export class RuleBasedRoomComponent implements OnInit{
       if (this.roomSubscription) {
         this.roomSubscription.unsubscribe();
       }
+      if (this.cardSubscription) {
+        this.cardSubscription.unsubscribe();
+      }
     }
   }
 
@@ -192,6 +196,7 @@ export class RuleBasedRoomComponent implements OnInit{
         if (this.room.state) {
           const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
           const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId);
+          
           const ruledPiles = await this.gameInfoService.getRuledPiles(this.room.state.gameId);
           ruledPiles[0].cardIds = cards.map(c => c.id);
           const firstRuledPileId = ruledPiles[0].nameIdentifier;
@@ -210,7 +215,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
           // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
           for (const card of cards) {
-            this.freeModeService.addCard({
+            const cardGame = {
               name: card.name,
               cardLayoutId: card.layoutId,
               data: card.data,
@@ -226,7 +231,10 @@ export class RuleBasedRoomComponent implements OnInit{
               onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null,
               onPhaseStartCode: cardStringCodes.find((item: any) => item.id == card.id).onPhaseStartCode || null,
               onPhaseEndCode: cardStringCodes.find((item: any) => item.id == card.id).onPhaseEndCode || null
-            })
+            }
+
+            this.freeModeService.addCard(cardGame)
+            this.roomService.createCard(this.room.id, cardGame);
           }
         }
 
@@ -236,59 +244,13 @@ export class RuleBasedRoomComponent implements OnInit{
         await this.updateRoom();
 
         //ouve as mudanças feitas na subcoleção de usuários
-        this.playerSubscription = this.roomService
-          .listenPlayers(this.room.id)
-          .subscribe((players) => {
-            this.players = players;
-          });
+        this.subscribePlayers();
 
         //ouve as mudanças feitas no documento dessa sala
-        this.roomSubscription = this.roomService
-          .listenRoom(this.room.id)
-          .subscribe(async (room) => {
-            
-            if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
-              //console.log('NOVA SALA: ', room)
-              if(room.state?.isGameOcurring === false){
-                //room.state['isGameOcurring'] = false;
-                //console.log("SKIBIDI 1")
-                this.toastService.showSuccessToast('', 'Fim de jogo');
-              }
-              else if(room.state?.isGameOcurring != undefined){
-                //room.state['isGameOcurring'] = true;
-                //console.log("SKIBIDI 2")
-                this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
-              }
-            }
+        this.subscribeRoom();
 
-            if((this.currentPhaseNumber < 0) || (this.phases[this.currentPhaseNumber] != room.state?.currentphase)){
-              this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
-            }
-
-            if((room.state?.currentPlayerToPlay && this.currentPlayerToPlay == undefined) || (this.currentPlayerToPlay && this.currentPlayerToPlay.playerId != room.state?.currentPlayerToPlay)){
-              const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
-              this.currentPlayerToPlay = currentPlayerToPlay!;
-              this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
-
-              if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
-                this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
-                this.runOnPhaseStartTriggers();
-                this.isDragDisabled = false;
-              }
-              else{
-                this.isDragDisabled = true;
-              }
-            }
-
-            this.room = room;
-            if(room.state?.cards){
-              this.freeModeService.cards.set(room.state.cards);
-            }
-
-            if(room.state?.ruledPiles){
-              this.freeModeService.ruledPiles = room.state.ruledPiles;
-            }
-          });
+        //ouve as mudanças feitas na subcoleção de cartas
+        this.subscribeCards();
 
 
         // Carregar o campo do jogo
@@ -559,11 +521,6 @@ export class RuleBasedRoomComponent implements OnInit{
     }
   }
 
-  async updateRoom(): Promise<void>{
-    const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
-    this.roomService.updateRoom(this.room.id, { state: newState });
-  }
-
   private goToLoginPage(roomLink: string) {
     const queryParams: any = {
       roomUrl: "/ruled-rooms/" + roomLink,
@@ -575,13 +532,98 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   // =================================
+  // ======= MÉTODOS DE UPDATE =======
+  // =================================
+
+  async updateRoom(): Promise<void>{
+    //const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
+    const newState: RoomState = {...this.room.state!, ruledPiles: this.freeModeService.ruledPiles};
+    this.roomService.updateRoom(this.room.id, { state: newState });
+  }
+
+  // =================================
+  // ========== SUBSCRIÇÕES ==========
+  // =================================
+
+  //ouve as mudanças feitas no documento dessa sala
+  private subscribeRoom(){
+    this.roomSubscription = this.roomService
+      .listenRoom(this.room.id)
+      .subscribe(async (room) => {
+
+        if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
+          //console.log('NOVA SALA: ', room)
+          if(room.state?.isGameOcurring === false){
+            //room.state['isGameOcurring'] = false;
+            //console.log("SKIBIDI 1")
+            this.toastService.showSuccessToast('', 'Fim de jogo');
+          }
+          else if(room.state?.isGameOcurring != undefined){
+            //room.state['isGameOcurring'] = true;
+            //console.log("SKIBIDI 2")
+            this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
+          }
+        }
+
+        if((this.currentPhaseNumber < 0) || (this.phases[this.currentPhaseNumber] != room.state?.currentphase)){
+          this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
+        }
+
+        if((room.state?.currentPlayerToPlay && this.currentPlayerToPlay == undefined) || (this.currentPlayerToPlay && this.currentPlayerToPlay.playerId != room.state?.currentPlayerToPlay)){
+          const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
+          this.currentPlayerToPlay = currentPlayerToPlay!;
+          this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
+          if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
+            this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+            this.runOnPhaseStartTriggers();
+            this.isDragDisabled = false;
+          }
+          else{
+            this.isDragDisabled = true;
+          }
+        }
+
+        this.room = room;
+
+        //if(room.state?.cards){
+        //  this.freeModeService.cards.set(room.state.cards);
+        //}
+        if(room.state?.ruledPiles){
+          this.freeModeService.ruledPiles = room.state.ruledPiles;
+        }
+      });
+  }
+
+  //ouve as mudanças feitas na subcoleção de usuários
+  private subscribePlayers(){
+    this.playerSubscription = this.roomService
+      .listenPlayers(this.room.id)
+      .subscribe((players) => {
+        this.players = players;
+      });
+  }
+
+  //ouve as mudanças feitas na subcoleção de cartas
+  private subscribeCards(){
+    this.cardSubscription = this.roomService
+      .listenCards(this.room.id)
+      .subscribe((cards) => {
+        this.freeModeService.cards.set(cards);
+      });
+  }
+
+  //ouve as mudanças feitas na subcoleção de cartas
+
+  // =================================
   // ==== MOVIMENTAÇÃO DAS CARTAS ====
   // =================================
 
   // flipar a carta
-  doubleClick(cardId: string){
+  async doubleClick(cardId: string){
     this.freeModeService.flipCard(cardId);
-    this.updateRoom();
+    //this.updateRoom();
+    const card = this.freeModeService.getCardById(cardId);
+    await this.roomService.updateCard(this.room.id, cardId, {flipped: card!.flipped});
   }
 
   // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
@@ -714,6 +756,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     //await new Promise(resolve => setTimeout(resolve, 132));
     this.updateRoom()
+    await this.roomService.updateCard(this.room.id, draggedCard!.id, draggedCard!);
   }
 
 }
