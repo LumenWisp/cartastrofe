@@ -24,6 +24,7 @@ export class AppHeaderComponent {
   ngOnInit() {
     forkJoin({
       myGames: this.translateService.get('app-main.menu-items.my-games'),
+      myCards: this.translateService.get('app-main.menu-items.my-cards'),
       myLayouts: this.translateService.get('app-main.menu-items.my-layouts'),
       createRoom: this.translateService.get('app-main.menu-items.create-room'),
       logout: this.translateService.get('app-main.menu-items.logout'),
@@ -35,7 +36,7 @@ export class AppHeaderComponent {
           routerLink: '/my-games',
         },
         {
-          label: 'Minhas Cartas',
+          label: translations.myCards,
           icon: 'pi pi-clone',
           routerLink: '/my-cards'
         },
@@ -56,7 +57,7 @@ export class AppHeaderComponent {
           icon: 'pi pi-sign-out',
           command: () => {
             this.userService.logout();
-            this.router.navigate(['login']);
+            this.router.navigate(['']);
           },
         },
       ];

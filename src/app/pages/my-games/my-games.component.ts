@@ -72,7 +72,6 @@ export class MyGamesComponent {
 
   ngOnInit() {
     this.loadGames();
-    this.loadingService.hide();
 
     forkJoin({
       gameModeStructured: this.translateService.get('game-mode.structured'),
@@ -91,11 +90,16 @@ export class MyGamesComponent {
   }
 
   loadGames() {
+    this.loadingService.show();
+
     this.gameInfoService.getGameInfos()
       .then(games => {
         this.games.set(games);
+        this.loadingService.hide();
+
       }).catch(() => {
         this.toastService.showErrorToast('Erro ao carregar os jogos', 'Houve um erro ao carregar os jogos!')
+        this.loadingService.hide();
       })
   }
 

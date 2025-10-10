@@ -12,8 +12,8 @@
 
   <ng-template #footer> 
     <div class="buttons">
-        <button pButton type="button" icon="pi pi-pencil" label="Editar" [routerLink]="['game-description', gameInfo.id]"></button>
-        <button pButton type="button" icon="pi pi-trash" label="Deletar" (click)="deleteGame()"></button>
+        <button pButton type="button" icon="pi pi-pencil" label="{{'panel-game.button-edit' | translate}}" [routerLink]="['game-description', gameInfo.id]"></button>
+        <button pButton type="button" icon="pi pi-trash" label="{{'panel-game.button-delete' | translate}}" (click)="deleteGame()"></button>
     </div>
   </ng-template>
 </p-panel>

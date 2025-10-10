@@ -118,6 +118,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
         console.log('Email ou senha inválidos');
       }
     }
+    this.loadingService.hide();
   }
   
   goToRegisterPage() {

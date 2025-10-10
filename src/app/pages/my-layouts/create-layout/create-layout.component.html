@@ -1,18 +1,18 @@
-<p-drawer [(visible)]="menuVisible" header="Card Layout">
+<p-drawer [(visible)]="menuVisible" [header]="'create-layout.drawer-header' | translate">
   <p-menu [model]="menuItems"></p-menu>
 </p-drawer>
 
 <div class="layout">
   <p-button
     class="lateral-menu-btn"
-    label="Menu"
+  [label]="'create-layout.menu-button' | translate"
     icon="pi pi-arrow-right"
     iconPos="right"
     (click)="menuVisible = true"
   />
   <p-button
     class="save-btn"
-    label="Salvar"
+  [label]="'create-layout.save-button' | translate"
     icon="pi pi-save"
     iconPos="right"
     (click)="saveCardLayout()"

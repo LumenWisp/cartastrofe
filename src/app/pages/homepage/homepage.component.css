@@ -22,6 +22,11 @@ header {
     background: var(--card-bg);
     box-shadow: var(--shadow);
 }
+.menu-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
 .logo {
     font-size: 2rem;
     font-weight: 700;
