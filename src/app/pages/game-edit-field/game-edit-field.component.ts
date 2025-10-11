@@ -37,7 +37,7 @@ export class GameEditFieldComponent implements OnInit{
     this.items.push({
       type: GameFieldItemEnum.PILE,
       position: {x: 0, y: 0},
-      nameIdentifier: `item_${this.items.length}`
+      nameIdentifier: `PILHA_${this.items.length}`
     });
   }
 

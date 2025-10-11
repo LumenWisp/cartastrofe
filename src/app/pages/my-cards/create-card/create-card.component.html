@@ -3,7 +3,7 @@
   <aside class="sidebar">
     <div class="sidebar-content">
       <p-floatlabel variant="on" class="floatlabel">
-          <input type="text" pInputText [(ngModel)]="cardName" id="cardName" />
+          <input type="text" pInputText [(ngModel)]="cardName" id="cardName" autocomplete="off"/>
           <label for="cardName">{{'create-card.card-name-label' | translate}}</label>
       </p-floatlabel>
       <div>
@@ -41,6 +41,7 @@
             pInputText
             [(ngModel)]="selectedField.value"
             id="cardFieldName"
+            autocomplete="off"
           />
             <label for="cardFieldName">{{'create-card.card-field-name-label' | translate}}</label>
         }
