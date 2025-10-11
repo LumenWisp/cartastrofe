@@ -58,6 +58,7 @@ export const toolbox = {
       contents: [
         { kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
       ]
@@ -140,6 +141,7 @@ export const toolboxCard = {
       contents: [
         { kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
       ]
@@ -267,13 +269,14 @@ export function registerBlocks() {
   // 🚀 CHANGE ATTRIBUTE FROM CARD TO
   Blockly.Blocks['ChangeAttributeFromCardTo'] = {
     init: function() {
-      this.appendValueInput('ATTRIBUTE').appendField('ChangeAttribute');
       this.appendDummyInput()
+        .appendField('Change Attribute')
+        .appendField(new Blockly.FieldTextInput('Attribute'), 'ATTRIBUTE')
         .appendField('From')
-        .appendField(new Blockly.FieldTextInput('value_card'), 'CARD');
+        .appendField(new Blockly.FieldTextInput('Card'), 'CARD');
       this.appendDummyInput()
         .appendField('To')
-        .appendField(new Blockly.FieldTextInput('new_attribute'), 'NEW_ATTRIBUTE');
+        .appendField(new Blockly.FieldTextInput('New_attribute_Value'), 'NEW_ATTRIBUTE_VALUE');
       this.setInputsInline(true);
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
@@ -322,6 +325,18 @@ export function registerBlocks() {
     init: function() {
       this.appendDummyInput('NextPhase')
         .appendField('NextPhase');
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 RANDOMIZE ALL CARDS FROM PILE
+  Blockly.Blocks['randomizePile'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Randomize All Cards From')
+        .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null);
       this.setColour(225);
@@ -510,12 +525,14 @@ export function registerGenerators() {
   // CHANGE ATTRIBUTE FROM CARD TO
   javascriptGenerator.forBlock['ChangeAttributeFromCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_attribute = generator.valueToCode(block, 'ATTRIBUTE', Order.ATOMIC);
-    const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
-    const text_new_attribute = block.getFieldValue('NEW_ATTRIBUTE');
+
+    const attribute_name = block.getFieldValue('ATTRIBUTE');
+    const card_value = block.getFieldValue('CARD');
+    const new_attribute_value = block.getFieldValue('NEW_ATTRIBUTE_VALUE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `blockCodeGeneratorsService.changeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
+    //const code = `blockCodeGeneratorsService.changeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
+    const code = ''
     return code;
   };
 
@@ -579,6 +596,21 @@ export function registerGenerators() {
     
     return code;
   }
+
+  // RANDOMIZE ALL CARDS FROM PILE
+  javascriptGenerator.forBlock['randomizePile'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_pile = block.getFieldValue('PILE');
+
+    // TODO: Assemble javascript into the code variable.
+    //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    const code = `const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
+    const cardsArray = pile.cardIds;
+    for (let i = cardsArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+    [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}`
+    return code;
+  };
 
   javascriptGenerator.forBlock['onPhaseStart'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength

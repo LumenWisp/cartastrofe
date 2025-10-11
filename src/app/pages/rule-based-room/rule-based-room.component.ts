@@ -37,7 +37,6 @@ import { ToastService } from '../../services/toast.service';
 
 // COMPONENTS
 import { CardGameComponent } from "../../components/card-game/card-game.component";
-import { consumerMarkDirty } from '@angular/core/primitives/signals';
 
 
 @Component({
