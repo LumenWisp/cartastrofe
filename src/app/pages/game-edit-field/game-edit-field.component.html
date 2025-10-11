@@ -3,7 +3,10 @@
   <!-- Botão toggle -->
   <p-button [icon]="sidebarExpanded ? 'pi pi-angle-right' : 'pi pi-angle-left'"  class="sidebar-toggle" (click)="sidebarExpanded = !sidebarExpanded"/>
 
-  <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+  @if (game) {
+    <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+  }
+
 
   <div class="toolbox">
     <!-- Botão para adicionar pilha -->
