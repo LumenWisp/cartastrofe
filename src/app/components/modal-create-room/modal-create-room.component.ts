@@ -45,7 +45,20 @@ import { GameInfoModel } from '../../types/game-info';
   styleUrl: './modal-create-room.component.css',
 })
 export class ModalCreateRoomComponent {
-  @Input() display: boolean = false;
+  private _display = false;
+
+  @Input()
+  set display(value: boolean) {
+    this._display = value;
+    if (value) {
+      this.loadGames(); // Atualiza os jogos toda vez que o modal for aberto
+    }
+  }
+
+  get display() {
+    return this._display;
+  }
+
   @Output() displayChange = new EventEmitter<boolean>();
 
   gameInfo: WritableSignal<GameInfoModel | null> = signal(null);
@@ -57,9 +70,7 @@ export class ModalCreateRoomComponent {
     private roomService: RoomService,
     private toastService: ToastService,
     private loadingService: LoadingService,
-  ) {
-    this.loadGames();
-  }
+  ) {}
 
   loadGames() {
     this.gameInfoService.getGameInfosPlayable().then((gameInfos) => {

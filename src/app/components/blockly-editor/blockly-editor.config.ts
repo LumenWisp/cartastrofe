@@ -1,7 +1,6 @@
 // src/app/blockly/blockly.config.ts
 import * as Blockly from 'blockly';
 import { javascriptGenerator, Order } from 'blockly/javascript';
-import { BlockCodeGeneratorsService } from '../../services/block-code-generators.service';
 
 // ===============================================================
 // 📦 TOOLBOX
@@ -33,7 +32,7 @@ export const toolbox = {
           kind: 'category',
           name: 'On Phase End',
           contents: [
-          { kind: 'block', type: 'onPhaseEnded' },
+          { kind: 'block', type: 'onPhaseEnd' },
           ]
         },
       ]
@@ -104,13 +103,15 @@ export const toolboxCard = {
           name: 'On Phase Start',
           contents: [
           { kind: 'block', type: 'onPhaseStart' },
+          { kind: 'block', type: 'cardOnPhaseStartAndCardIn' },
           ]
         },
         {
           kind: 'category',
           name: 'On Phase End',
           contents: [
-          { kind: 'block', type: 'onPhaseEnded' },
+          { kind: 'block', type: 'onPhaseEnd' },
+          { kind: 'block', type: 'cardOnPhaseEndAndCardIn' },
           ]
         },
       ]
@@ -202,9 +203,11 @@ export function registerBlocks() {
   // 🚀 MOVE CARD TO
   Blockly.Blocks['MoveCardTo'] = {
     init: function() {
-      this.appendValueInput('CARD').appendField('Move');
-      this.appendValueInput('NEW_PILE').appendField('To');
-      this.setInputsInline(true);
+      this.appendDummyInput()
+      .appendField('Card')
+      .appendField(new Blockly.FieldTextInput('Card'), 'CARD')
+      .appendField('To')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour(225);
@@ -249,11 +252,12 @@ export function registerBlocks() {
   // 🚀 CARD ON MOVE CARD FROM TO
   Blockly.Blocks['cardOnMoveCardFromTo'] = {
     init: function() {
-      this.appendDummyInput().appendField('OnMoveCard')
-      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
+      this.appendDummyInput()
+      .appendField('OnMoveCard')
       .appendField('From')
+      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
+      .appendField('To')
       .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
-      .appendField('To');
       this.setInputsInline(true);
       this.setOutput(true, null);
       this.setColour(120);
@@ -338,21 +342,53 @@ export function registerBlocks() {
   // 🚀 ON PHASE START
   Blockly.Blocks['onPhaseStart'] = {
     init: function() {
-      this.appendValueInput('PHASE')
-        .appendField('onPhaseStart');
+      this.appendDummyInput()
+      .appendField('onPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('Start')
       this.setInputsInline(true)
-      this.setNextStatement(true, null);
+      this.setOutput(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 CARD ON PHASE START AND CARD IN
+  Blockly.Blocks['cardOnPhaseStartAndCardIn'] = {
+    init: function() {
+      this.appendDummyInput()
+      .appendField('OnPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('Start and Card In')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
       this.setColour(120);
     }
   };
 
   // 🚀 ON PHASE END
-  Blockly.Blocks['onPhaseEnded'] = {
+  Blockly.Blocks['onPhaseEnd'] = {
     init: function() {
-      this.appendValueInput('PHASE')
-        .appendField('onPhaseEnd');
+      this.appendDummyInput()
+      .appendField('onPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('End')
       this.setInputsInline(true)
-      this.setNextStatement(true, null);
+      this.setOutput(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 CARD ON PHASE END AND CARD IN
+  Blockly.Blocks['cardOnPhaseEndAndCardIn'] = {
+    init: function() {
+      this.appendDummyInput()
+      .appendField('OnPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('End and Card In')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
       this.setColour(120);
     }
   };
@@ -367,7 +403,6 @@ export function registerBlocks() {
       this.setColour(335);
     }
   };
-
   
   // 🚀 GET LAST PILE ID VALUE
   Blockly.Blocks['getLastPileIdValue'] = {
@@ -422,11 +457,11 @@ export function registerGenerators() {
   // MOVE CARD TO
   javascriptGenerator.forBlock['MoveCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
-    const value_new_pile = generator.valueToCode(block, 'NEW_PILE', Order.ATOMIC);
+    const value_card = block.getFieldValue('CARD');
+    const value_new_pile = block.getFieldValue('PILE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `blockCodeGeneratorsService.moveCardTo(${value_card}, ${value_new_pile});updateRoom();`;
+    const code = "console.log('SKIBIDILSON');console.log('CAGA BAGRE VASCAINO');";
     return code;
   };
 
@@ -523,8 +558,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['nextPhase'] = function() {
     // TODO: Assemble javascript into the code variable.
     const code = 
-    `
-    if(room.state.currentphase == game.gamePhases[game.gamePhases.length-1]){
+    `if(room.state.currentphase == game.gamePhases[game.gamePhases.length-1]){
       const nextPlayernumber = (currentPlayerToPlayNumber+1)% players.length;
       const nextPlayerId = players[nextPlayernumber].playerId;
       room.state['currentphase'] = phases[0];
@@ -533,8 +567,7 @@ export function registerGenerators() {
     else{
       room.state['currentphase'] = phases[currentPhaseNumber+1];
       toastService.showSuccessToast('Mudamos de fase', 'Fase atual:' + phases[currentPhaseNumber+1]);
-    }
-    `;
+    }`;
     return code;
   }
 
@@ -549,21 +582,48 @@ export function registerGenerators() {
 
   javascriptGenerator.forBlock['onPhaseStart'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
+    const value_phase = block.getFieldValue('PHASE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = '';
-    return code;
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ")";
+    return [code, Order.NONE];
   }
 
-  javascriptGenerator.forBlock['onPhaseEnded'] = function(block, generator) {
-      // TODO: change Order.ATOMIC to the correct operator precedence strength
-      const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
+  // CARD ON PHASE START AND CARD IN
+  javascriptGenerator.forBlock['cardOnPhaseStartAndCardIn'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+    const value_pile = block.getFieldValue('PILE');
 
-      // TODO: Assemble javascript into the code variable.
-      const code = '';
-      return code;
-    }
+    const cardId =  (block.workspace as Blockly.WorkspaceSvg).cardId;
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards())";
+    return [code, Order.NONE];
+  };
+
+  javascriptGenerator.forBlock['onPhaseEnd'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ")";
+    return [code, Order.NONE];
+  }
+
+  // CARD ON PHASE START AND CARD IN
+  javascriptGenerator.forBlock['cardOnPhaseEndAndCardIn'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+    const value_pile = block.getFieldValue('PILE');
+
+    const cardId =  (block.workspace as Blockly.WorkspaceSvg).cardId;
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    return [code, Order.NONE];
+  };
 
   // GET TARGET CARD ID VALUE
   javascriptGenerator.forBlock['getTargetCardIdValue'] = function(block, generator) {

@@ -37,6 +37,7 @@ import { ToastService } from '../../services/toast.service';
 
 // COMPONENTS
 import { CardGameComponent } from "../../components/card-game/card-game.component";
+import { consumerMarkDirty } from '@angular/core/primitives/signals';
 
 
 @Component({
@@ -61,6 +62,7 @@ export class RuleBasedRoomComponent implements OnInit{
   // Subscrições
     private playerSubscription?: Subscription;
     private roomSubscription?: Subscription;
+    private cardSubscription?: Subscription;
 
   @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
   @ViewChild('handAreaContainer') handAreaContainer!: ElementRef<HTMLDivElement>;
@@ -68,7 +70,8 @@ export class RuleBasedRoomComponent implements OnInit{
   isOverHandArea = false;
 
   // Caracteristicas do jogo
-  phases: string[] = []; // dados mockados
+  phases: string[] = [];
+  totalPhases: number = 0;
   currentPhaseNumber = 0;
   currentPlayerToPlayNumber = 0;
   currentPlayerToPlay!: PlayerEntity;
@@ -78,8 +81,8 @@ export class RuleBasedRoomComponent implements OnInit{
   winConditionCode: string = '';
 
   //pilha de códigos para rodar com base em triggers
-  onPhaseStartCodeList: string[] = [];
-  onPhaseEndCodeList: string[] = [];
+  onPhaseStartCodeList!: TriggersList;
+  onPhaseEndCodeList!: TriggersList;
 
   //movimentaão das cartas
   isDragging: string = "";
@@ -117,6 +120,8 @@ export class RuleBasedRoomComponent implements OnInit{
         this.currentPlayer.playerId
       );
 
+      await this.roomService.removeAllCards(this.room.id);
+
       // Verificar se o usuário que está saindo é o último na sala, para resetar ela
       if (this.players.length === 0) {
         await this.roomService.resetRoom(this.room.id);
@@ -128,6 +133,9 @@ export class RuleBasedRoomComponent implements OnInit{
       }
       if (this.roomSubscription) {
         this.roomSubscription.unsubscribe();
+      }
+      if (this.cardSubscription) {
+        this.cardSubscription.unsubscribe();
       }
     }
   }
@@ -156,9 +164,7 @@ export class RuleBasedRoomComponent implements OnInit{
       mouseY <= rect.bottom;
   }
 
-  /**
-   * Verifica parâmetros da rota e carrega os dados relacionados
-   */
+  //Verifica parâmetros da rota e carrega os dados relacionados
   private async checkQueryParamsGame() {
     const gameId = this.route.snapshot.queryParams['gameId'];
     const game = await this.gameInfoService.getGameInfoById(gameId);
@@ -193,6 +199,7 @@ export class RuleBasedRoomComponent implements OnInit{
         if (this.room.state) {
           const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
           const cardLayouts = await this.gameInfoService.getCardLayouts(this.room.state.gameId);
+          
           const ruledPiles = await this.gameInfoService.getRuledPiles(this.room.state.gameId);
           ruledPiles[0].cardIds = cards.map(c => c.id);
           const firstRuledPileId = ruledPiles[0].nameIdentifier;
@@ -211,7 +218,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
           // const cards = await this.gameInfoService.getCards(this.room.state.gameId)
           for (const card of cards) {
-            this.freeModeService.addCard({
+            const cardGame = {
               name: card.name,
               cardLayoutId: card.layoutId,
               data: card.data,
@@ -224,8 +231,13 @@ export class RuleBasedRoomComponent implements OnInit{
               belongsTo: null,
               ruledLastPileId: firstRuledPileId,
               ruledPileId: firstRuledPileId,
-              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null
-            })
+              onMoveCardFromToCode: cardStringCodes.find((item: any) => item.id == card.id).onMoveCardFromToCode || null,
+              onPhaseStartCode: cardStringCodes.find((item: any) => item.id == card.id).onPhaseStartCode || null,
+              onPhaseEndCode: cardStringCodes.find((item: any) => item.id == card.id).onPhaseEndCode || null
+            }
+
+            this.freeModeService.addCard(cardGame)
+            this.roomService.createCard(this.room.id, cardGame);
           }
         }
 
@@ -235,58 +247,13 @@ export class RuleBasedRoomComponent implements OnInit{
         await this.updateRoom();
 
         //ouve as mudanças feitas na subcoleção de usuários
-        this.playerSubscription = this.roomService
-          .listenPlayers(this.room.id)
-          .subscribe((players) => {
-            this.players = players;
-          });
+        this.subscribePlayers();
 
         //ouve as mudanças feitas no documento dessa sala
-        this.roomSubscription = this.roomService
-          .listenRoom(this.room.id)
-          .subscribe(async (room) => {
-            
-            if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
-              console.log('NOVA SALA: ', room)
-              if(room.state?.isGameOcurring === false){
-                //room.state['isGameOcurring'] = false;
-                console.log("SKIBIDI 1")
-                this.toastService.showSuccessToast('', 'Fim de jogo');
-              }
-              else if(room.state?.isGameOcurring != undefined){
-                //room.state['isGameOcurring'] = true;
-                console.log("SKIBIDI 2")
-                this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
-              }
-            }
+        this.subscribeRoom();
 
-            if(this.phases[this.currentPhaseNumber] != room.state?.currentphase){
-              this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
-            }
-
-            if(this.currentPlayerToPlay && this.currentPlayerToPlay.playerId != room.state?.currentPlayerToPlay){
-              const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
-              this.currentPlayerToPlay = currentPlayerToPlay!;
-              this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
-
-              if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
-                this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
-                this.isDragDisabled = false;
-              }
-              else{
-                this.isDragDisabled = true;
-              }
-            }
-
-            this.room = room;
-            if(room.state?.cards){
-              this.freeModeService.cards.set(room.state.cards);
-            }
-
-            if(room.state?.ruledPiles){
-              this.freeModeService.ruledPiles = room.state.ruledPiles;
-            }
-          });
+        //ouve as mudanças feitas na subcoleção de cartas
+        this.subscribeCards();
 
 
         // Carregar o campo do jogo
@@ -298,10 +265,23 @@ export class RuleBasedRoomComponent implements OnInit{
             this.winConditionCode = this.game.winConditionCode!;
             if(this.game.gamePhases){
               this.phases = this.game.gamePhases;
+              this.totalPhases = this.phases.length;
             }
             else{
               this.phases = ['fase 1', 'fase 2', 'fase 3']
+              this.totalPhases = 3;
             }
+
+            this.phases.forEach((phase) => {
+              this.onPhaseStartCodeList = {...this.onPhaseStartCodeList, [phase]: []};
+              this.onPhaseEndCodeList = {...this.onPhaseEndCodeList, [phase]: []};
+            });
+
+            this.loadOnPhaseStartTriggers();
+            this.loadOnPhaseEndTriggers();
+
+            //console.log("LISTA onPhaseStart:", this.onPhaseStartCodeList);
+            //console.log("LISTA onPhaseEnd:", this.onPhaseEndCodeList);
           }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
@@ -376,8 +356,8 @@ export class RuleBasedRoomComponent implements OnInit{
       this.phases,
       this.currentPhaseNumber,
       card ?? null,
-      card.ruledPileId ?? null,
-      card.ruledLastPileId ?? null,
+      card?.ruledPileId ?? null,
+      card?.ruledLastPileId ?? null,
       stringCode
     );
   }
@@ -407,7 +387,7 @@ export class RuleBasedRoomComponent implements OnInit{
     }
   }
 
-  nextPhase(){
+  async nextPhase(){
 
     if(this.room.state?.isGameOcurring === false) return;
 
@@ -417,10 +397,20 @@ export class RuleBasedRoomComponent implements OnInit{
       return;
     }
 
+    // Acionar as triggers de fim de fase
+    this.runOnPhaseEndTriggers();
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+
     this.currentPhaseNumber++;
 
-    if(this.currentPhaseNumber < this.phases.length){
-      this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+    if(this.currentPhaseNumber < this.totalPhases){
+
+      // Acionar as triggers de inicio de fase
+      this.room.state!['currentphase'] = this.phases[this.currentPhaseNumber];
+      this.runOnPhaseStartTriggers();
+
+      this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`);
       this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
     }
     else{
@@ -439,9 +429,99 @@ export class RuleBasedRoomComponent implements OnInit{
     this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: false}});
   }
 
-  async updateRoom(): Promise<void>{
-    const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
-    this.roomService.updateRoom(this.room.id, { state: newState });
+  loadOnPhaseStartTriggers(){
+
+    // Verificar se o jogo possui trigger de inicio de fase
+    if(this.game.onPhaseStartCode){
+      this.game.onPhaseStartCode.forEach((gameOnPhaseStart) => {
+        if(gameOnPhaseStart.startsWith("if ((room.state.currentphase == ")){
+      
+          const finalPhaseIndex = gameOnPhaseStart.indexOf("'", 33);
+          const phaseName = gameOnPhaseStart.substring(33, finalPhaseIndex);
+      
+          if(this.phases.includes(phaseName)){
+            this.onPhaseStartCodeList[phaseName].push(gameOnPhaseStart);
+          }
+        }
+      });
+    }
+
+    // Verificar se cada possui trigger de inicio de fase
+    this.freeModeService.cards().forEach((card) => {
+      if(card.onPhaseStartCode){
+
+        card.onPhaseStartCode.forEach((cardOnPhaseStart) => {
+          if(cardOnPhaseStart.startsWith("if ((room.state.currentphase == ")){
+
+            const finalPhaseIndex = cardOnPhaseStart.indexOf("'", 33);
+            const phaseName = cardOnPhaseStart.substring(33, finalPhaseIndex);
+
+            if(this.phases.includes(phaseName)){
+              this.onPhaseStartCodeList[phaseName].push(cardOnPhaseStart);
+            }
+          }
+        })
+      }
+    });
+  }
+
+  runOnPhaseStartTriggers(){
+    if(this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]]){
+      this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]].forEach(async (code) => {
+        if(code){
+          this.runStringCode(code);
+          this.roomService.updateRoom(this.room.id, {state: {...this.room.state!}});
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      });
+    }
+  }
+
+  loadOnPhaseEndTriggers(){
+
+    // Verificar se o jogo possui trigger de inicio de fase
+    if(this.game.onPhaseEndCode){
+      this.game.onPhaseEndCode.forEach((gameOnPhaseEnd) => {
+        if(gameOnPhaseEnd.startsWith("if ((room.state.currentphase == ")){
+      
+          const finalPhaseIndex = gameOnPhaseEnd.indexOf("'", 33);
+          const phaseName = gameOnPhaseEnd.substring(33, finalPhaseIndex);
+      
+          if(this.phases.includes(phaseName)){
+            this.onPhaseStartCodeList[phaseName].push(gameOnPhaseEnd);
+          }
+        }
+      })
+    }
+
+    this.freeModeService.cards().forEach((card) => {
+      if(card.onPhaseEndCode){
+
+        card.onPhaseEndCode.forEach((cardOnPhaseEnd) => {
+          if(cardOnPhaseEnd.startsWith("if ((room.state.currentphase == ")){
+
+            const finalPhaseIndex = cardOnPhaseEnd.indexOf("'", 33);
+            const phaseName = cardOnPhaseEnd.substring(33, finalPhaseIndex);
+
+            if(this.phases.includes(phaseName)){
+              this.onPhaseStartCodeList[phaseName].push(cardOnPhaseEnd);
+            }
+          }
+        })
+      }
+    });
+  }
+
+  runOnPhaseEndTriggers(){
+    if(this.onPhaseEndCodeList[this.phases[this.currentPhaseNumber]]){
+      this.onPhaseEndCodeList[this.phases[this.currentPhaseNumber]].forEach(async (code) => {
+        if(code){
+          this.runStringCode(code);
+          this.roomService.updateRoom(this.room.id, {state: {...this.room.state!}});
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      });
+    }
   }
 
   private goToLoginPage(roomLink: string) {
@@ -455,8 +535,99 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   // =================================
+  // ======= MÉTODOS DE UPDATE =======
+  // =================================
+
+  async updateRoom(): Promise<void>{
+    //const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), ruledPiles: this.freeModeService.ruledPiles};
+    const newState: RoomState = {...this.room.state!, ruledPiles: this.freeModeService.ruledPiles};
+    this.roomService.updateRoom(this.room.id, { state: newState });
+  }
+
+  // =================================
+  // ========== SUBSCRIÇÕES ==========
+  // =================================
+
+  //ouve as mudanças feitas no documento dessa sala
+  private subscribeRoom(){
+    this.roomSubscription = this.roomService
+      .listenRoom(this.room.id)
+      .subscribe(async (room) => {
+
+        if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
+          //console.log('NOVA SALA: ', room)
+          if(room.state?.isGameOcurring === false){
+            //room.state['isGameOcurring'] = false;
+            //console.log("SKIBIDI 1")
+            this.toastService.showSuccessToast('', 'Fim de jogo');
+          }
+          else if(room.state?.isGameOcurring != undefined){
+            //room.state['isGameOcurring'] = true;
+            //console.log("SKIBIDI 2")
+            this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
+          }
+        }
+
+        if((this.currentPhaseNumber < 0) || (this.phases[this.currentPhaseNumber] != room.state?.currentphase)){
+          this.currentPhaseNumber = this.phases.indexOf(room.state?.currentphase!);
+        }
+
+        if((room.state?.currentPlayerToPlay && this.currentPlayerToPlay == undefined) || (this.currentPlayerToPlay && this.currentPlayerToPlay.playerId != room.state?.currentPlayerToPlay)){
+          const currentPlayerToPlay = this.players.find((player) => player.playerId === room.state?.currentPlayerToPlay);
+          this.currentPlayerToPlay = currentPlayerToPlay!;
+          this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
+          if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
+            this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+            this.runOnPhaseStartTriggers();
+            this.isDragDisabled = false;
+          }
+          else{
+            this.isDragDisabled = true;
+          }
+        }
+
+        this.room = room;
+
+        //if(room.state?.cards){
+        //  this.freeModeService.cards.set(room.state.cards);
+        //}
+        if(room.state?.ruledPiles){
+          this.freeModeService.ruledPiles = room.state.ruledPiles;
+        }
+      });
+  }
+
+  //ouve as mudanças feitas na subcoleção de usuários
+  private subscribePlayers(){
+    this.playerSubscription = this.roomService
+      .listenPlayers(this.room.id)
+      .subscribe((players) => {
+        this.players = players;
+      });
+  }
+
+  //ouve as mudanças feitas na subcoleção de cartas
+  private subscribeCards(){
+    this.cardSubscription = this.roomService
+      .listenCards(this.room.id)
+      .subscribe((cards) => {
+        this.freeModeService.cards.set(cards);
+      });
+  }
+
+  //ouve as mudanças feitas na subcoleção de cartas
+
+  // =================================
   // ==== MOVIMENTAÇÃO DAS CARTAS ====
   // =================================
+
+  // flipar a carta
+  async doubleClick(cardId: string){
+    this.freeModeService.flipCard(cardId);
+    //this.updateRoom();
+    const card = this.freeModeService.getCardById(cardId);
+    await this.roomService.updateCard(this.room.id, cardId, {flipped: card!.flipped});
+  }
 
   // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
   showOptions(event: MouseEvent, card: CardGame, popover: Popover) {
@@ -586,8 +757,17 @@ export class RuleBasedRoomComponent implements OnInit{
       this.resizeHandArea()
     }
 
-    await new Promise(resolve => setTimeout(resolve, 132));
-    this.updateRoom()
+    //await new Promise(resolve => setTimeout(resolve, 132));
+    this.updateRoom();
+    await this.roomService.updateCard(this.room.id, draggedCard!.id, this.freeModeService.getCardById(draggedCard!.id)!);
   }
 
+}
+
+// =================================
+// ==== TIPAGENS PARA FACILITAR ====
+// =================================
+
+interface TriggersList{
+  [key: string]: string[];
 }
