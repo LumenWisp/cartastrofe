@@ -11,6 +11,7 @@
   &.text {
     border: 1px dashed #000000;
     padding: 4px;
+    user-select: none;
   }
 }
 
