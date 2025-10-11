@@ -37,6 +37,7 @@ import { ToastService } from '../../services/toast.service';
 
 // COMPONENTS
 import { CardGameComponent } from "../../components/card-game/card-game.component";
+import { consumerMarkDirty } from '@angular/core/primitives/signals';
 
 
 @Component({
@@ -118,6 +119,8 @@ export class RuleBasedRoomComponent implements OnInit{
         this.room.id,
         this.currentPlayer.playerId
       );
+
+      await this.roomService.removeAllCards(this.room.id);
 
       // Verificar se o usuário que está saindo é o último na sala, para resetar ela
       if (this.players.length === 0) {
@@ -755,8 +758,8 @@ export class RuleBasedRoomComponent implements OnInit{
     }
 
     //await new Promise(resolve => setTimeout(resolve, 132));
-    this.updateRoom()
-    await this.roomService.updateCard(this.room.id, draggedCard!.id, draggedCard!);
+    this.updateRoom();
+    await this.roomService.updateCard(this.room.id, draggedCard!.id, this.freeModeService.getCardById(draggedCard!.id)!);
   }
 
 }

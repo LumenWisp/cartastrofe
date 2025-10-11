@@ -398,6 +398,29 @@ export class RoomService {
     }
   }
 
+  async removeAllCards(roomId: string): Promise<void> {
+    const refCollection = collection(
+      this.firestore,
+      this.path,
+      roomId,
+      'cards'
+    );
+
+    const cardsIds = this.freeModeService.cards().map((card) => card.id);
+
+    try {
+
+      cardsIds.forEach(async (cardId) => {
+        const cardRef = doc(refCollection, cardId);
+        await deleteDoc(cardRef);
+      });
+
+    } catch (error) {
+      console.error(' Firestore Error:', error);
+      throw error;
+    }
+  }
+
   //==================== MÉTODOS PARA RULEDPILES
 
   // Observa a subcoleção de ruledPiles esperando uma mudança para atualizar para todos
