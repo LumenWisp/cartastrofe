@@ -40,6 +40,13 @@
           <span [pTooltip]="item.description" tooltipPosition="top">{{ item.value }}</span>
         </ng-template>
       </p-selectbutton>
+
+      <i 
+        class="pi pi-exclamation-circle info-circle"
+        pTooltip="Máximo de jogadores no modo regrado: 2 <br> <br> Máximo de jogadores no modo livre: 4"
+        [escape]="false"
+        tooltipPosition="right"
+      ></i>
     </div>
 
     <!--
@@ -79,9 +86,6 @@
       </div>
     </div>
     -->
-    <div class="inline-input">
-      <span> Número máximo de jogadores: {{maxPlayers}}</span>
-    </div>
 
     <p-button type="submit" label="{{'modal-create-game.submit-button' | translate}}" />
   </form>
