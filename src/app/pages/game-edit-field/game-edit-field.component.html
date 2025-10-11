@@ -109,6 +109,7 @@
     [cdkDragFreeDragPosition]="item.position"
     [ngClass]="item.type"
     (contextmenu)="onItemClick($event, i, popover)"
+    style="display: flex; justify-content: center; align-items: center; text-align: center;"
   >
     {{ item.nameIdentifier }}
   </div>
