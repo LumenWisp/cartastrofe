@@ -108,7 +108,6 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   loadWorkSpaceState(): void {
 
-    // TODO: adicionar carregamento de cartas
     let state;
     if (this.game) {
       
@@ -135,7 +134,5 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
       console.log('WorkSpace salvo com sucesso!')
     }
-
-    // TODO: adicionar salvamento de cartas
   }
 }

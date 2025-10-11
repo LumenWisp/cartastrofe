@@ -214,14 +214,9 @@ export class CardRulesComponent {
         [this.selectedCategory]: state,
       });
 
-      //const key = this.selectedCategory as keyof CardGame;
-
-      // TODO: deixar isso sem parecer uma gambiarra
-      //this.cardSelected[key] = state as never;
+      this.cardSelectedWorkspaces[this.selectedCategory] = state;
 
       console.log('WorkSpace salvo com sucesso!');
     }
-
-    // TODO: adicionar salvamento de cartas
   }
 }
