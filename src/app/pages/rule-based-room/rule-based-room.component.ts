@@ -105,6 +105,7 @@ export class RuleBasedRoomComponent implements OnInit{
       this.checkQueryParamsGame();
       this.checkRouteParamsRoom();
       //this.loadingService.hide(); // precaucao
+      this.loadingService.show();
   }
 
   ngAfterViewInit() {
