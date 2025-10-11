@@ -107,6 +107,7 @@ export class GameEditFieldComponent implements OnInit{
       await this.gameInfoService.updateGameInfo(this.game.id, {gamePhases: gamePhases});
       this.namePhase.nativeElement.value = '';
       this.toastService.showSuccessToast('Salvamento concluído', 'A Fase foi salva!')
+      this.game.gamePhases = gamePhases;
       this.optionsPhase.push(namePhase)
     } catch (error) {
       this.toastService.showErrorToast('Erro!', 'Não foi possível salvar a fase')
@@ -126,6 +127,7 @@ export class GameEditFieldComponent implements OnInit{
       await this.gameInfoService.updateGameInfo(this.game.id, {gameAttributes: gameAttributes});
       this.nameAttribute.nativeElement.value = '';
       this.toastService.showSuccessToast('Salvamento concluído', 'O Atributo foi salvo!')
+      this.game.gameAttributes = gameAttributes;
       this.optionsAttribute.push(nameAttribute)
     } catch (error) {
       this.toastService.showErrorToast('Erro!', 'Não foi possível salvar o atributo')
