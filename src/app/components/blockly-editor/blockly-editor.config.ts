@@ -206,7 +206,7 @@ export function registerBlocks() {
   Blockly.Blocks['MoveCardTo'] = {
     init: function() {
       this.appendDummyInput()
-      .appendField('Card')
+      .appendField('Move')
       .appendField(new Blockly.FieldTextInput('Card'), 'CARD')
       .appendField('To')
       .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
@@ -339,6 +339,7 @@ export function registerBlocks() {
         .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
       this.setColour(225);
     }
   };
@@ -532,7 +533,12 @@ export function registerGenerators() {
 
     // TODO: Assemble javascript into the code variable.
     //const code = `blockCodeGeneratorsService.changeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
-    const code = ''
+    const code = `const card = freeModeService.cards().find(card => card.name == '${card_value}');
+    const keys = Object.keys(card.data);
+    if(keys.includes('${attribute_name}')){
+      card.data['${attribute_name}'] = '${new_attribute_value}';
+      roomService.updateCard(room.id, card.id, card);
+    }`
     return code;
   };
 
@@ -606,6 +612,7 @@ export function registerGenerators() {
     //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
     const code = `const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
     const cardsArray = pile.cardIds;
+    console.log('KKK', cardsArray, pile);
     for (let i = cardsArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
     [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}`

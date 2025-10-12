@@ -702,7 +702,6 @@ export class RuleBasedRoomComponent implements OnInit{
           this.freeModeService.addCardToRuledPile(targetPileId, draggedCard.ruledLastPileId, draggedCardId!)
         }
         
-
         if(draggedCard.onMoveCardFromToCode){
           await this.runStringCode(draggedCard.onMoveCardFromToCode, draggedCard);
         }
