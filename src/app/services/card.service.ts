@@ -156,7 +156,6 @@ export class CardService {
     }
 
     const docId = snapshot.docs[0].id;
-    console.log("IDDDDD", docId);
 
     const docRef = doc(this.firestore, this.path, docId);
     await setDoc(docRef, data, { merge: true });

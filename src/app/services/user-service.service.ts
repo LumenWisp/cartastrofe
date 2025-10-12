@@ -104,7 +104,6 @@ export class UserService {
     );
     const uid = user.uid;
 
-    console.log("USUÁRIO QUE LOGOU", uid)
 
     // Busca os dados do Firestore com o UID
     const docSnap = await getDoc(doc(this.firestore, this.path, uid));

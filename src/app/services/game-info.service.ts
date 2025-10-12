@@ -210,7 +210,6 @@ async getGameInfosPlayable() {
     );
 
     try {
-      console.log(`Retirando jogo com ID ${id} da sala`);
       const gameRef = doc(refCollection, id);
       await deleteDoc(gameRef);
     } catch (error) {

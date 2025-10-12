@@ -28,9 +28,7 @@ export class GameRulesComponent implements OnInit {
    */
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
-    console.log('gameId: ', gameId);
     const game = await this.gameInfoService.getGameInfoById(gameId);
     if(game) this.game = game;
-    console.log('Jogo selecionado: ', this.game);
   }
 }
