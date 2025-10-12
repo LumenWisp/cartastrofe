@@ -559,11 +559,16 @@ export function registerGenerators() {
     const pile_value = block.getFieldValue('PILE');
     const attribute_name = block.getFieldValue('ATTRIBUTE');
     
-    const code = `freeModeService.cards().find(card => card.name ==
-    (freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}')).cardIds[0]
-    ).data['${attribute_name}']`
+    const code = `(() => {
+    const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if(pile?.cardIds && pile.cardIds.length != 0){
+    const topCard = freeModeService.cards().find(card => card.id == pile.cardIds[pile.cardIds.length-1]);
+    return topCard.data['${attribute_name}'];
+    }
+    return '132DEU ERRADO132';
+    })()`
     // TODO: Change Order.NONE to the correct operator precedence strength
-    return code;
+    return [code, Order.NONE];
   };
 
   // IS PILE EMPTY
@@ -571,7 +576,7 @@ export function registerGenerators() {
 
     const pile_value = block.getFieldValue('PILE');
     
-    const code = `freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}')).cardIds.length == 0`
+    const code = `(freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}')?.cardIds == undefined) || freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}').cardIds.length == 0`
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
