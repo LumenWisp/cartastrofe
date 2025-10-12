@@ -133,5 +133,6 @@ export class UserService {
 
   async logout(): Promise<void> {
     await signOut(this.auth);
+    this._currentUser.set(null);
   }
 }
