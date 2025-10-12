@@ -88,7 +88,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
     if(this.game){
       const key: string = this.selectedCategory + 'Code';
 
-      if(!this.selectedCategory.startsWith('onPhase')){
+      if((!this.selectedCategory.startsWith('onPhase')) && (this.selectedCategory != 'onMoveCardFromTo')){
         console.log(code);
         await this.gameInfoService.updateGameInfo(this.game.id, {
           [key]: code,

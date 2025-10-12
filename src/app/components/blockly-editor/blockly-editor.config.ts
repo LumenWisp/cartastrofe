@@ -19,6 +19,7 @@ export const toolbox = {
           name: 'On Move Card From To',
           contents: [
           { kind: 'block', type: 'onMoveCardFromTo' },
+          { kind: 'block', type: 'onMoveCardTo' },
           ]
         },
         {
@@ -50,6 +51,7 @@ export const toolbox = {
         { kind: 'block', type: 'getGameAttribute' },
         { kind: 'block', type: 'getPhase' },
         { kind: 'block', type: 'getGeneralVariableValue' },
+        { kind: 'block', type: 'getPiletopCardAttribute' },
       ]
     },
     {
@@ -58,6 +60,8 @@ export const toolbox = {
       contents: [
         { kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'isPileEmpty' },
+        { kind: 'block', type: 'cancelMovement' },
         { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
@@ -227,6 +231,31 @@ export function registerBlocks() {
     }
   };
 
+  // 🚀 GET PILE TOP CARD
+  Blockly.Blocks['getPiletopCardAttribute'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Get Pile Top Card Attribute')
+        .appendField(new Blockly.FieldTextInput('Attribute'), 'ATTRIBUTE')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+      this.setOutput(true, null);
+      this.setColour(15);
+    }
+  };
+
+  // 🚀 IS PILE EMPTY
+  Blockly.Blocks['isPileEmpty'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Is Pile')
+        .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+        .appendField('Empty')
+      this.setOutput(true, null);
+      this.setColour(15);
+    }
+  };
+
   // 🚀 GET PHASE
   Blockly.Blocks['getPhase'] = {
     init: function() {
@@ -255,11 +284,22 @@ export function registerBlocks() {
   Blockly.Blocks['cardOnMoveCardFromTo'] = {
     init: function() {
       this.appendDummyInput()
-      .appendField('OnMoveCard')
-      .appendField('From')
+      .appendField('OnMoveCard From')
       .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
       .appendField('To')
       .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 ON MOVE CARD TO
+  Blockly.Blocks['onMoveCardTo'] = {
+    init: function() {
+      this.appendDummyInput()
+      .appendField('On Move Card To')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
       this.setInputsInline(true);
       this.setOutput(true, null);
       this.setColour(120);
@@ -340,6 +380,17 @@ export function registerBlocks() {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 CANCEL MOVEMENT
+  Blockly.Blocks['cancelMovement'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('cancelMovement')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
       this.setColour(225);
     }
   };
@@ -490,6 +541,29 @@ export function registerGenerators() {
     return [code, Order.NONE];
   };
 
+  // GET PILE TOP CARD
+  javascriptGenerator.forBlock['getPiletopCardAttribute'] = function(block) {
+
+    const pile_value = block.getFieldValue('PILE');
+    const attribute_name = block.getFieldValue('ATTRIBUTE');
+    
+    const code = `freeModeService.cards().find(card => card.name ==
+    (freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}')).cardIds[0]
+    ).data['${attribute_name}']`
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return code;
+  };
+
+  // IS PILE EMPTY
+  javascriptGenerator.forBlock['isPileEmpty'] = function(block) {
+
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}')).cardIds.length == 0`
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
   // GET PHASE
   javascriptGenerator.forBlock['getPhase'] = function(block) {
     const text_phase_id = block.getFieldValue('PHASE_ID');
@@ -510,6 +584,16 @@ export function registerGenerators() {
     // TODO: Assemble javascript into the code variable.
     const code = '';
     return code;
+  };
+
+  // ON MOVE CARD TO
+  javascriptGenerator.forBlock['onMoveCardTo'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_pile = block.getFieldValue('PILE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `(targetPile && targetPile.nameIdentifier == '${value_pile}')`;
+    return [code, Order.NONE];
   };
 
   // CARD ON MOVE CARD FROM TO
@@ -616,6 +700,15 @@ export function registerGenerators() {
     for (let i = cardsArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
     [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}`
+    return code;
+  };
+
+  // RANDOMIZE ALL CARDS FROM PILE
+  javascriptGenerator.forBlock['cancelMovement'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `movementControler['cancelMovement'] = true;`
     return code;
   };
 

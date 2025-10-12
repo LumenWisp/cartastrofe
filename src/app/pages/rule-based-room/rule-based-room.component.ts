@@ -70,6 +70,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
   // Caracteristicas do jogo
   phases: string[] = [];
+  pilesNamesIdentifiers: string[] = [];
   totalPhases: number = 0;
   currentPhaseNumber = 0;
   currentPlayerToPlayNumber = 0;
@@ -77,11 +78,14 @@ export class RuleBasedRoomComponent implements OnInit{
   isGameOcurringHTML: boolean = false;
   isDragDisabled: boolean = true;
 
+  movementControler = {cancelMovement: false};
+
   winConditionCode: string = '';
 
   //pilha de códigos para rodar com base em triggers
   onPhaseStartCodeList!: TriggersList;
   onPhaseEndCodeList!: TriggersList;
+  onMoveCardFromToCodeList!: TriggersList;
 
   //movimentaão das cartas
   isDragging: string = "";
@@ -272,16 +276,27 @@ export class RuleBasedRoomComponent implements OnInit{
               this.totalPhases = 3;
             }
 
+            // CARREGAR OS CÓDIGOS DAS TRIGGERS
             this.phases.forEach((phase) => {
               this.onPhaseStartCodeList = {...this.onPhaseStartCodeList, [phase]: []};
               this.onPhaseEndCodeList = {...this.onPhaseEndCodeList, [phase]: []};
             });
 
+            this.freeModeService.ruledPiles.forEach((ruledPile) =>{
+              this.pilesNamesIdentifiers.push(ruledPile.nameIdentifier);
+            });
+
+            this.pilesNamesIdentifiers.forEach((pileName) => {
+              this.onMoveCardFromToCodeList = {...this.onMoveCardFromToCodeList, [pileName]: []};
+            });
+
             this.loadOnPhaseStartTriggers();
             this.loadOnPhaseEndTriggers();
+            this.loadOnMoveCardFromToCode();
 
             //console.log("LISTA onPhaseStart:", this.onPhaseStartCodeList);
             //console.log("LISTA onPhaseEnd:", this.onPhaseEndCodeList);
+            //console.log("LISTA onMove:", this.onMoveCardFromToCodeList);
           }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
@@ -323,7 +338,7 @@ export class RuleBasedRoomComponent implements OnInit{
     return topCard;
   }
 
-  private async runStringCode(stringCode: string, card?: any) {
+  private async runStringCode(stringCode: string, card?: any, targetPile?: GameFieldItem) {
 
     const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
 
@@ -338,6 +353,8 @@ export class RuleBasedRoomComponent implements OnInit{
       'currentPlayerToPlayNumber',
       'phases',
       'currentPhaseNumber',
+      'movementControler',
+      'targetPile',
       'card',
       'ruledPileId',
       'ruledLastPileId',
@@ -355,6 +372,8 @@ export class RuleBasedRoomComponent implements OnInit{
       this.currentPlayerToPlayNumber,
       this.phases,
       this.currentPhaseNumber,
+      this.movementControler,
+      targetPile ?? null,
       card ?? null,
       card?.ruledPileId ?? null,
       card?.ruledLastPileId ?? null,
@@ -517,6 +536,37 @@ export class RuleBasedRoomComponent implements OnInit{
       this.onPhaseEndCodeList[this.phases[this.currentPhaseNumber]].forEach(async (code) => {
         if(code){
           this.runStringCode(code);
+          this.roomService.updateRoom(this.room.id, {state: {...this.room.state!}});
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      });
+    }
+  }
+
+  loadOnMoveCardFromToCode(){
+
+    // Verificar se o jogo possui trigger de movimentação para pilhas
+    if(this.game.onMoveCardFromToCode){
+      this.game.onMoveCardFromToCode.forEach((gameOnMoveCardFromTo) => {
+        if(gameOnMoveCardFromTo.startsWith("if ((targetPile && targetPile.nameIdentifier == ")){
+          
+      
+          const finalPhaseIndex = gameOnMoveCardFromTo.indexOf("'", 49);
+          const pileName = gameOnMoveCardFromTo.substring(49, finalPhaseIndex);
+      
+          if(this.pilesNamesIdentifiers.includes(pileName)){
+            this.onMoveCardFromToCodeList[pileName].push(gameOnMoveCardFromTo);
+          }
+        }
+      })
+    }
+  }
+
+  runOnMoveCardFromToTriggers(targetPile: GameFieldItem, card: CardGame){
+    if(this.onMoveCardFromToCodeList[targetPile.nameIdentifier]){
+      this.onMoveCardFromToCodeList[targetPile.nameIdentifier].forEach(async (code) => {
+        if(code){
+          this.runStringCode(code, card, targetPile);
           this.roomService.updateRoom(this.room.id, {state: {...this.room.state!}});
           await new Promise(resolve => setTimeout(resolve, 500));
         }
@@ -689,6 +739,18 @@ export class RuleBasedRoomComponent implements OnInit{
 
       // IGUAL AO DE ELSE IF EMBAIXO
       const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
+
+      //VERIFICAR TRIGGERS QUE ATIVAM AO MOVER PARA ESSA PILHA
+      if(this.onMoveCardFromToCodeList[targetItem!.nameIdentifier]){
+        this.runOnMoveCardFromToTriggers(targetItem!, draggedCard!);
+      }
+
+      // CANCELAR O MOVIMENTO DE DROP
+      if(this.movementControler.cancelMovement){
+        this.movementControler['cancelMovement'] = false;
+        return;
+      }
+
       if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
         
         draggedCard.freeDragPos = {
