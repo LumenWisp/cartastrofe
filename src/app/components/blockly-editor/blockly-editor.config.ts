@@ -45,13 +45,11 @@ export const toolbox = {
       kind: 'category',
       name: 'Variables',
       contents: [
-        { kind: 'block', type: 'getCard' },
-        { kind: 'block', type: 'getPile' },
         { kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
-        { kind: 'block', type: 'getPhase' },
-        { kind: 'block', type: 'getGeneralVariableValue' },
+        { kind: 'block', type: 'getDroppedCardAttribute' },
         { kind: 'block', type: 'getPiletopCardAttribute' },
+        { kind: 'block', type: 'getGeneralVariableValue' },
       ]
     },
     {
@@ -348,6 +346,18 @@ export function registerBlocks() {
     }
   };
 
+  // 🚀 GET DROPPED CARD ATTRIBUTE
+  Blockly.Blocks['getDroppedCardAttribute'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Get  Dropped Card Attribute')
+        .appendField(new Blockly.FieldTextInput('Attribute'), 'ATTRIBUTE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(315);
+    }
+  };
+
   // 🚀 GET GENERAL VARIABLE VALUE
   Blockly.Blocks['getGeneralVariableValue'] = {
     init: function() {
@@ -368,6 +378,7 @@ export function registerBlocks() {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null);
       this.setColour(225);
+      this.setNextStatement(true, null);
     }
   };
 
@@ -389,8 +400,9 @@ export function registerBlocks() {
     init: function() {
       this.appendDummyInput()
         .appendField('cancelMovement')
-      this.setInputsInline(true)
+      this.setInputsInline(true);
       this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
       this.setColour(225);
     }
   };
@@ -645,6 +657,18 @@ export function registerGenerators() {
 
     // TODO: Assemble javascript into the code variable.
     const code = `'${text_attribute}'`;
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
+  // GET DROPPED CARD ATTRIBUTE
+  javascriptGenerator.forBlock['getDroppedCardAttribute'] = function(block, generator) {
+
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const attribute_name = block.getFieldValue('ATTRIBUTE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `card.data['${attribute_name}']`;
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };

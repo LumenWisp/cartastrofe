@@ -548,13 +548,18 @@ export class RuleBasedRoomComponent implements OnInit{
     // Verificar se o jogo possui trigger de movimentação para pilhas
     if(this.game.onMoveCardFromToCode){
       this.game.onMoveCardFromToCode.forEach((gameOnMoveCardFromTo) => {
-        if(gameOnMoveCardFromTo.startsWith("if ((targetPile && targetPile.nameIdentifier == ")){
-          
+        if(gameOnMoveCardFromTo.startsWith("if (")){
+
+          let pileName;
+
+          for (const pileNameIdentifier of this.pilesNamesIdentifiers){
+            if(gameOnMoveCardFromTo.indexOf(pileNameIdentifier) != -1){
+              pileName = pileNameIdentifier;
+              break;
+            }
+          }
       
-          const finalPhaseIndex = gameOnMoveCardFromTo.indexOf("'", 49);
-          const pileName = gameOnMoveCardFromTo.substring(49, finalPhaseIndex);
-      
-          if(this.pilesNamesIdentifiers.includes(pileName)){
+          if(pileName){
             this.onMoveCardFromToCodeList[pileName].push(gameOnMoveCardFromTo);
           }
         }
