@@ -80,7 +80,6 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
   private async checkRouteParams() {
     const roomUrl = this.route.snapshot.queryParams['roomUrl'];
-    console.log('roomUrl: ', roomUrl);
     if (roomUrl) {
       this.roomUrl = roomUrl;
     }

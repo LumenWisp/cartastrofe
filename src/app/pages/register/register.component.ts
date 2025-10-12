@@ -73,7 +73,6 @@ export class RegisterComponent extends FormManager implements OnDestroy {
 
   private async checkRouteParams() {
     const roomLink = this.route.snapshot.queryParams['roomLink'];
-    console.log('roomLink: ', roomLink);
     if (roomLink) {
       this.roomLink = roomLink;
     }

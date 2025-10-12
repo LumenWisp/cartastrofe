@@ -128,7 +128,6 @@ export class RoomsComponent {
    */
   private async checkRouteParams() {
     const roomLink = this.route.snapshot.params['roomLink'];
-    console.log('roomLink: ', roomLink);
     if (roomLink) {
 
 
@@ -333,7 +332,6 @@ export class RoomsComponent {
       this.room.id
     );
     this.currentPlayer = currentPlayer;
-    console.log('Jogador: ', this.currentPlayer);
   }
 
   private goToLoginPage(roomLink: string) {
