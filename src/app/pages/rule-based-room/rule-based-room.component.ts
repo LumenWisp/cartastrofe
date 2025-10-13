@@ -434,7 +434,10 @@ export class RuleBasedRoomComponent implements OnInit{
       // Acionar as triggers de inicio de fase
       this.room.state!['currentphase'] = this.phases[this.currentPhaseNumber];
       this.runOnPhaseStartTriggers();
-
+      if(this.currentPhaseNumber == -1){
+        const phaseName = this.room.state?.currentphase;
+        this.currentPhaseNumber = this.phases.indexOf(phaseName!);
+        }
       this.toastService.showSuccessToast('Mudamos de fase', `Fase atual: ${this.phases[this.currentPhaseNumber]}`);
       this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber]}});
     }
@@ -491,7 +494,11 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   runOnPhaseStartTriggers(){
-    if(this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]]){
+    if(this.currentPhaseNumber == -1){
+      const phaseName = this.room.state?.currentphase;
+      this.currentPhaseNumber = this.phases.indexOf(phaseName!);
+    }
+    if(this.onPhaseStartCodeList && this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]]){
       this.onPhaseStartCodeList[this.phases[this.currentPhaseNumber]].forEach(async (code) => {
         if(code){
           this.runStringCode(code);
@@ -570,8 +577,8 @@ export class RuleBasedRoomComponent implements OnInit{
             this.onMoveCardFromToCodeList[pileName].push(gameOnMoveCardFromTo);
           }
         }
-        console.log('ADOLETA', this.onMoveCardFromToCodeList);
       })
+      console.log('ADOLETA', this.onMoveCardFromToCodeList);
     }
   }
 
@@ -640,7 +647,13 @@ export class RuleBasedRoomComponent implements OnInit{
           this.currentPlayerToPlay = currentPlayerToPlay!;
           this.currentPlayerToPlayNumber = this.players.indexOf(this.currentPlayerToPlay);
           if(this.currentPlayer.playerId === currentPlayerToPlay?.playerId){
-            this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+
+            if(this.currentPhaseNumber != -1){
+              this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.phases[this.currentPhaseNumber]}`)
+            }
+            else{
+              this.toastService.showSuccessToast('Sua vez de jogar', `Fase atual: ${this.room.state?.currentphase}`)
+            }
             this.runOnPhaseStartTriggers();
             this.isDragDisabled = false;
           }
@@ -733,7 +746,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
       //VERIFICAR TRIGGERS QUE ATIVAM AO MOVER PARA ESSA PILHA
       if(this.onMoveCardFromToCodeList[targetItem!.nameIdentifier]){
-        this.runOnMoveCardFromToTriggers(targetItem!, draggedCard!);
+        await this.runOnMoveCardFromToTriggers(targetItem!, draggedCard!);
       }
 
       // CANCELAR O MOVIMENTO DE DROP
@@ -771,7 +784,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
       //VERIFICAR TRIGGERS QUE ATIVAM AO MOVER PARA ESSA PILHA
       if(this.onMoveCardFromToCodeList[targetItem!.nameIdentifier]){
-        this.runOnMoveCardFromToTriggers(targetItem!, draggedCard!);
+        await this.runOnMoveCardFromToTriggers(targetItem!, draggedCard!);
       }
 
       // CANCELAR O MOVIMENTO DE DROP
