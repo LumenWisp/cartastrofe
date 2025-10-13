@@ -462,13 +462,20 @@ export class RuleBasedRoomComponent implements OnInit{
     // Verificar se o jogo possui trigger de inicio de fase
     if(this.game.onPhaseStartCode){
       this.game.onPhaseStartCode.forEach((gameOnPhaseStart) => {
-        if(gameOnPhaseStart.startsWith("if ((room.state.currentphase == ")){
+        if(gameOnPhaseStart.startsWith("if (")){
+
+          let phaseName;
+
+          for (const phase of this.phases){
+            const targetText = `room.state.currentphase == '${phase}'`
+            if(gameOnPhaseStart.indexOf(targetText) != -1){
+              phaseName = phase;
+              break;
+            }
+          }
       
-          const finalPhaseIndex = gameOnPhaseStart.indexOf("'", 33);
-          const phaseName = gameOnPhaseStart.substring(33, finalPhaseIndex);
-      
-          if(this.phases.includes(phaseName)){
-            this.onPhaseStartCodeList[phaseName].push(gameOnPhaseStart);
+          if(phaseName){
+            this.onMoveCardFromToCodeList[phaseName].push(gameOnPhaseStart);
           }
         }
       });
