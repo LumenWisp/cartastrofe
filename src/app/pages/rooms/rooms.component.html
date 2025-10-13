@@ -35,7 +35,7 @@
     <div class="hand-area" #handArea></div>
 </div>
 <div class="sidebar-right">
-  <p-button routerLink="/my-games" label="Sair" />
+  <p-button routerLink="/my-games" label="Sair" (onClick)="resetLocalGame()" />
 
   @if (isAdmin()) {
     <p-button label="Começar" (onClick)="startGame()" />

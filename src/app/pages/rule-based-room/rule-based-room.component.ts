@@ -314,6 +314,10 @@ export class RuleBasedRoomComponent implements OnInit{
     this.loadingService.hide();
   }
 
+  async resetLocalGame() {
+    this.freeModeService.clearCards();
+  }
+
   //pega o Jogador logado, redireciona para login se não está logado ainda
   async getCurrentPlayer() {
     const currentPlayer: PlayerEntity = await this.roomService.getCurrentPlayer(
@@ -387,7 +391,7 @@ export class RuleBasedRoomComponent implements OnInit{
     this.isGameOcurringHTML = true;
     // Atualizando a sala para que seja visivel que o jogo já começou
     //if(this.room.state) this.room.state['isGameOcurring'] = true;
-    this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true, currentphase: this.phases[0], currentPlayerToPlay: this.players[0].playerId}});
+    await this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, isGameOcurring: true, currentphase: this.phases[0], currentPlayerToPlay: this.players[0].playerId}});
 
     //Começando o jogo
     this.playGame();
@@ -404,7 +408,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
     //Verificar se o jogo possui uma trigger de ativação de inicio de jogo
     if(this.game.onGameStartCode){
-      this.runStringCode(this.game.onGameStartCode)
+      await this.runStringCode(this.game.onGameStartCode)
     }
   }
 

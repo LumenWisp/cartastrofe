@@ -395,4 +395,9 @@ export class RoomsComponent {
     const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
     this.roomService.updateRoom(this.room.id, { state: newState });
   }
+
+  async resetLocalGame() {
+    this.freeModeService.clearCards();
+  }
+
 }
