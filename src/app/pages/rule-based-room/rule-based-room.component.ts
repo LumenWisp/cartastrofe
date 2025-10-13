@@ -623,7 +623,7 @@ export class RuleBasedRoomComponent implements OnInit{
           else if(room.state?.isGameOcurring != undefined){
             //room.state['isGameOcurring'] = true;
             //console.log("SKIBIDI 2")
-            this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
+            this.toastService.showSuccessToast('', 'O jogo começou');
           }
         }
 
