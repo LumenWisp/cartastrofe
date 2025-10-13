@@ -570,7 +570,6 @@ export function registerGenerators() {
         const playerToPlay = players[currentPlayerToPlayNumber];
         freeModeService.changeBelongsTo(card.id, playerToPlay.playerId);
         freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
-        freeModeService.flipCard(card.id);
         roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
       }
     }
