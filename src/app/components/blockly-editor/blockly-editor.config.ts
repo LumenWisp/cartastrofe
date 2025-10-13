@@ -57,6 +57,7 @@ export const toolbox = {
       name: 'Actions',
       contents: [
         { kind: 'block', type: 'MoveCardTo' },
+        { kind: 'block', type: 'drawFirstCardsFromPile' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
         { kind: 'block', type: 'isPileEmpty' },
         { kind: 'block', type: 'cancelMovement' },
@@ -193,17 +194,6 @@ export function registerBlocks() {
     }
   };
 
-  // 🚀 GET CARD
-  Blockly.Blocks['getCard'] = {
-    init: function() {
-      this.appendDummyInput()
-        .appendField('Card')
-        .appendField(new Blockly.FieldTextInput('card_id'), 'CARD_ID');
-      this.setOutput(true, null);
-      this.setColour(60);
-    }
-  };
-
   // 🚀 MOVE CARD TO
   Blockly.Blocks['MoveCardTo'] = {
     init: function() {
@@ -218,14 +208,18 @@ export function registerBlocks() {
     }
   };
 
-  // 🚀 GET PILE
-  Blockly.Blocks['getPile'] = {
+  // 🚀 DRAW CARDS FROM PILE
+  Blockly.Blocks['drawFirstCardsFromPile'] = {
     init: function() {
       this.appendDummyInput()
-        .appendField('Pile')
-        .appendField(new Blockly.FieldTextInput('pile_id'), 'PILE_ID');
-      this.setOutput(true, null);
-      this.setColour(15);
+        .appendField('Draw First')
+        .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
     }
   };
 
@@ -524,15 +518,6 @@ export function registerGenerators() {
     return code;
   };
 
-  // GET CARD
-  javascriptGenerator.forBlock['getCard'] = function(block, generator) {
-    const text_card_id = block.getFieldValue('CARD_ID');
-
-    const code = `${text_card_id}`;
-    // TODO: Change Order.NONE to the correct operator precedence strength
-    return [code, Order.NONE];
-  };
-
   // MOVE CARD TO
   javascriptGenerator.forBlock['MoveCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
@@ -544,13 +529,24 @@ export function registerGenerators() {
     return code;
   };
 
-  // GET PILE
-  javascriptGenerator.forBlock['getPile'] = function(block) {
-    const text_pile_id = block.getFieldValue('PILE_ID');
+  // GET PILE TOP CARD
+  javascriptGenerator.forBlock['drawFirstCardsFromPile'] = function(block) {
 
-    const code = `${text_pile_id}`;
+    const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if(pile?.cardIds){
+      const limit = (pile.cardIds.length >= ${number_of_cards})? pile.cardIds.length-${number_of_cards}: 0;
+      for(let i = pile.cardIds.length-1; i >= limit; i--){
+        const card = freeModeService.cards().find(card => card.id == pile.cardIds[i]);
+        freeModeService.changeBelongsTo(card.id, currentPlayer.playerId);
+        freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
+        roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
+    }`
     // TODO: Change Order.NONE to the correct operator precedence strength
-    return [code, Order.NONE];
+    return code;
   };
 
   // GET PILE TOP CARD

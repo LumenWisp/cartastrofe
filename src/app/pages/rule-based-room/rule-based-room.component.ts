@@ -351,6 +351,7 @@ export class RuleBasedRoomComponent implements OnInit{
       'toastService',
       'players',
       'currentPlayerToPlayNumber',
+      'currentPlayer',
       'phases',
       'currentPhaseNumber',
       'movementControler',
@@ -370,6 +371,7 @@ export class RuleBasedRoomComponent implements OnInit{
       this.toastService,
       this.players,
       this.currentPlayerToPlayNumber,
+      this.currentPlayer,
       this.phases,
       this.currentPhaseNumber,
       this.movementControler,
@@ -564,6 +566,7 @@ export class RuleBasedRoomComponent implements OnInit{
             this.onMoveCardFromToCodeList[pileName].push(gameOnMoveCardFromTo);
           }
         }
+        console.log('ADOLETA', this.onMoveCardFromToCodeList);
       })
     }
   }
@@ -713,7 +716,7 @@ export class RuleBasedRoomComponent implements OnInit{
     fakeElement?.classList.remove("remove-pointer-events");
     draggedElement?.classList.remove("remove-pointer-events");
 
-    console.log(targetElement);
+    //console.log(targetElement);
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
     
