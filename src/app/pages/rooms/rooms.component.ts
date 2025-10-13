@@ -363,7 +363,8 @@ export class RoomsComponent {
     this.updateRoom();
 
     if (this.room.state) {
-      this.loadingService.show();
+      //this.loadingService.show();
+      this.loadingService.showByTime(120, ["Criando ambiente...", "Iniciando campos...", "Carregando cartas...", "Preparando jogo...", "Separando jogadores...", "Definindo turnos...", "Embaralhando cartas..."]);
       const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
 
 
