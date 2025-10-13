@@ -500,6 +500,10 @@ export class RuleBasedRoomComponent implements OnInit{
   }
 
   runOnPhaseStartTriggers(){
+
+    console.log("LLL", this.onPhaseStartCodeList);
+    console.log("LLL", this.room.state);
+
     if(this.currentPhaseNumber == -1){
       const phaseName = this.room.state?.currentphase;
       this.currentPhaseNumber = this.phases.indexOf(phaseName!);
@@ -632,7 +636,7 @@ export class RuleBasedRoomComponent implements OnInit{
 
         if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
           //console.log('NOVA SALA: ', room)
-          if(room.state?.isGameOcurring === false){
+          if(room.state?.isGameOcurring != undefined && room.state?.isGameOcurring === false){
             //room.state['isGameOcurring'] = false;
             //console.log("SKIBIDI 1")
             this.toastService.showSuccessToast('', 'Fim de jogo');
