@@ -553,7 +553,8 @@ export class RuleBasedRoomComponent implements OnInit{
           let pileName;
 
           for (const pileNameIdentifier of this.pilesNamesIdentifiers){
-            if(gameOnMoveCardFromTo.indexOf(pileNameIdentifier) != -1){
+            const targetText = `targetPile && targetPile.nameIdentifier == '${pileNameIdentifier}'`
+            if(gameOnMoveCardFromTo.indexOf(targetText) != -1){
               pileName = pileNameIdentifier;
               break;
             }
@@ -760,6 +761,18 @@ export class RuleBasedRoomComponent implements OnInit{
 
       // IGUAL AO IF DE CIMA (nao me julgue)
       const targetItem = this.items.find(i => i.nameIdentifier === targetPileId);
+
+      //VERIFICAR TRIGGERS QUE ATIVAM AO MOVER PARA ESSA PILHA
+      if(this.onMoveCardFromToCodeList[targetItem!.nameIdentifier]){
+        this.runOnMoveCardFromToTriggers(targetItem!, draggedCard!);
+      }
+
+      // CANCELAR O MOVIMENTO DE DROP
+      if(this.movementControler.cancelMovement){
+        this.movementControler['cancelMovement'] = false;
+        return;
+      }
+
       if (draggedCard && targetItem !== null && targetElement && targetItem?.type === 'pile') {
         
         draggedCard.freeDragPos = {
