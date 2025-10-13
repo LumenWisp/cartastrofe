@@ -59,7 +59,7 @@ export class GameEditCardsComponent {
   }
 
   loadCards() {
-    this.loadingService.show();
+    this.loadingService.showByTime(2.3);
 
     this.cardService.getAllCards()
       .then(cards => {
@@ -68,14 +68,12 @@ export class GameEditCardsComponent {
           const obj = this.convert(card, layout);
           return { cardGame: obj, cardModel: card }
         }))
-      this.loadingService.hide();
       })
       .catch(() => {
         this.toastService.showErrorToast(
           'Erro ao carregar cartas',
           'Não foi possível carregar as cartas. Tente novamente mais tarde.'
         );
-      this.loadingService.hide();
       });
   }
 

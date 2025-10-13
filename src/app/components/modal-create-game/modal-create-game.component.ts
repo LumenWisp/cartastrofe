@@ -46,7 +46,7 @@ export class ModalCreateGameComponent {
 
   private readonly MIN_PLAYERS = 1;
   private readonly MAX_PLAYERS = 4;
-  maxPlayers = 2;
+  maxPlayers = 4;
 
   modes: { label: string; value: GameModesEnum }[] = [];
 

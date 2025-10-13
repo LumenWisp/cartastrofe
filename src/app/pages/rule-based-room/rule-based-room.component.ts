@@ -477,16 +477,13 @@ export class RuleBasedRoomComponent implements OnInit{
     // Verificar se cada possui trigger de inicio de fase
     this.freeModeService.cards().forEach((card) => {
       if(card.onPhaseStartCode){
-
         card.onPhaseStartCode.forEach((cardOnPhaseStart) => {
-          if(cardOnPhaseStart.startsWith("if ((room.state.currentphase == ")){
 
             const finalPhaseIndex = cardOnPhaseStart.indexOf("'", 33);
             const phaseName = cardOnPhaseStart.substring(33, finalPhaseIndex);
 
             if(this.phases.includes(phaseName)){
               this.onPhaseStartCodeList[phaseName].push(cardOnPhaseStart);
-            }
           }
         })
       }
