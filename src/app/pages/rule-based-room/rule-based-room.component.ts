@@ -105,10 +105,10 @@ export class RuleBasedRoomComponent implements OnInit{
     ) {}
 
   ngOnInit() {
-      this.checkQueryParamsGame();
-      this.checkRouteParamsRoom();
-      //this.loadingService.hide(); // precaucao
-      this.loadingService.show();
+    this.checkQueryParamsGame();
+    this.checkRouteParamsRoom();
+    //this.loadingService.hide(); // precaucao
+    this.loadingService.showByTime(120, ["Buscando sala...", "Acessando sala...", "Criando ambiente...", "Iniciando campos...", "Carregando cartas...", "Verificando regras...", "Preparando jogo...", "Separando jogadores...", "Definindo turnos...", "Embaralhando cartas...", "Ajustando mesa..."]);
   }
 
   ngAfterViewInit() {
@@ -620,7 +620,7 @@ export class RuleBasedRoomComponent implements OnInit{
           else if(room.state?.isGameOcurring != undefined){
             //room.state['isGameOcurring'] = true;
             //console.log("SKIBIDI 2")
-            this.toastService.showSuccessToast('Divirtasse🎈🎇✨', 'Jogo Iniciando');
+            this.toastService.showSuccessToast('Divirta-se🎈🎇✨', 'Jogo Iniciado');
           }
         }
 
