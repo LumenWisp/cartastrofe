@@ -40,8 +40,8 @@ export interface CardGame {
 
   // Triggers
   onMoveCardFromToCode?: string;
-  onPhaseStartCode?: string;
-  onPhaseEndCode?: string;
+  onPhaseStartCode?: string[];
+  onPhaseEndCode?: string[];
 }
 
 export interface CardModel {

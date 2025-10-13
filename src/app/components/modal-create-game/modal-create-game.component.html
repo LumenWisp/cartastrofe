@@ -13,19 +13,9 @@
         pInputText
         [fluid]="true"
         formControlName="name"
+        autocomplete="off"
       />
       <label for="name">{{'modal-create-game.game-name' | translate}}</label>
-    </p-floatlabel>
-
-    <p-floatlabel variant="on" class="floatlabel">
-      <textarea
-        pTextarea
-        id="description"
-        [autoResize]="false"
-        [fluid]="true"
-        formControlName="description"
-      ></textarea>
-      <label for="description">Descrição do jogo</label>
     </p-floatlabel>
 
     <div class="inline-input">
@@ -40,8 +30,16 @@
           <span [pTooltip]="item.description" tooltipPosition="top">{{ item.value }}</span>
         </ng-template>
       </p-selectbutton>
+
+      <i 
+        class="pi pi-exclamation-circle info-circle"
+        pTooltip="Máximo de jogadores no modo regrado: 2 <br> <br> Máximo de jogadores no modo livre: 4"
+        [escape]="false"
+        tooltipPosition="right"
+      ></i>
     </div>
 
+    <!--
     <div class="inline-input">
       <span>Número de jogadores em cada modo<br> FREE: (mínimo 1, máximo 4) <br> STRUCTURED: (mínimo 1, máximo 2)</span>
 
@@ -77,6 +75,7 @@
         />
       </div>
     </div>
+    -->
 
     <p-button type="submit" label="{{'modal-create-game.submit-button' | translate}}" />
   </form>

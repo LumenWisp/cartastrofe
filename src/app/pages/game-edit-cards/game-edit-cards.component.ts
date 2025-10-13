@@ -136,11 +136,14 @@ export class GameEditCardsComponent {
   saveLayoutsAndCards() {
     if (!this.currentGame) return;
 
+    const totalCards = this.cardsUsed.length;
+
     this.gameInfoService.updateGameInfo(
       this.currentGame.id,
       {
         cardLayoutIds: Array.from(new Set(this.cardsUsed.map(c => c.layoutId))),
         cardIds: this.cardsUsed.map(c => c.id),
+        countCards: totalCards
       }
     ).then(() => {
       this.toastService.showSuccessToast(

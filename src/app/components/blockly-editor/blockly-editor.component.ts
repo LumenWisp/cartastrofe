@@ -31,6 +31,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   private workspace!: Blockly.WorkspaceSvg;
   selectedCategory: string = '';
+  selectedCategoryTitle: string = '';
 
   //Lista de categorias do blockly que não devem carregar um workspace
   // Ou seja, são categorias utilitárias
@@ -66,11 +67,12 @@ export class BlocklyEditorComponent implements AfterViewInit {
         if
         (
           categoryName &&
-          categoryName != this.selectedCategory &&
+          categoryName != this.selectedCategoryTitle &&
           (!this.utilsFields.includes(categoryName)) &&
           (!this.generalFields.includes(categoryName))
         ) {
           // Nome da categoria clicada
+          this.selectedCategoryTitle = categoryName;
           this.selectedCategory = categoryName.replace(/\s+/g, "");
           this.selectedCategory = this.selectedCategory.charAt(0).toLowerCase() + this.selectedCategory.substring(1);
           this.loadWorkSpaceState();
@@ -82,14 +84,23 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   async saveStringCode(): Promise<void> {
     const code = javascriptGenerator.workspaceToCode(this.workspace);
-    console.log(code);
-    console.log(code.length);
 
     if(this.game){
       const key: string = this.selectedCategory + 'Code';
-      await this.gameInfoService.updateGameInfo(this.game.id, {
-        [key]: code,
-      });
+
+      if((!this.selectedCategory.startsWith('onPhase')) && (this.selectedCategory != 'onMoveCardFromTo')){
+        console.log(code);
+        await this.gameInfoService.updateGameInfo(this.game.id, {
+          [key]: code,
+        });
+      }
+      else{
+        const codes = code.split('\n\n');
+        console.log(codes);
+        await this.gameInfoService.updateGameInfo(this.game.id, {
+          [key]: codes,
+        });
+      }
 
       console.log("String do código salvo com sucesso!");
     }
@@ -97,7 +108,6 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   loadWorkSpaceState(): void {
 
-    // TODO: adicionar carregamento de cartas
     let state;
     if (this.game) {
       
@@ -124,7 +134,5 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
       console.log('WorkSpace salvo com sucesso!')
     }
-
-    // TODO: adicionar salvamento de cartas
   }
 }

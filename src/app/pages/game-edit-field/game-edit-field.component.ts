@@ -37,7 +37,7 @@ export class GameEditFieldComponent implements OnInit{
     this.items.push({
       type: GameFieldItemEnum.PILE,
       position: {x: 0, y: 0},
-      nameIdentifier: `item_${this.items.length}`
+      nameIdentifier: `PILHA_${this.items.length-1}`
     });
   }
 
@@ -107,6 +107,8 @@ export class GameEditFieldComponent implements OnInit{
       await this.gameInfoService.updateGameInfo(this.game.id, {gamePhases: gamePhases});
       this.namePhase.nativeElement.value = '';
       this.toastService.showSuccessToast('Salvamento concluído', 'A Fase foi salva!')
+      this.game.gamePhases = gamePhases;
+      this.optionsPhase.push(namePhase)
     } catch (error) {
       this.toastService.showErrorToast('Erro!', 'Não foi possível salvar a fase')
       console.error('Erro ao salvar fase:', error);
@@ -125,6 +127,8 @@ export class GameEditFieldComponent implements OnInit{
       await this.gameInfoService.updateGameInfo(this.game.id, {gameAttributes: gameAttributes});
       this.nameAttribute.nativeElement.value = '';
       this.toastService.showSuccessToast('Salvamento concluído', 'O Atributo foi salvo!')
+      this.game.gameAttributes = gameAttributes;
+      this.optionsAttribute.push(nameAttribute)
     } catch (error) {
       this.toastService.showErrorToast('Erro!', 'Não foi possível salvar o atributo')
       console.error('Erro ao salvar atributo:', error);
@@ -142,10 +146,10 @@ export class GameEditFieldComponent implements OnInit{
     if (this.game.fieldItems && this.game.fieldItems.length > 0) {
       this.items = [...this.game.fieldItems];
     }
-    
+
     else {
       this.items.push(
-        {type: GameFieldItemEnum.PASSPHASE, position: {x: 0, y: 0}, nameIdentifier: 'passPhase'}, 
+        {type: GameFieldItemEnum.PASSPHASE, position: {x: 0, y: 0}, nameIdentifier: 'passPhase'},
         {type: GameFieldItemEnum.HAND, position: {x: 0, y: 0}, nameIdentifier: 'hand'}
       );
     }

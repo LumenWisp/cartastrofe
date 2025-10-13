@@ -35,8 +35,8 @@ export interface GameInfoModel extends GameInfoData {
 
   // Triggers
   onGameStartCode?: string;
-  onMoveCardFromToCode?: string;
-  onPhaseStartCode?: string;
-  onPhaseEndCode?: string;
+  onMoveCardFromToCode?: string[];
+  onPhaseStartCode?: string[];
+  onPhaseEndCode?: string[];
   winConditionCode?: string;
 }

@@ -128,7 +128,6 @@ export class RoomsComponent {
    */
   private async checkRouteParams() {
     const roomLink = this.route.snapshot.params['roomLink'];
-    console.log('roomLink: ', roomLink);
     if (roomLink) {
 
 
@@ -333,7 +332,6 @@ export class RoomsComponent {
       this.room.id
     );
     this.currentPlayer = currentPlayer;
-    console.log('Jogador: ', this.currentPlayer);
   }
 
   private goToLoginPage(roomLink: string) {
@@ -362,6 +360,7 @@ export class RoomsComponent {
     this.updateRoom();
 
     if (this.room.state) {
+      this.loadingService.show();
       const cards = await this.gameInfoService.getCardsInGame(this.room.state.gameId);
 
 
@@ -380,6 +379,7 @@ export class RoomsComponent {
           belongsTo: null,
         })
       }
+      this.loadingService.hide();
       await this.updateRoom();
     }
   }

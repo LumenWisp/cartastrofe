@@ -69,7 +69,7 @@ export class BlockWorkspaceService {
       blocks: [
         {
           id: 'default_block_onPhaseEndDefault',
-          type: 'onPhaseEnded',
+          type: 'onPhaseEnd',
           x: 220,
           y: 39,
         },
