@@ -17,6 +17,7 @@ import { javascriptGenerator } from 'blockly/javascript';
 import { GameInfoModel } from '../../types/game-info';
 import { CardGame } from '../../types/card';
 import { GameInfoService } from '../../services/game-info.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-blockly-editor',
@@ -40,7 +41,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
   //Listas de categorias que abrem para outras categorias(como Triggers)
   generalFields: string[] = ['Triggers']
 
-  constructor(private gameInfoService: GameInfoService) {}
+  constructor(private gameInfoService: GameInfoService, private toastService: ToastService) {}
 
   ngAfterViewInit() {
     registerBlocks();
@@ -52,7 +53,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
       //scrollbars: true,
       move: {
       scrollbars: {
-        horizontal: false,
+        horizontal: true,
         vertical: true
       }}
     });
@@ -102,6 +103,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
         });
       }
 
+      this.toastService.showSuccessToast('Regras salvas', 'Criação das regras concluída')
       console.log("String do código salvo com sucesso!");
     }
   }

@@ -9,6 +9,7 @@ import { Popover, PopoverModule } from 'primeng/popover';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { ListboxModule } from 'primeng/listbox';
+import { FormsModule } from '@angular/forms';
 
 import { GameInfoModel } from '../../types/game-info';
 import { GameInfoService } from '../../services/game-info.service';
@@ -19,7 +20,7 @@ import { GameFieldItemEnum } from '../../enum/game-field-item.enum';
 
 @Component({
   selector: 'app-game-edit-field',
-  imports: [ButtonModule, RouterLink, CdkDrag, CommonModule, PopoverModule, DropdownModule, InputTextModule, ListboxModule],
+  imports: [ButtonModule, RouterLink, CdkDrag, CommonModule, PopoverModule, DropdownModule, InputTextModule, ListboxModule, FormsModule],
   templateUrl: './game-edit-field.component.html',
   styleUrl: './game-edit-field.component.css'
 })
@@ -32,6 +33,16 @@ export class GameEditFieldComponent implements OnInit{
   optionsPhase: string[] = [];
   @ViewChild('nameAttribute') nameAttribute!: ElementRef;
   @ViewChild('namePhase') namePhase!: ElementRef;
+
+  selectedPhase: string | null = null;
+
+  async deleteOption(option: string) {
+    this.optionsPhase = this.optionsPhase.filter(o => o !== option);
+    await this.gameInfoService.updateGameInfo(this.game.id, {
+      gamePhases: this.optionsPhase
+    });
+  }
+
 
   addPile() {
     this.items.push({

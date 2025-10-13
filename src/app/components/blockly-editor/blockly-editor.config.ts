@@ -45,7 +45,7 @@ export const toolbox = {
       kind: 'category',
       name: 'Variables',
       contents: [
-        { kind: 'block', type: 'getCardAttribute' },
+        //{ kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
         { kind: 'block', type: 'getDroppedCardAttribute' },
         { kind: 'block', type: 'getPiletopCardAttribute' },
@@ -56,7 +56,9 @@ export const toolbox = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        { kind: 'block', type: 'MoveCardTo' },
+        { kind: 'block', type: 'MoveTopCardFromPileToPile' },
+        { kind: 'block', type: 'drawFirstCardsFromPile' },
+        { kind: 'block', type: 'drawFirstCardsFromPileToEveryone' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
         { kind: 'block', type: 'isPileEmpty' },
         { kind: 'block', type: 'cancelMovement' },
@@ -128,7 +130,7 @@ export const toolboxCard = {
       contents: [
         { kind: 'block', type: 'getCard' },
         { kind: 'block', type: 'getPile' },
-        { kind: 'block', type: 'getCardAttribute' },
+        //{ kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
         { kind: 'block', type: 'getPhase' },
         { kind: 'block', type: 'getGeneralVariableValue' },
@@ -141,7 +143,7 @@ export const toolboxCard = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        { kind: 'block', type: 'MoveCardTo' },
+        //{ kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
         { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
@@ -193,39 +195,48 @@ export function registerBlocks() {
     }
   };
 
-  // 🚀 GET CARD
-  Blockly.Blocks['getCard'] = {
-    init: function() {
-      this.appendDummyInput()
-        .appendField('Card')
-        .appendField(new Blockly.FieldTextInput('card_id'), 'CARD_ID');
-      this.setOutput(true, null);
-      this.setColour(60);
-    }
-  };
-
   // 🚀 MOVE CARD TO
-  Blockly.Blocks['MoveCardTo'] = {
+  Blockly.Blocks['MoveTopCardFromPileToPile'] = {
     init: function() {
       this.appendDummyInput()
-      .appendField('Move')
-      .appendField(new Blockly.FieldTextInput('Card'), 'CARD')
+      .appendField('Move Top Card From Pile')
+      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
       .appendField('To')
-      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour(225);
     }
   };
 
-  // 🚀 GET PILE
-  Blockly.Blocks['getPile'] = {
+  // 🚀 DRAW CARDS FROM PILE
+  Blockly.Blocks['drawFirstCardsFromPile'] = {
     init: function() {
       this.appendDummyInput()
-        .appendField('Pile')
-        .appendField(new Blockly.FieldTextInput('pile_id'), 'PILE_ID');
-      this.setOutput(true, null);
-      this.setColour(15);
+        .appendField('Draw First')
+        .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 DRAW CARDS FROM PILE TO EVERYONE
+  Blockly.Blocks['drawFirstCardsFromPileToEveryone'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Draw First')
+        .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+        .appendField('To Everyone')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
     }
   };
 
@@ -524,33 +535,72 @@ export function registerGenerators() {
     return code;
   };
 
-  // GET CARD
-  javascriptGenerator.forBlock['getCard'] = function(block, generator) {
-    const text_card_id = block.getFieldValue('CARD_ID');
-
-    const code = `${text_card_id}`;
-    // TODO: Change Order.NONE to the correct operator precedence strength
-    return [code, Order.NONE];
-  };
-
   // MOVE CARD TO
-  javascriptGenerator.forBlock['MoveCardTo'] = function(block, generator) {
+  javascriptGenerator.forBlock['MoveTopCardFromPileToPile'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_card = block.getFieldValue('CARD');
-    const value_new_pile = block.getFieldValue('PILE');
+    const value_old_pile = block.getFieldValue('OLD_PILE');
+    const value_new_pile = block.getFieldValue('NEW_PILE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = "console.log('SKIBIDILSON');console.log('CAGA BAGRE VASCAINO');";
+    const code = `{const newPile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_new_pile}');
+    const oldPile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_old_pile}');
+    if((oldPile?.cardIds && oldPile.cardIds.length != 0) && (newPile.nameIdentifier != oldPile.nameIdentifier)){
+      const topcardId = oldPile.cardIds[oldPile.cardIds.length-1];
+      const card = freeModeService.cards().find(card => card.id == topcardId);
+      card['ruledLastPileId'] = card.ruledPileId ?? newPile.nameIdentifier
+      card['ruledPileId'] = newPile.nameIdentifier
+      freeModeService.addCardToRuledPile(newPile.nameIdentifier, card.ruledLastPileId, card.id);
+      roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+    }
+    }`;
     return code;
   };
 
-  // GET PILE
-  javascriptGenerator.forBlock['getPile'] = function(block) {
-    const text_pile_id = block.getFieldValue('PILE_ID');
+  // DRAW CARDS FROM PILE
+  javascriptGenerator.forBlock['drawFirstCardsFromPile'] = function(block) {
 
-    const code = `${text_pile_id}`;
+    const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `{const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if (pile1?.cardIds) {
+      const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
+      for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
+        const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
+        const playerToPlay = players[currentPlayerToPlayNumber];
+        freeModeService.changeBelongsTo(card.id, playerToPlay.playerId);
+        freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
+        roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
+    }
+  }`
     // TODO: Change Order.NONE to the correct operator precedence strength
-    return [code, Order.NONE];
+    return code;
+  };
+
+  // DRAW CARDS FROM PILE TO EVERYONE
+  javascriptGenerator.forBlock['drawFirstCardsFromPileToEveryone'] = function(block) {
+
+    const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `{const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if (pile1?.cardIds) {
+      for(const player of players){
+      const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
+      for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
+        const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
+        freeModeService.flipCard(card.id);
+        roomService.updateCard(room.id, card.id, {flipped: card.flipped});
+        freeModeService.changeBelongsTo(card.id, player.playerId);
+        freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
+        roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
+      }
+    }
+  }`
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return code;
   };
 
   // GET PILE TOP CARD
@@ -723,12 +773,12 @@ export function registerGenerators() {
 
     // TODO: Assemble javascript into the code variable.
     //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
-    const code = `const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
+    const code = `{const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
     const cardsArray = pile.cardIds;
     console.log('KKK', cardsArray, pile);
     for (let i = cardsArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-    [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}`
+    [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}}`
     return code;
   };
 

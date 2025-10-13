@@ -60,6 +60,7 @@ export class FreeModeService {
   clearCards() {
     this.cards.set([]);
     this.piles = [];
+    this.ruledPiles = [];
   }
 
   // Retorna a carta a partir de seu id

@@ -2,7 +2,7 @@ import { GameModesEnum } from '../enum/game-modes.enum';
 import { GameFieldItem } from './game-field-item';
 export interface GameInfoData {
   name: string;
-  description: string;
+  description?: string;
   gameMode: GameModesEnum;
   countPlayersMin: number;
   countPlayersMax: number;
