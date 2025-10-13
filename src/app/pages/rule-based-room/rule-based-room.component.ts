@@ -684,33 +684,13 @@ export class RuleBasedRoomComponent implements OnInit{
     await this.roomService.updateCard(this.room.id, cardId, {flipped: card!.flipped});
   }
 
-  // Mostrar o menu de opções da carta (por enquanto, apenas embaralhar)
-  showOptions(event: MouseEvent, card: CardGame, popover: Popover) {
-      event.preventDefault();
-      if (this.isDragging) return;
-      this.selectedCard = card;
-      if (this.freeModeService.isPartOfPile(card.id!)) {
-        popover.show(event);
-      }
-  }
-
   // Aumentar o zindex da carta sendo arrastada | Remover a carta da pilha em que estava (se estava)
   onDragStart(event: CdkDragStart<CardGame[]>) {
     const cardId = event.source.element.nativeElement.getAttribute('card-id');
     if (cardId) {
        this.isDragging = cardId;
     }
-    if (this.popover) {
-    this.popover.hide(); // fecha o popover quando arrastar outra carta
-    }
-
     this.freeModeService.updateZindex(cardId!, 999999999)
-  }
-
-  onDropHandle(pileId: string, coordinates: {x: number, y: number}) {
-    this.isDraggingHandle = false;
-    this.freeModeService.changexyOfPileCards(pileId, coordinates)
-    this.updateRoom();
   }
 
   // Evento disparado quando se solta uma carta sendo arrastada
@@ -722,21 +702,19 @@ export class RuleBasedRoomComponent implements OnInit{
     this.freeModeService.updateZindex(draggedCardId!, 99);
     const { x, y } = event.dropPoint; // posição do mouse no fim do drag
 
-    // ignoramentos
-    draggedElement.classList.add("remove-pointer-events"); // Ignorar a carta sendo arrastada
-    const fakeTargetElement = document.elementFromPoint(x, y); // Pegar o alvo falso
-    fakeTargetElement!.classList.add("remove-pointer-events"); // Ignorar o elemento fake
+    draggedElement.classList.add("remove-pointer-events");
+    const fakeElement = document.elementFromPoint(x, y);
+    fakeElement?.classList.add("remove-pointer-events");
+    let targetElement = document.elementFromPoint(x, y);
+    while (targetElement && (!targetElement.getAttribute('card-id') && !targetElement.id)) {
+      targetElement = targetElement.parentElement;
+    }
+    fakeElement?.classList.remove("remove-pointer-events");
+    draggedElement?.classList.remove("remove-pointer-events");
 
-    const targetElement = document.elementFromPoint(x, y); // Pegar o alvo REAL!
-
-    // remover ignoramentos
-    draggedElement.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
-    fakeTargetElement!.classList.remove("remove-pointer-events"); // Remover o ignoramento kekw
-
+    console.log(targetElement);
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
-
-    //console.log(targetElement)
     
     if (targetElement?.id) {
       // É uma pilha

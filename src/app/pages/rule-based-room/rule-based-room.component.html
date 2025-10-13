@@ -59,7 +59,6 @@
               [isDragDisabled]="isDragDisabled"
               (cardDragStart)="onDragStart($event)"
               (cardDragEnd)="onDrop($event)"
-              (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"
               (mousemove)="onDragMoved($event)"
               (cardDoubleClick)="doubleClick(sigmaTopCard.id!)"
             />
@@ -80,7 +79,6 @@
           [card]="card"
           (cardDragStart)="onDragStart($event)"
           (cardDragEnd)="onDrop($event)"
-          (cardContextMenu)="showOptions($event, card, popover)"
           (mousemove)="onDragMoved($event)"
           (cardDoubleClick)="doubleClick(card.id!)"
         />
