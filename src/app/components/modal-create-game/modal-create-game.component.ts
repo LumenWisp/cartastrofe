@@ -59,10 +59,6 @@ export class ModalCreateGameComponent {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    description: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required]
-    }),
 //    countPlayersMin: new FormControl(this.MIN_PLAYERS, {
 //      nonNullable: true,
 //      validators: [

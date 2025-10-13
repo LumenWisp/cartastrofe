@@ -45,7 +45,7 @@ export const toolbox = {
       kind: 'category',
       name: 'Variables',
       contents: [
-        { kind: 'block', type: 'getCardAttribute' },
+        //{ kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
         { kind: 'block', type: 'getDroppedCardAttribute' },
         { kind: 'block', type: 'getPiletopCardAttribute' },
@@ -56,7 +56,7 @@ export const toolbox = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        { kind: 'block', type: 'MoveCardTo' },
+        //{ kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'drawFirstCardsFromPile' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
         { kind: 'block', type: 'isPileEmpty' },
@@ -129,7 +129,7 @@ export const toolboxCard = {
       contents: [
         { kind: 'block', type: 'getCard' },
         { kind: 'block', type: 'getPile' },
-        { kind: 'block', type: 'getCardAttribute' },
+        //{ kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
         { kind: 'block', type: 'getPhase' },
         { kind: 'block', type: 'getGeneralVariableValue' },
@@ -142,7 +142,7 @@ export const toolboxCard = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        { kind: 'block', type: 'MoveCardTo' },
+        //{ kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
         { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
@@ -535,16 +535,17 @@ export function registerGenerators() {
     const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
     const pile_value = block.getFieldValue('PILE');
     
-    const code = `const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
-    if(pile?.cardIds){
-      const limit = (pile.cardIds.length >= ${number_of_cards})? pile.cardIds.length-${number_of_cards}: 0;
-      for(let i = pile.cardIds.length-1; i >= limit; i--){
-        const card = freeModeService.cards().find(card => card.id == pile.cardIds[i]);
+    const code = `const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if (pile1?.cardIds) {
+      const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
+      for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
+        const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
         freeModeService.changeBelongsTo(card.id, currentPlayer.playerId);
         freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
         roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
       }
-    }`
+    }
+    `
     // TODO: Change Order.NONE to the correct operator precedence strength
     return code;
   };

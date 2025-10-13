@@ -52,7 +52,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
       //scrollbars: true,
       move: {
       scrollbars: {
-        horizontal: false,
+        horizontal: true,
         vertical: true
       }}
     });
