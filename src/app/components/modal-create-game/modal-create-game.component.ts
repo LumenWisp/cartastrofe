@@ -46,7 +46,7 @@ export class ModalCreateGameComponent {
 
   private readonly MIN_PLAYERS = 1;
   private readonly MAX_PLAYERS = 4;
-  maxPlayers = 2;
+  maxPlayers = 4;
 
   modes: { label: string; value: GameModesEnum }[] = [];
 
@@ -56,10 +56,6 @@ export class ModalCreateGameComponent {
       validators: [Validators.required]
     }),
     gameMode: new FormControl(GameModesEnum.FREE, {
-      nonNullable: true,
-      validators: [Validators.required]
-    }),
-    description: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required]
     }),

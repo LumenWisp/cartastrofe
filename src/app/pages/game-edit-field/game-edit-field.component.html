@@ -64,7 +64,24 @@
       />
     </div>
 
-    <p-listbox [options]="optionsPhase" />
+    <p-listbox
+      [options]="optionsPhase"
+      [(ngModel)]="selectedPhase"
+    >
+      <ng-template let-option pTemplate="item">
+        <div class="flex justify-between items-center w-full">
+          <span>{{ option }}</span>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-danger"
+            (click)="deleteOption(option); $event.stopPropagation()"
+          ></button>
+        </div>
+      </ng-template>
+    </p-listbox>
+
+
   </div>
   }
 

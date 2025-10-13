@@ -45,6 +45,7 @@ export class RoomsComponent {
   @ViewChild('popover') popover!: Popover;
   users: UserEntity[] = [];
   selectedCard: CardGame | null = null;
+  vazio: boolean = false;
 
   cardLayouts: { [id: string]: CardLayout } = {};
 
@@ -288,13 +289,15 @@ export class RoomsComponent {
       const draggedCard = this.freeModeService.getCardById(draggedCardId!);
       draggedCard!.freeDragPos = { x, y };
       this.freeModeService.updateCard(draggedCard!)
+      this.vazio = true
     }
 
     if (draggedCardId) {
       if (this.isOverHandArea) {
         this.freeModeService.changeBelongsTo(draggedCardId, this.currentPlayer!.playerId);
       } else {
-        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo) {
+        if (this.freeModeService.getCardById(draggedCardId)?.belongsTo && this.vazio == true) {
+          this.vazio = false;
           this.freeModeService.cards.update(cards =>
             cards.map(c => {
               if (c.id === draggedCardId) {
@@ -314,7 +317,7 @@ export class RoomsComponent {
 
       this.resizeHandArea()
     }
-
+    this.vazio = false;
     this.updateRoom()
 
 
@@ -392,4 +395,9 @@ export class RoomsComponent {
     const newState: RoomState = {...this.room.state!, cards: this.freeModeService.cards(), piles: this.freeModeService.piles};
     this.roomService.updateRoom(this.room.id, { state: newState });
   }
+
+  async resetLocalGame() {
+    this.freeModeService.clearCards();
+  }
+
 }
