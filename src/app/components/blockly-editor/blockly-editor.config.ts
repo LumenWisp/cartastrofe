@@ -569,7 +569,8 @@ export function registerGenerators() {
         const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
         freeModeService.flipCard(card.id);
         roomService.updateCard(room.id, card.id, {flipped: card.flipped});
-        freeModeService.changeBelongsTo(card.id, currentPlayer.playerId);
+        const playerToPlay = players[currentPlayerToPlayNumber];
+        freeModeService.changeBelongsTo(card.id, playerToPlay.playerId);
         freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
         roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
       }
