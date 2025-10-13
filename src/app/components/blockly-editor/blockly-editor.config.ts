@@ -535,7 +535,7 @@ export function registerGenerators() {
     const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
     const pile_value = block.getFieldValue('PILE');
     
-    const code = `const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    const code = `{const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
     if (pile1?.cardIds) {
       const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
       for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
@@ -545,7 +545,7 @@ export function registerGenerators() {
         roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
       }
     }
-    `
+  }`
     // TODO: Change Order.NONE to the correct operator precedence strength
     return code;
   };
@@ -720,12 +720,12 @@ export function registerGenerators() {
 
     // TODO: Assemble javascript into the code variable.
     //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
-    const code = `const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
+    const code = `{const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
     const cardsArray = pile.cardIds;
     console.log('KKK', cardsArray, pile);
     for (let i = cardsArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-    [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}`
+    [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}}`
     return code;
   };
 
