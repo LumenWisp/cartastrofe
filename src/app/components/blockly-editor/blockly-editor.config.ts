@@ -56,7 +56,7 @@ export const toolbox = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        //{ kind: 'block', type: 'MoveCardTo' },
+        { kind: 'block', type: 'MoveTopCardFromPileToPile' },
         { kind: 'block', type: 'drawFirstCardsFromPile' },
         { kind: 'block', type: 'drawFirstCardsFromPileToEveryone' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
@@ -196,13 +196,13 @@ export function registerBlocks() {
   };
 
   // 🚀 MOVE CARD TO
-  Blockly.Blocks['MoveCardTo'] = {
+  Blockly.Blocks['MoveTopCardFromPileToPile'] = {
     init: function() {
       this.appendDummyInput()
-      .appendField('Move')
-      .appendField(new Blockly.FieldTextInput('Card'), 'CARD')
+      .appendField('Move Top Card From Pile')
+      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
       .appendField('To')
-      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour(225);
@@ -536,13 +536,23 @@ export function registerGenerators() {
   };
 
   // MOVE CARD TO
-  javascriptGenerator.forBlock['MoveCardTo'] = function(block, generator) {
+  javascriptGenerator.forBlock['MoveTopCardFromPileToPile'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_card = block.getFieldValue('CARD');
-    const value_new_pile = block.getFieldValue('PILE');
+    const value_old_pile = block.getFieldValue('OLD_PILE');
+    const value_new_pile = block.getFieldValue('NEW_PILE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = "console.log('SKIBIDILSON');console.log('CAGA BAGRE VASCAINO');";
+    const code = `{const newPile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_new_pile}');
+    const oldPile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_old_pile}');
+    if((oldPile?.cardIds && oldPile.cardIds.length != 0) && (newPile.nameIdentifier != oldPile.nameIdentifier)){
+      const topcardId = oldPile.cardIds[oldPile.cardIds.length-1];
+      const card = freeModeService.cards().find(card => card.id == topcardId);
+      card['ruledLastPileId'] = card.ruledPileId ?? newPile.nameIdentifier
+      card['ruledPileId'] = newPile.nameIdentifier
+      freeModeService.addCardToRuledPile(newPile.nameIdentifier, card.ruledLastPileId, card.id);
+      roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+    }
+    }`;
     return code;
   };
 
