@@ -475,7 +475,7 @@ export class RuleBasedRoomComponent implements OnInit{
           }
       
           if(phaseName){
-            this.onMoveCardFromToCodeList[phaseName].push(gameOnPhaseStart);
+            this.onPhaseStartCodeList[phaseName].push(gameOnPhaseStart);
           }
         }
       });
@@ -485,12 +485,14 @@ export class RuleBasedRoomComponent implements OnInit{
     this.freeModeService.cards().forEach((card) => {
       if(card.onPhaseStartCode){
         card.onPhaseStartCode.forEach((cardOnPhaseStart) => {
+          if(cardOnPhaseStart.startsWith("if ((room.state.currentphase == ")){
 
             const finalPhaseIndex = cardOnPhaseStart.indexOf("'", 33);
             const phaseName = cardOnPhaseStart.substring(33, finalPhaseIndex);
 
             if(this.phases.includes(phaseName)){
               this.onPhaseStartCodeList[phaseName].push(cardOnPhaseStart);
+            }
           }
         })
       }
