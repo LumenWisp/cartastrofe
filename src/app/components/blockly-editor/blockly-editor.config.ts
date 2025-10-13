@@ -58,6 +58,7 @@ export const toolbox = {
       contents: [
         //{ kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'drawFirstCardsFromPile' },
+        { kind: 'block', type: 'drawFirstCardsFromPileToEveryone' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
         { kind: 'block', type: 'isPileEmpty' },
         { kind: 'block', type: 'cancelMovement' },
@@ -216,6 +217,22 @@ export function registerBlocks() {
         .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
         .appendField('From Pile')
         .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 DRAW CARDS FROM PILE TO EVERYONE
+  Blockly.Blocks['drawFirstCardsFromPileToEveryone'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Draw First')
+        .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+        .appendField('To Everyone')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
@@ -529,7 +546,7 @@ export function registerGenerators() {
     return code;
   };
 
-  // GET PILE TOP CARD
+  // DRAW CARDS FROM PILE
   javascriptGenerator.forBlock['drawFirstCardsFromPile'] = function(block) {
 
     const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
@@ -540,9 +557,36 @@ export function registerGenerators() {
       const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
       for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
         const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
+        freeModeService.flipCard(card.id);
+        roomService.updateCard(room.id, card.id, {flipped: card.flipped});
         freeModeService.changeBelongsTo(card.id, currentPlayer.playerId);
         freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
         roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
+    }
+  }`
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return code;
+  };
+
+  // DRAW CARDS FROM PILE TO EVERYONE
+  javascriptGenerator.forBlock['drawFirstCardsFromPileToEveryone'] = function(block) {
+
+    const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `{const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if (pile1?.cardIds) {
+      for(const player of players){
+      const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
+      for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
+        const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
+        freeModeService.flipCard(card.id);
+        roomService.updateCard(room.id, card.id, {flipped: card.flipped});
+        freeModeService.changeBelongsTo(card.id, player.playerId);
+        freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
+        roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
       }
     }
   }`
