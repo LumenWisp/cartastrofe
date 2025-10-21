@@ -34,7 +34,7 @@ export class LoadingService {
     for (let i = 0; i < messages.length; i++) {
       const timeoutId = setTimeout(() => {
         if (!this.isLoading) return;
-        console.log(i);
+        
         this.messageLoading = messages[i];
       }, ((seconds * 1000) / messages.length) * i);
       this.timeoutIds.push(timeoutId);

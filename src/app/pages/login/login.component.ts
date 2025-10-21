@@ -91,7 +91,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
     this.form.markAllAsTouched();
 
     if (!this.form.valid) {
-      console.log('Formulário inválido');
+      
       return;
     }
     this.loadingService.show();
@@ -114,7 +114,7 @@ export class LoginComponent extends FormManager implements OnDestroy {
 
         console.error('Erro ao registrar usuário:', error.code);
       } else {
-        console.log('Email ou senha inválidos');
+        
       }
     }
     this.loadingService.hide();
