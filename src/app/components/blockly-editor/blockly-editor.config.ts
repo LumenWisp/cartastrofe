@@ -775,7 +775,7 @@ export function registerGenerators() {
     //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
     const code = `{const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
     const cardsArray = pile.cardIds;
-    console.log('KKK', cardsArray, pile);
+    
     for (let i = cardsArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
     [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}}`

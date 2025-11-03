@@ -77,7 +77,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
           this.selectedCategory = categoryName.replace(/\s+/g, "");
           this.selectedCategory = this.selectedCategory.charAt(0).toLowerCase() + this.selectedCategory.substring(1);
           this.loadWorkSpaceState();
-          console.log('Categoria selecionada:', this.selectedCategory);
+          
         }
       }
     });
@@ -90,21 +90,21 @@ export class BlocklyEditorComponent implements AfterViewInit {
       const key: string = this.selectedCategory + 'Code';
 
       if((!this.selectedCategory.startsWith('onPhase')) && (this.selectedCategory != 'onMoveCardFromTo')){
-        console.log(code);
+        
         await this.gameInfoService.updateGameInfo(this.game.id, {
           [key]: code,
         });
       }
       else{
         const codes = code.split('\n\n');
-        console.log(codes);
+        
         await this.gameInfoService.updateGameInfo(this.game.id, {
           [key]: codes,
         });
       }
 
       this.toastService.showSuccessToast('Regras salvas', 'Criação das regras concluída')
-      console.log("String do código salvo com sucesso!");
+      
     }
   }
 
@@ -122,7 +122,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   async saveWorkSpaceState(): Promise<void> {
     const state = Blockly.serialization.workspaces.save(this.workspace);
-    console.log(state);
+    
 
     if (this.game) {
       await this.gameInfoService.updateGameInfo(this.game.id, {
@@ -134,7 +134,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
       // TODO: deixar isso sem parecer uma gambiarra
       this.game[key] = state as never;
 
-      console.log('WorkSpace salvo com sucesso!')
+      
     }
   }
 }

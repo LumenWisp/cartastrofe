@@ -95,7 +95,7 @@ export class ModalCreateRoomComponent {
 
       if (!room) {
         this.toastService.showErrorToast('Erro ao criar sala', 'Não há salas disponíveis')
-        console.log('Não há salas disponiveis');
+        
         this.loadingService.hide();
       } else {
           if (this.gameInfo()!.gameMode === GameModesEnum.FREE) {

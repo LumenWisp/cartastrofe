@@ -121,7 +121,7 @@ export class ModalCreateGameComponent {
 
   createGame() {
     if (!this.form.valid) {
-      console.log('Formulário inválido');
+      
       return;
     }
 

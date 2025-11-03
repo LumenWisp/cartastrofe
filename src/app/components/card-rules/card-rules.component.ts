@@ -101,7 +101,7 @@ export class CardRulesComponent {
             this.selectedCategory.charAt(0).toLowerCase() +
             this.selectedCategory.substring(1);
           this.loadWorkSpaceState();
-          console.log('Categoria selecionada:', this.selectedCategory);
+          
         }
       }
     });
@@ -158,15 +158,15 @@ export class CardRulesComponent {
    */
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
-    console.log('gameId: ', gameId);
+    
     const game = await this.gameInfoService.getGameInfoById(gameId);
     if (game) this.game = game;
-    console.log('Jogo selecionado: ', this.game);
+    
   }
 
   async getCardSelectedWorkSpace(): Promise<void>{
     this.cardSelectedWorkspaces = await this.cardService.getCardWorkSpaces(this.cardSelected?.id!);
-    console.log(this.cardSelectedWorkspaces);
+    
   }
 
   loadWorkSpaceState(): void {
@@ -188,26 +188,26 @@ export class CardRulesComponent {
       const key: string = this.selectedCategory + 'Code';
 
       if(!this.selectedCategory.startsWith('onPhase')){
-        console.log(code);
+        
         await this.cardService.updateCardRules(this.cardSelected.id, {
           [key]: code,
         });
       }
       else{
         const codes = code.split('\n\n');
-        console.log(codes);
+        
         await this.cardService.updateCardRules(this.cardSelected.id, {
           [key]: codes,
         });
       }
 
-      console.log('String do código salvo com sucesso!');
+      
     }
   }
 
   async saveWorkSpaceState(): Promise<void> {
     const state = Blockly.serialization.workspaces.save(this.workspace);
-    console.log(state);
+    
 
     if (this.game && this.cardSelected) {
       await this.cardService.updateCardRules(this.cardSelected.id, {
@@ -216,7 +216,7 @@ export class CardRulesComponent {
 
       this.cardSelectedWorkspaces[this.selectedCategory] = state;
 
-      console.log('WorkSpace salvo com sucesso!');
+      
     }
   }
 }
