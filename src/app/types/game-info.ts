@@ -2,7 +2,7 @@ import { GameModesEnum } from '../enum/game-modes.enum';
 import { GameFieldItem } from './game-field-item';
 export interface GameInfoData {
   name: string;
-  description: string;
+  description?: string;
   gameMode: GameModesEnum;
   countPlayersMin: number;
   countPlayersMax: number;
@@ -35,8 +35,8 @@ export interface GameInfoModel extends GameInfoData {
 
   // Triggers
   onGameStartCode?: string;
-  onMoveCardFromToCode?: string;
-  onPhaseStartCode?: string;
-  onPhaseEndCode?: string;
+  onMoveCardFromToCode?: string[];
+  onPhaseStartCode?: string[];
+  onPhaseEndCode?: string[];
   winConditionCode?: string;
 }

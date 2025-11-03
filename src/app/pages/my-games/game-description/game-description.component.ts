@@ -13,10 +13,11 @@ import { GameInfoService } from '../../../services/game-info.service';
 import { GameInfoModel } from '../../../types/game-info';
 // enums
 import { GameModesEnum } from '../../../enum/game-modes.enum';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game-description',
-  imports: [SplitterModule, InputTextModule, CardModule, ButtonModule, RouterLink, CommonModule],
+  imports: [SplitterModule, InputTextModule, CardModule, ButtonModule, RouterLink, CommonModule, TranslatePipe],
   templateUrl: './game-description.component.html',
   styleUrl: './game-description.component.css'
 })
@@ -24,6 +25,8 @@ export class GameDescriptionComponent implements OnInit {
   GameModesEnum = GameModesEnum;
   gameInfo: GameInfoModel | null = null
   ngIconGamemode = {};
+  isEditing = false;
+  editableDescription: string = '';
 
   constructor(private route: ActivatedRoute, private gameInfoService: GameInfoService) {}
 
@@ -51,4 +54,22 @@ export class GameDescriptionComponent implements OnInit {
       await this.gameInfoService.deleteGameInfo(this.gameInfo.id);
     }
   }
+
+  startEditing() {
+    this.isEditing = true;
+    this.editableDescription = this.gameInfo?.description || '';
+  }
+
+  saveDescription() {
+  if (!this.gameInfo?.id) return;
+
+  this.isEditing = false;
+
+  const updatedData: Partial<GameInfoModel> = {
+    description: this.editableDescription
+  };
+
+  this.gameInfoService.updateGameInfo(this.gameInfo.id, updatedData)
+}
+
 }

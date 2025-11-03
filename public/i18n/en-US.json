@@ -4,6 +4,7 @@
 			"create-room": "Create Room",
 			"logout": "Logout",
 			"my-games": "My Games",
+			"my-cards": "My Cards",
 			"my-layouts": "My Layouts"
 		}
 	},
@@ -44,7 +45,8 @@
 		"hero-button": "Start Building",
 		"hero-desc": "Cartastrofe is your modern, intuitive card game builder and player. Create, customize, play and share stunning card games — no coding skills needed!",
 		"hero-title": "Design Cards. Build Games. Unleash Creativity.",
-		"login": "Login"
+		"login": "Login",
+		"register": "Register"
 	},
 		"login": {
 			"email": "Email",
@@ -79,7 +81,9 @@
 	},
 	"panel-game": {
 		"number-of-cards": "Nº cards",
-		"number-of-players": "Nº players"
+		"number-of-players": "Nº players",
+		"button-edit": "Edit",
+		"button-delete": "Delete"
 	},
 		"register": {
 			"email": "Email",
@@ -109,5 +113,63 @@
 	},
 	"rooms": {
 		"header": "Players"
+	},
+	"my-layouts-page": {
+		"my-layouts": "My Layouts",
+		"button-create-layout": "Create Layout"
+	},
+	"my-cards-page": {
+		"my-cards": "My Cards",
+		"button-create-card": "Create Card"
+	},
+	"layouts-grid": {
+		"empty-message": "No layouts found."
+	},
+	"cards-grid": {
+		"empty-message": "No cards found."
+	},
+	"search-field-placeholder": "Search",
+	"save-button": "Save",
+	"card-layout-selection-placeholder": "Select a card layout",
+	"card-layout": "Card Layout",
+	"game-edit-page": {
+		"empty-message": "No game selected."
+	}
+	,
+	"game-description": {
+		"back-button": "Back",
+		"cards-button": "Cards",
+		"field-button": "Field",
+		"rules-button": "Rules",
+		"delete-button": "Delete",
+		"game-name-label": "Game Name:",
+		"game-mode-label": "Game Mode:",
+		"card-count-label": "Card Count:",
+		"min-players-label": "Min Players:",
+		"max-players-label": "Max Players:",
+		"banner-alt": "banner"
+	}
+	,
+	"create-card": {
+		"card-name-label": "Card Name",
+		"card-layout-label": "Card Layout:",
+		"card-layout-placeholder": "Select a Card Layout",
+		"save-button": "Save",
+		"update-button": "Update",
+		"card-field-name-label": "Card Field",
+		"choose-image-label": "Choose Image"
+	}
+	,
+	"game-edit-cards": {
+		"search-placeholder": "Search",
+		"card-layout-placeholder": "Select a Card Layout",
+		"save-button": "Save",
+		"empty-message": "No cards found."
+	}
+	,
+	"create-layout": {
+		"drawer-header": "Card Layout",
+		"menu-button": "Menu",
+		"save-button": "Save"
 	}
 }

@@ -17,6 +17,7 @@ import { javascriptGenerator } from 'blockly/javascript';
 import { GameInfoModel } from '../../types/game-info';
 import { CardGame } from '../../types/card';
 import { GameInfoService } from '../../services/game-info.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-blockly-editor',
@@ -31,6 +32,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   private workspace!: Blockly.WorkspaceSvg;
   selectedCategory: string = '';
+  selectedCategoryTitle: string = '';
 
   //Lista de categorias do blockly que não devem carregar um workspace
   // Ou seja, são categorias utilitárias
@@ -39,7 +41,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
   //Listas de categorias que abrem para outras categorias(como Triggers)
   generalFields: string[] = ['Triggers']
 
-  constructor(private gameInfoService: GameInfoService) {}
+  constructor(private gameInfoService: GameInfoService, private toastService: ToastService) {}
 
   ngAfterViewInit() {
     registerBlocks();
@@ -51,7 +53,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
       //scrollbars: true,
       move: {
       scrollbars: {
-        horizontal: false,
+        horizontal: true,
         vertical: true
       }}
     });
@@ -66,15 +68,16 @@ export class BlocklyEditorComponent implements AfterViewInit {
         if
         (
           categoryName &&
-          categoryName != this.selectedCategory &&
+          categoryName != this.selectedCategoryTitle &&
           (!this.utilsFields.includes(categoryName)) &&
           (!this.generalFields.includes(categoryName))
         ) {
           // Nome da categoria clicada
+          this.selectedCategoryTitle = categoryName;
           this.selectedCategory = categoryName.replace(/\s+/g, "");
           this.selectedCategory = this.selectedCategory.charAt(0).toLowerCase() + this.selectedCategory.substring(1);
           this.loadWorkSpaceState();
-          console.log('Categoria selecionada:', this.selectedCategory);
+          
         }
       }
     });
@@ -82,22 +85,31 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   async saveStringCode(): Promise<void> {
     const code = javascriptGenerator.workspaceToCode(this.workspace);
-    console.log(code);
-    console.log(code.length);
 
     if(this.game){
       const key: string = this.selectedCategory + 'Code';
-      await this.gameInfoService.updateGameInfo(this.game.id, {
-        [key]: code,
-      });
 
-      console.log("String do código salvo com sucesso!");
+      if((!this.selectedCategory.startsWith('onPhase')) && (this.selectedCategory != 'onMoveCardFromTo')){
+        
+        await this.gameInfoService.updateGameInfo(this.game.id, {
+          [key]: code,
+        });
+      }
+      else{
+        const codes = code.split('\n\n');
+        
+        await this.gameInfoService.updateGameInfo(this.game.id, {
+          [key]: codes,
+        });
+      }
+
+      this.toastService.showSuccessToast('Regras salvas', 'Criação das regras concluída')
+      
     }
   }
 
   loadWorkSpaceState(): void {
 
-    // TODO: adicionar carregamento de cartas
     let state;
     if (this.game) {
       
@@ -110,7 +122,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
 
   async saveWorkSpaceState(): Promise<void> {
     const state = Blockly.serialization.workspaces.save(this.workspace);
-    console.log(state);
+    
 
     if (this.game) {
       await this.gameInfoService.updateGameInfo(this.game.id, {
@@ -122,9 +134,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
       // TODO: deixar isso sem parecer uma gambiarra
       this.game[key] = state as never;
 
-      console.log('WorkSpace salvo com sucesso!')
+      
     }
-
-    // TODO: adicionar salvamento de cartas
   }
 }

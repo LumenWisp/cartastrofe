@@ -4,6 +4,7 @@
 			"create-room": "Criar Sala",
 			"logout": "Sair",
 			"my-games": "Meus Jogos",
+			"my-cards": "Minhas Cartas",
 			"my-layouts": "Meus Layouts"
 		}
 	},
@@ -44,7 +45,8 @@
 		"hero-button": "Comece a construir",
 		"hero-desc": "Cartastrofe é o seu criador e jogador de jogos de cartas moderno e intuitivo. Crie, personalize, jogue e compartilhe jogos de cartas incríveis — sem precisar de habilidades de programação!",
 		"hero-title": "Crie cartas. Construa jogos. Liberte a criatividade.",
-		"login": "Entrar"
+		"login": "Entrar",
+		"register": "Cadastrar"
 	},
 		"login": {
 			"email": "Email",
@@ -79,7 +81,9 @@
 	},
 	"panel-game": {
 		"number-of-cards": "Nº cartas",
-		"number-of-players": "Nº jogadores"
+		"number-of-players": "Nº jogadores",
+		"button-edit": "Editar",
+		"button-delete": "Deletar"
 	},
 		"register": {
 			"email": "Email",
@@ -109,5 +113,62 @@
 	},
 	"rooms": {
 		"header": "Jogadores"
+	},
+	"my-layouts-page": {
+		"my-layouts": "Meus Layouts",
+		"button-create-layout": "Criar Layout"
+	},
+	"my-cards-page": {
+		"my-cards": "Minhas Cartas",
+		"button-create-card": "Criar Carta"
+	},
+	"layouts-grid": {
+		"empty-message": "Nenhum layout encontrado."
+	},
+	"cards-grid": {
+		"empty-message": "Nenhuma carta encontrada."
+	},
+	"search-field-placeholder": "Pesquisar",
+	"card-layout-selection-placeholder": "Selecione um layout de carta",
+	"save-button": "Salvar",
+	"card-layout": "Layout de Carta",
+	"game-edit-page": {
+		"empty-message": "Nenhum jogo selecionado."
+	}
+	,
+	"game-description": {
+		"back-button": "Voltar",
+		"cards-button": "Cartas",
+		"field-button": "Campo",
+		"rules-button": "Regras",
+		"delete-button": "Deletar",
+		"game-name-label": "Nome do jogo:",
+		"game-mode-label": "Modo de jogo:",
+		"card-count-label": "Contagem de cartas:",
+		"min-players-label": "Jogadores mínimos:",
+		"max-players-label": "Jogadores máximos:",
+		"banner-alt": "banner"
+	},
+	"create-card": {
+		"card-name-label": "Nome da Carta",
+		"card-layout-label": "Layout da Carta:",
+		"card-layout-placeholder": "Selecione um Layout",
+		"save-button": "Salvar",
+		"update-button": "Atualizar",
+		"card-field-name-label": "Campo da Carta",
+		"choose-image-label": "Escolha a imagem"
+	}
+	,
+	"game-edit-cards": {
+		"search-placeholder": "Pesquisar",
+		"card-layout-placeholder": "Selecione um Layout",
+		"save-button": "Salvar",
+		"empty-message": "Sem cartas"
+	}
+	,
+	"create-layout": {
+		"drawer-header": "Layout de Carta",
+		"menu-button": "Menu",
+		"save-button": "Salvar"
 	}
 }

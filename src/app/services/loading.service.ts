@@ -8,32 +8,48 @@ import { BehaviorSubject } from 'rxjs';
 export class LoadingService {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
+  isLoading = false;
+  messageLoading = '';
 
-  private timeoutId: any;
+  private timeoutIds: any[] = [];
 
-  show() {
-    this.clearTimeout();
+  show(message: string = '') {
+    this.messageLoading = message;
+    this.clearTimeouts();
     this.loadingSubject.next(true);
+    this.isLoading = true;
   }
 
   hide() {
-    this.clearTimeout();
+    this.clearTimeouts();
     this.loadingSubject.next(false);
+    this.isLoading = false;
   }
 
   // Não sei se tem necessidade, mas adicionei tbm
-  showByTime(seconds: number) {
+  showByTime(seconds: number, messages: string[] = ['']) {
     this.show();
+    this.clearTimeouts();
 
-    this.timeoutId = setTimeout(() => {
+    for (let i = 0; i < messages.length; i++) {
+      const timeoutId = setTimeout(() => {
+        if (!this.isLoading) return;
+        
+        this.messageLoading = messages[i];
+      }, ((seconds * 1000) / messages.length) * i);
+      this.timeoutIds.push(timeoutId);
+    }
+
+    const hideTimeoutId = setTimeout(() => {
       this.hide();
     }, seconds * 1000);
+    this.timeoutIds.push(hideTimeoutId);
   }
 
-  private clearTimeout() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
+  private clearTimeouts() {
+    if (this.timeoutIds.length) {
+      this.timeoutIds.forEach(id => clearTimeout(id));
+      this.timeoutIds = [];
     }
   }
 }

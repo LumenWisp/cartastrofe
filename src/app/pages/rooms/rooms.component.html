@@ -3,7 +3,7 @@
   <div class="grid">
     @for (card of freeModeService.tableCards(); track card.id) {
         <app-card-game
-          style="position: absolute; width: 80px; height: 120px; background-color: white;"
+          style="position: absolute; width: 80px; height: 120px; background-color: #F8F6F3;"
           bgColor="white"
           [cardLayout]="cardLayouts[card.cardLayoutId]"
           [card]="card"
@@ -35,7 +35,7 @@
     <div class="hand-area" #handArea></div>
 </div>
 <div class="sidebar-right">
-  <p-button routerLink="/my-games" label="Sair" />
+  <p-button routerLink="/my-games" label="Sair" (onClick)="resetLocalGame()" />
 
   @if (isAdmin()) {
     <p-button label="Começar" (onClick)="startGame()" />

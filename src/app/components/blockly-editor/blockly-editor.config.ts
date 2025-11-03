@@ -1,7 +1,6 @@
 // src/app/blockly/blockly.config.ts
 import * as Blockly from 'blockly';
 import { javascriptGenerator, Order } from 'blockly/javascript';
-import { BlockCodeGeneratorsService } from '../../services/block-code-generators.service';
 
 // ===============================================================
 // 📦 TOOLBOX
@@ -20,6 +19,7 @@ export const toolbox = {
           name: 'On Move Card From To',
           contents: [
           { kind: 'block', type: 'onMoveCardFromTo' },
+          { kind: 'block', type: 'onMoveCardTo' },
           ]
         },
         {
@@ -33,7 +33,7 @@ export const toolbox = {
           kind: 'category',
           name: 'On Phase End',
           contents: [
-          { kind: 'block', type: 'onPhaseEnded' },
+          { kind: 'block', type: 'onPhaseEnd' },
           ]
         },
       ]
@@ -45,11 +45,10 @@ export const toolbox = {
       kind: 'category',
       name: 'Variables',
       contents: [
-        { kind: 'block', type: 'getCard' },
-        { kind: 'block', type: 'getPile' },
-        { kind: 'block', type: 'getCardAttribute' },
+        //{ kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
-        { kind: 'block', type: 'getPhase' },
+        { kind: 'block', type: 'getDroppedCardAttribute' },
+        { kind: 'block', type: 'getPiletopCardAttribute' },
         { kind: 'block', type: 'getGeneralVariableValue' },
       ]
     },
@@ -57,8 +56,13 @@ export const toolbox = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        { kind: 'block', type: 'MoveCardTo' },
+        { kind: 'block', type: 'MoveTopCardFromPileToPile' },
+        { kind: 'block', type: 'drawFirstCardsFromPile' },
+        { kind: 'block', type: 'drawFirstCardsFromPileToEveryone' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'isPileEmpty' },
+        { kind: 'block', type: 'cancelMovement' },
+        { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
       ]
@@ -104,13 +108,15 @@ export const toolboxCard = {
           name: 'On Phase Start',
           contents: [
           { kind: 'block', type: 'onPhaseStart' },
+          { kind: 'block', type: 'cardOnPhaseStartAndCardIn' },
           ]
         },
         {
           kind: 'category',
           name: 'On Phase End',
           contents: [
-          { kind: 'block', type: 'onPhaseEnded' },
+          { kind: 'block', type: 'onPhaseEnd' },
+          { kind: 'block', type: 'cardOnPhaseEndAndCardIn' },
           ]
         },
       ]
@@ -124,7 +130,7 @@ export const toolboxCard = {
       contents: [
         { kind: 'block', type: 'getCard' },
         { kind: 'block', type: 'getPile' },
-        { kind: 'block', type: 'getCardAttribute' },
+        //{ kind: 'block', type: 'getCardAttribute' },
         { kind: 'block', type: 'getGameAttribute' },
         { kind: 'block', type: 'getPhase' },
         { kind: 'block', type: 'getGeneralVariableValue' },
@@ -137,8 +143,9 @@ export const toolboxCard = {
       kind: 'category',
       name: 'Actions',
       contents: [
-        { kind: 'block', type: 'MoveCardTo' },
+        //{ kind: 'block', type: 'MoveCardTo' },
         { kind: 'block', type: 'ChangeAttributeFromCardTo' },
+        { kind: 'block', type: 'randomizePile' },
         { kind: 'block', type: 'nextPhase' },
         { kind: 'block', type: 'endGame' },
       ]
@@ -188,35 +195,71 @@ export function registerBlocks() {
     }
   };
 
-  // 🚀 GET CARD
-  Blockly.Blocks['getCard'] = {
+  // 🚀 MOVE CARD TO
+  Blockly.Blocks['MoveTopCardFromPileToPile'] = {
     init: function() {
       this.appendDummyInput()
-        .appendField('Card')
-        .appendField(new Blockly.FieldTextInput('card_id'), 'CARD_ID');
-      this.setOutput(true, null);
-      this.setColour(60);
-    }
-  };
-
-  // 🚀 MOVE CARD TO
-  Blockly.Blocks['MoveCardTo'] = {
-    init: function() {
-      this.appendValueInput('CARD').appendField('Move');
-      this.appendValueInput('NEW_PILE').appendField('To');
-      this.setInputsInline(true);
+      .appendField('Move Top Card From Pile')
+      .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
+      .appendField('To')
+      .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour(225);
     }
   };
 
-  // 🚀 GET PILE
-  Blockly.Blocks['getPile'] = {
+  // 🚀 DRAW CARDS FROM PILE
+  Blockly.Blocks['drawFirstCardsFromPile'] = {
     init: function() {
       this.appendDummyInput()
-        .appendField('Pile')
-        .appendField(new Blockly.FieldTextInput('pile_id'), 'PILE_ID');
+        .appendField('Draw First')
+        .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 DRAW CARDS FROM PILE TO EVERYONE
+  Blockly.Blocks['drawFirstCardsFromPileToEveryone'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Draw First')
+        .appendField(new Blockly.FieldTextInput('Number_Of_Cards'), 'NUMBER_OF_CARDS')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+        .appendField('To Everyone')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 GET PILE TOP CARD
+  Blockly.Blocks['getPiletopCardAttribute'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Get Pile Top Card Attribute')
+        .appendField(new Blockly.FieldTextInput('Attribute'), 'ATTRIBUTE')
+        .appendField('From Pile')
+        .appendField(new Blockly.FieldTextInput('pile'), 'PILE')
+      this.setOutput(true, null);
+      this.setColour(15);
+    }
+  };
+
+  // 🚀 IS PILE EMPTY
+  Blockly.Blocks['isPileEmpty'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Is Pile')
+        .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+        .appendField('Empty')
       this.setOutput(true, null);
       this.setColour(15);
     }
@@ -249,11 +292,23 @@ export function registerBlocks() {
   // 🚀 CARD ON MOVE CARD FROM TO
   Blockly.Blocks['cardOnMoveCardFromTo'] = {
     init: function() {
-      this.appendDummyInput().appendField('OnMoveCard')
+      this.appendDummyInput()
+      .appendField('OnMoveCard From')
       .appendField(new Blockly.FieldTextInput('Old_Pile'), 'OLD_PILE')
-      .appendField('From')
+      .appendField('To')
       .appendField(new Blockly.FieldTextInput('New_Pile'), 'NEW_PILE')
-      .appendField('To');
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 ON MOVE CARD TO
+  Blockly.Blocks['onMoveCardTo'] = {
+    init: function() {
+      this.appendDummyInput()
+      .appendField('On Move Card To')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
       this.setInputsInline(true);
       this.setOutput(true, null);
       this.setColour(120);
@@ -263,13 +318,14 @@ export function registerBlocks() {
   // 🚀 CHANGE ATTRIBUTE FROM CARD TO
   Blockly.Blocks['ChangeAttributeFromCardTo'] = {
     init: function() {
-      this.appendValueInput('ATTRIBUTE').appendField('ChangeAttribute');
       this.appendDummyInput()
+        .appendField('Change Attribute')
+        .appendField(new Blockly.FieldTextInput('Attribute'), 'ATTRIBUTE')
         .appendField('From')
-        .appendField(new Blockly.FieldTextInput('value_card'), 'CARD');
+        .appendField(new Blockly.FieldTextInput('Card'), 'CARD');
       this.appendDummyInput()
         .appendField('To')
-        .appendField(new Blockly.FieldTextInput('new_attribute'), 'NEW_ATTRIBUTE');
+        .appendField(new Blockly.FieldTextInput('New_attribute_Value'), 'NEW_ATTRIBUTE_VALUE');
       this.setInputsInline(true);
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
@@ -301,6 +357,18 @@ export function registerBlocks() {
     }
   };
 
+  // 🚀 GET DROPPED CARD ATTRIBUTE
+  Blockly.Blocks['getDroppedCardAttribute'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Get  Dropped Card Attribute')
+        .appendField(new Blockly.FieldTextInput('Attribute'), 'ATTRIBUTE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
+      this.setColour(315);
+    }
+  };
+
   // 🚀 GET GENERAL VARIABLE VALUE
   Blockly.Blocks['getGeneralVariableValue'] = {
     init: function() {
@@ -321,6 +389,32 @@ export function registerBlocks() {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null);
       this.setColour(225);
+      this.setNextStatement(true, null);
+    }
+  };
+
+  // 🚀 RANDOMIZE ALL CARDS FROM PILE
+  Blockly.Blocks['randomizePile'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Randomize All Cards From')
+        .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
+    }
+  };
+
+  // 🚀 CANCEL MOVEMENT
+  Blockly.Blocks['cancelMovement'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('cancelMovement')
+      this.setInputsInline(true);
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(225);
     }
   };
 
@@ -338,21 +432,53 @@ export function registerBlocks() {
   // 🚀 ON PHASE START
   Blockly.Blocks['onPhaseStart'] = {
     init: function() {
-      this.appendValueInput('PHASE')
-        .appendField('onPhaseStart');
+      this.appendDummyInput()
+      .appendField('onPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('Start')
       this.setInputsInline(true)
-      this.setNextStatement(true, null);
+      this.setOutput(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 CARD ON PHASE START AND CARD IN
+  Blockly.Blocks['cardOnPhaseStartAndCardIn'] = {
+    init: function() {
+      this.appendDummyInput()
+      .appendField('OnPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('Start and Card In')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
       this.setColour(120);
     }
   };
 
   // 🚀 ON PHASE END
-  Blockly.Blocks['onPhaseEnded'] = {
+  Blockly.Blocks['onPhaseEnd'] = {
     init: function() {
-      this.appendValueInput('PHASE')
-        .appendField('onPhaseEnd');
+      this.appendDummyInput()
+      .appendField('onPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('End')
       this.setInputsInline(true)
-      this.setNextStatement(true, null);
+      this.setOutput(true, null);
+      this.setColour(120);
+    }
+  };
+
+  // 🚀 CARD ON PHASE END AND CARD IN
+  Blockly.Blocks['cardOnPhaseEndAndCardIn'] = {
+    init: function() {
+      this.appendDummyInput()
+      .appendField('OnPhase')
+      .appendField(new Blockly.FieldTextInput('Phase'), 'PHASE')
+      .appendField('End and Card In')
+      .appendField(new Blockly.FieldTextInput('Pile'), 'PILE')
+      this.setInputsInline(true);
+      this.setOutput(true, null);
       this.setColour(120);
     }
   };
@@ -367,7 +493,6 @@ export function registerBlocks() {
       this.setColour(335);
     }
   };
-
   
   // 🚀 GET LAST PILE ID VALUE
   Blockly.Blocks['getLastPileIdValue'] = {
@@ -410,31 +535,98 @@ export function registerGenerators() {
     return code;
   };
 
-  // GET CARD
-  javascriptGenerator.forBlock['getCard'] = function(block, generator) {
-    const text_card_id = block.getFieldValue('CARD_ID');
+  // MOVE CARD TO
+  javascriptGenerator.forBlock['MoveTopCardFromPileToPile'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_old_pile = block.getFieldValue('OLD_PILE');
+    const value_new_pile = block.getFieldValue('NEW_PILE');
 
-    const code = `${text_card_id}`;
+    // TODO: Assemble javascript into the code variable.
+    const code = `{const newPile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_new_pile}');
+    const oldPile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_old_pile}');
+    if((oldPile?.cardIds && oldPile.cardIds.length != 0) && (newPile.nameIdentifier != oldPile.nameIdentifier)){
+      const topcardId = oldPile.cardIds[oldPile.cardIds.length-1];
+      const card = freeModeService.cards().find(card => card.id == topcardId);
+      card['ruledLastPileId'] = card.ruledPileId ?? newPile.nameIdentifier
+      card['ruledPileId'] = newPile.nameIdentifier
+      freeModeService.addCardToRuledPile(newPile.nameIdentifier, card.ruledLastPileId, card.id);
+      roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+    }
+    }`;
+    return code;
+  };
+
+  // DRAW CARDS FROM PILE
+  javascriptGenerator.forBlock['drawFirstCardsFromPile'] = function(block) {
+
+    const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `{const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if (pile1?.cardIds) {
+      const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
+      for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
+        const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
+        const playerToPlay = players[currentPlayerToPlayNumber];
+        freeModeService.changeBelongsTo(card.id, playerToPlay.playerId);
+        freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
+        roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
+    }
+  }`
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return code;
+  };
+
+  // DRAW CARDS FROM PILE TO EVERYONE
+  javascriptGenerator.forBlock['drawFirstCardsFromPileToEveryone'] = function(block) {
+
+    const number_of_cards = block.getFieldValue('NUMBER_OF_CARDS');
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `{const pile1 = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if (pile1?.cardIds) {
+      for(const player of players){
+      const limit = (pile1.cardIds.length >= ${number_of_cards}) ? pile1.cardIds.length - ${number_of_cards} : 0;
+      for (let i = pile1.cardIds.length - 1; i >= limit; i--) {
+        const card = freeModeService.cards().find(card => card.id == pile1.cardIds[i]);
+        freeModeService.flipCard(card.id);
+        roomService.updateCard(room.id, card.id, {flipped: card.flipped});
+        freeModeService.changeBelongsTo(card.id, player.playerId);
+        freeModeService.removeCardFromRuledPile(card.id, card.ruledPileId, true);
+        roomService.updateCard(room.id, card.id, freeModeService.getCardById(card.id));
+      }
+      }
+    }
+  }`
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return code;
+  };
+
+  // GET PILE TOP CARD
+  javascriptGenerator.forBlock['getPiletopCardAttribute'] = function(block) {
+
+    const pile_value = block.getFieldValue('PILE');
+    const attribute_name = block.getFieldValue('ATTRIBUTE');
+    
+    const code = `(() => {
+    const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}');
+    if(pile?.cardIds && pile.cardIds.length != 0){
+    const topCard = freeModeService.cards().find(card => card.id == pile.cardIds[pile.cardIds.length-1]);
+    return topCard.data['${attribute_name}'];
+    }
+    return '132DEU ERRADO132';
+    })()`
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
 
-  // MOVE CARD TO
-  javascriptGenerator.forBlock['MoveCardTo'] = function(block, generator) {
-    // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
-    const value_new_pile = generator.valueToCode(block, 'NEW_PILE', Order.ATOMIC);
+  // IS PILE EMPTY
+  javascriptGenerator.forBlock['isPileEmpty'] = function(block) {
 
-    // TODO: Assemble javascript into the code variable.
-    const code = `blockCodeGeneratorsService.moveCardTo(${value_card}, ${value_new_pile});updateRoom();`;
-    return code;
-  };
-
-  // GET PILE
-  javascriptGenerator.forBlock['getPile'] = function(block) {
-    const text_pile_id = block.getFieldValue('PILE_ID');
-
-    const code = `${text_pile_id}`;
+    const pile_value = block.getFieldValue('PILE');
+    
+    const code = `(freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}')?.cardIds == undefined) || freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${pile_value}').cardIds.length == 0`
     // TODO: Change Order.NONE to the correct operator precedence strength
     return [code, Order.NONE];
   };
@@ -461,6 +653,16 @@ export function registerGenerators() {
     return code;
   };
 
+  // ON MOVE CARD TO
+  javascriptGenerator.forBlock['onMoveCardTo'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_pile = block.getFieldValue('PILE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `(targetPile && targetPile.nameIdentifier == '${value_pile}')`;
+    return [code, Order.NONE];
+  };
+
   // CARD ON MOVE CARD FROM TO
   javascriptGenerator.forBlock['cardOnMoveCardFromTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
@@ -475,12 +677,19 @@ export function registerGenerators() {
   // CHANGE ATTRIBUTE FROM CARD TO
   javascriptGenerator.forBlock['ChangeAttributeFromCardTo'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_attribute = generator.valueToCode(block, 'ATTRIBUTE', Order.ATOMIC);
-    const value_card = generator.valueToCode(block, 'CARD', Order.ATOMIC);
-    const text_new_attribute = block.getFieldValue('NEW_ATTRIBUTE');
+
+    const attribute_name = block.getFieldValue('ATTRIBUTE');
+    const card_value = block.getFieldValue('CARD');
+    const new_attribute_value = block.getFieldValue('NEW_ATTRIBUTE_VALUE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = `blockCodeGeneratorsService.changeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
+    //const code = `blockCodeGeneratorsService.changeAttributeFromCardTo(${value_attribute}, ${value_card}, ${text_new_attribute})`;
+    const code = `const card = freeModeService.cards().find(card => card.name == '${card_value}');
+    const keys = Object.keys(card.data);
+    if(keys.includes('${attribute_name}')){
+      card.data['${attribute_name}'] = '${new_attribute_value}';
+      roomService.updateCard(room.id, card.id, card);
+    }`
     return code;
   };
 
@@ -507,6 +716,18 @@ export function registerGenerators() {
     return [code, Order.NONE];
   };
 
+  // GET DROPPED CARD ATTRIBUTE
+  javascriptGenerator.forBlock['getDroppedCardAttribute'] = function(block, generator) {
+
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const attribute_name = block.getFieldValue('ATTRIBUTE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `card.data['${attribute_name}']`;
+    // TODO: Change Order.NONE to the correct operator precedence strength
+    return [code, Order.NONE];
+  };
+
   // GET GENERAL VARIABLE VALUE
   javascriptGenerator.forBlock['getGeneralVariableValue'] = function(block, generator) {
 
@@ -523,8 +744,7 @@ export function registerGenerators() {
   javascriptGenerator.forBlock['nextPhase'] = function() {
     // TODO: Assemble javascript into the code variable.
     const code = 
-    `
-    if(room.state.currentphase == game.gamePhases[game.gamePhases.length-1]){
+    `if(room.state.currentphase == game.gamePhases[game.gamePhases.length-1]){
       const nextPlayernumber = (currentPlayerToPlayNumber+1)% players.length;
       const nextPlayerId = players[nextPlayernumber].playerId;
       room.state['currentphase'] = phases[0];
@@ -533,8 +753,7 @@ export function registerGenerators() {
     else{
       room.state['currentphase'] = phases[currentPhaseNumber+1];
       toastService.showSuccessToast('Mudamos de fase', 'Fase atual:' + phases[currentPhaseNumber+1]);
-    }
-    `;
+    }`;
     return code;
   }
 
@@ -547,23 +766,75 @@ export function registerGenerators() {
     return code;
   }
 
-  javascriptGenerator.forBlock['onPhaseStart'] = function(block, generator) {
+  // RANDOMIZE ALL CARDS FROM PILE
+  javascriptGenerator.forBlock['randomizePile'] = function(block, generator) {
     // TODO: change Order.ATOMIC to the correct operator precedence strength
-    const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
+    const value_pile = block.getFieldValue('PILE');
 
     // TODO: Assemble javascript into the code variable.
-    const code = '';
+    //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    const code = `{const pile = freeModeService.ruledPiles.find(ruledPile => ruledPile.nameIdentifier == '${value_pile}');
+    const cardsArray = pile.cardIds;
+    
+    for (let i = cardsArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+    [cardsArray[i], cardsArray[j]] = [cardsArray[j], cardsArray[i]];}}`
     return code;
+  };
+
+  // RANDOMIZE ALL CARDS FROM PILE
+  javascriptGenerator.forBlock['cancelMovement'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+
+    // TODO: Assemble javascript into the code variable.
+    const code = `movementControler['cancelMovement'] = true;`
+    return code;
+  };
+
+  javascriptGenerator.forBlock['onPhaseStart'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ")";
+    return [code, Order.NONE];
   }
 
-  javascriptGenerator.forBlock['onPhaseEnded'] = function(block, generator) {
-      // TODO: change Order.ATOMIC to the correct operator precedence strength
-      const value_phase = generator.valueToCode(block, 'PHASE', Order.ATOMIC);
+  // CARD ON PHASE START AND CARD IN
+  javascriptGenerator.forBlock['cardOnPhaseStartAndCardIn'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+    const value_pile = block.getFieldValue('PILE');
 
-      // TODO: Assemble javascript into the code variable.
-      const code = '';
-      return code;
-    }
+    const cardId =  (block.workspace as Blockly.WorkspaceSvg).cardId;
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    //const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards())";
+    return [code, Order.NONE];
+  };
+
+  javascriptGenerator.forBlock['onPhaseEnd'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ")";
+    return [code, Order.NONE];
+  }
+
+  // CARD ON PHASE START AND CARD IN
+  javascriptGenerator.forBlock['cardOnPhaseEndAndCardIn'] = function(block, generator) {
+    // TODO: change Order.ATOMIC to the correct operator precedence strength
+    const value_phase = block.getFieldValue('PHASE');
+    const value_pile = block.getFieldValue('PILE');
+
+    const cardId =  (block.workspace as Blockly.WorkspaceSvg).cardId;
+
+    // TODO: Assemble javascript into the code variable.
+    const code = "(room.state.currentphase == " + `'${value_phase}'` + ") && (freeModeService.cards().find(card => card.id ==" + `'${cardId}'` +").ruledPileId == " + `'${value_pile}'` + ")";
+    return [code, Order.NONE];
+  };
 
   // GET TARGET CARD ID VALUE
   javascriptGenerator.forBlock['getTargetCardIdValue'] = function(block, generator) {

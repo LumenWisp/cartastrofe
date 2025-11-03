@@ -41,7 +41,7 @@ export class ModalCreateCardLayoutComponent {
 
   createCardLayout() {
     if (!this.form.valid) {
-      console.log('Formulário inválido');
+      
       return;
     }
 

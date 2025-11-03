@@ -17,11 +17,12 @@ import { CardFieldTypesEnum } from '../../../enum/card-field-types.enum';
 import { FileSelectEvent, FileUploadModule } from 'primeng/fileupload';
 import { ActivatedRoute } from '@angular/router';
 import { Card } from 'primeng/card';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-create-card',
-  imports: [FormsModule, InputTextModule, SelectModule, FloatLabelModule, CardGameLayoutComponent, ButtonModule, TabsModule, FileUploadModule],
+  imports: [FormsModule, InputTextModule, SelectModule, FloatLabelModule, CardGameLayoutComponent, ButtonModule, TabsModule, FileUploadModule, TranslatePipe],
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.css'
 })

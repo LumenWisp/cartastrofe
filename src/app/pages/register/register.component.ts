@@ -73,7 +73,6 @@ export class RegisterComponent extends FormManager implements OnDestroy {
 
   private async checkRouteParams() {
     const roomLink = this.route.snapshot.queryParams['roomLink'];
-    console.log('roomLink: ', roomLink);
     if (roomLink) {
       this.roomLink = roomLink;
     }
@@ -85,12 +84,12 @@ export class RegisterComponent extends FormManager implements OnDestroy {
     this.form.markAllAsTouched();
 
     if (!this.form.valid) {
-      console.log('Formulário inválido');
+      
       return;
     }
 
     if (!this.checkPasswordsMatch(this.form.value.password, this.form.value.confirmPassword)) {
-      console.log('Senhas não correspondem')
+      
       this.setError('confirmPassword', 'passwordMismatch');
       return;
     }
@@ -102,7 +101,7 @@ export class RegisterComponent extends FormManager implements OnDestroy {
     try {
       await this.userService.register(name, email, password);
 
-      console.log('Registro feito com sucesso');
+      
       this.goToLoginPage()
     } catch (error) {
       this.loadingService.hide();

@@ -34,7 +34,7 @@ export class CardGameComponent {
   }
 
   onDoubleClick(event: MouseEvent) {
-    this.cardDoubleClick.emit(event);
+    if(!this.isDragDisabled) this.cardDoubleClick.emit(event);
   }
   onContextMenu(event: MouseEvent) {
     this.cardContextMenu.emit(event);

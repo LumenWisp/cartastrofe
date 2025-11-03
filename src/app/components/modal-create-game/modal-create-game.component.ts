@@ -17,6 +17,7 @@ import { GameModesEnum } from '../../enum/game-modes.enum';
 // services
 import { GameInfoService } from '../../services/game-info.service';
 import { ToastService } from '../../services/toast.service';
+import { GameInfoData } from '../../types/game-info';
 
 @Component({
   selector: 'app-modal-create-game',
@@ -45,6 +46,7 @@ export class ModalCreateGameComponent {
 
   private readonly MIN_PLAYERS = 1;
   private readonly MAX_PLAYERS = 4;
+  maxPlayers = 4;
 
   modes: { label: string; value: GameModesEnum }[] = [];
 
@@ -57,26 +59,22 @@ export class ModalCreateGameComponent {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    description: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required]
-    }),
-    countPlayersMin: new FormControl(this.MIN_PLAYERS, {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        Validators.min(this.MIN_PLAYERS),
-        Validators.max(this.MAX_PLAYERS)
-      ]
-    }),
-    countPlayersMax: new FormControl(this.MAX_PLAYERS, {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        Validators.min(this.MIN_PLAYERS),
-        Validators.max(this.MAX_PLAYERS)
-      ]
-    }),
+//    countPlayersMin: new FormControl(this.MIN_PLAYERS, {
+//      nonNullable: true,
+//      validators: [
+//        Validators.required,
+//        Validators.min(this.MIN_PLAYERS),
+//        Validators.max(this.MAX_PLAYERS)
+//      ]
+//    }),
+//    countPlayersMax: new FormControl(this.MAX_PLAYERS, {
+//      nonNullable: true,
+//      validators: [
+//        Validators.required,
+//        Validators.min(this.MIN_PLAYERS),
+//        Validators.max(this.MAX_PLAYERS)
+//      ]
+//    }),
   });
 
   constructor(
@@ -98,20 +96,22 @@ export class ModalCreateGameComponent {
 
     this.form.controls.gameMode.valueChanges.subscribe((mode) => {
       if (mode === GameModesEnum.STRUCTURED) {
-        this.form.controls.countPlayersMax.setValidators([
-          Validators.required,
-          Validators.min(1),
-          Validators.max(2)
-        ]);
+        this.maxPlayers = 2;
+//        this.form.controls.countPlayersMax.setValidators([
+//          Validators.required,
+//          Validators.min(1),
+//          Validators.max(2)
+//        ]);
       } 
       else {
-        this.form.controls.countPlayersMax.setValidators([
-          Validators.required,
-          Validators.min(1),
-          Validators.max(4)
-        ]);
+        this.maxPlayers = 4;
+//        this.form.controls.countPlayersMax.setValidators([
+//          Validators.required,
+//          Validators.min(1),
+//          Validators.max(4)
+//        ]);
       }
-      this.form.controls.countPlayersMax.updateValueAndValidity();
+//      this.form.controls.countPlayersMax.updateValueAndValidity();
     });
   }
 
@@ -121,11 +121,17 @@ export class ModalCreateGameComponent {
 
   createGame() {
     if (!this.form.valid) {
-      console.log('Formulário inválido');
+      
       return;
     }
 
-    this.gameInfoService.addGameInfo(this.form.getRawValue())
+    const game: GameInfoData = {
+      ...this.form.getRawValue(),
+      countPlayersMin: 1,
+      countPlayersMax: this.maxPlayers
+    }
+
+    this.gameInfoService.addGameInfo(game)
       .then(gameInfo => {
         this.toastService.showSuccessToast('Jogo criado com sucesso', `O jogo "${gameInfo.name}" foi criado com sucesso!`)
       })

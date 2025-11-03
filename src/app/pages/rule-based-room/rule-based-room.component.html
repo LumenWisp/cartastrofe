@@ -25,7 +25,7 @@
             [cdkDragDisabled]="true"
             class="next-phase-btn"
             [id]="item.nameIdentifier">
-            Next Phase
+            Próxima Fase
           </button>
 
         }
@@ -45,7 +45,8 @@
             [cdkDragFreeDragPosition]="item.position"
             [cdkDragDisabled]="true"
             [ngClass]="item.type"
-            [id]="item.nameIdentifier">
+            [id]="item.nameIdentifier"
+            style="display: flex; justify-content: center; align-items: center; text-align: center;">
             {{ item.nameIdentifier }}
           </div>
 
@@ -58,9 +59,8 @@
               [isDragDisabled]="isDragDisabled"
               (cardDragStart)="onDragStart($event)"
               (cardDragEnd)="onDrop($event)"
-              (cardContextMenu)="showOptions($event, sigmaTopCard, popover)"
               (mousemove)="onDragMoved($event)"
-              (cardDoubleClick)="freeModeService.flipCard(sigmaTopCard.id!)"
+              (cardDoubleClick)="doubleClick(sigmaTopCard.id!)"
             />
           }
 
@@ -79,9 +79,8 @@
           [card]="card"
           (cardDragStart)="onDragStart($event)"
           (cardDragEnd)="onDrop($event)"
-          (cardContextMenu)="showOptions($event, card, popover)"
           (mousemove)="onDragMoved($event)"
-          (cardDoubleClick)="freeModeService.flipCard(card.id!)"
+          (cardDoubleClick)="doubleClick(card.id!)"
         />
         }
       }
@@ -92,7 +91,7 @@
   </div>
 
   <div class="sidebar-right">
-    <p-button routerLink="/my-games" label="Sair" />
+    <p-button routerLink="/my-games" label="Sair" (onClick)="resetLocalGame()"/>
 
     <p-panel header="{{'rooms.header' | translate}}">
       @for (player of players; track $index) {

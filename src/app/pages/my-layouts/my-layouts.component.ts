@@ -16,6 +16,8 @@ import { PlaceholderGridComponent } from '../../components/placeholder-grid/plac
 import { ModalCreateCardLayoutComponent } from '../../components/modal-create-card-layout/modal-create-card-layout.component';
 import { CardGameLayoutComponent } from '../../components/card-game-layout/card-game-layout.component';
 import { Card3dComponent } from "../../components/card-3d/card-3d.component";
+import { TranslatePipe } from '@ngx-translate/core';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-my-layouts',
@@ -26,7 +28,8 @@ import { Card3dComponent } from "../../components/card-3d/card-3d.component";
     CommonModule,
     ModalCreateCardLayoutComponent,
     CardGameLayoutComponent,
-    Card3dComponent
+    Card3dComponent,
+    TranslatePipe
 ],
   templateUrl: './my-layouts.component.html',
   styleUrl: './my-layouts.component.css',
@@ -39,7 +42,8 @@ export class MyLayoutsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private cardLayoutService: CardLayoutService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private loadingService: LoadingService,
   ) {}
 
   async ngOnInit() {
@@ -47,17 +51,22 @@ export class MyLayoutsComponent implements OnInit {
   }
 
   loadCardLayouts() {
+    this.loadingService.show();
+
     this.cardLayoutService
       .getCardLayouts()
       .then((cardLayouts) => {
         this.cardLayouts = cardLayouts;
+        this.loadingService.hide();
       })
       .catch(() => {
         this.toastService.showErrorToast(
           'Erro ao carregar os jogos',
           'Houve um erro ao carregar os jogos!'
         );
+        this.loadingService.hide();
       });
+
   }
 
   showModal() {

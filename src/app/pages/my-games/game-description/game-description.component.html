@@ -1,5 +1,5 @@
 <div class="banner">
-  <img class="game-banner" src="/images/fire-cards-banner.png" alt="banner">
+  <img class="game-banner" src="/images/fire-cards-banner.png" alt="{{'game-description.banner-alt' | translate}}">
 
   <div class="overlay">
     <span class="overlay-text">{{ gameInfo?.name }}</span>
@@ -8,13 +8,13 @@
 
 <div class="content-wrapper">
   <div class="buttons">
-    <p-button label="Voltar" icon="pi pi-arrow-left" severity="secondary" [rounded]="true" routerLink="/my-games" />
-    <p-button label="Cartas" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-cards', gameInfo?.id]" />
+    <p-button label="{{'game-description.back-button' | translate}}" icon="pi pi-arrow-left" severity="secondary" [rounded]="true" routerLink="/my-games" />
+    <p-button label="{{'game-description.cards-button' | translate}}" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-cards', gameInfo?.id]" />
     @if(gameInfo?.gameMode === GameModesEnum.STRUCTURED){
-      <p-button label="Campo" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-field', gameInfo?.id]" />
-      <p-button label="Regras" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-rules', gameInfo?.id]" />
+      <p-button label="{{'game-description.field-button' | translate}}" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-field', gameInfo?.id]" />
+      <p-button label="{{'game-description.rules-button' | translate}}" icon="pi pi-pencil" severity="secondary" [rounded]="true" [routerLink]="['/my-games/game-edit-rules', gameInfo?.id]" />
     }
-    <p-button label="Deletar" icon="pi pi-trash" severity="danger" [rounded]="true" (onClick)="deleteGame()" routerLink="/my-games" />
+    <p-button label="{{'game-description.delete-button' | translate}}" icon="pi pi-trash" severity="danger" [rounded]="true" (onClick)="deleteGame()" routerLink="/my-games" />
   </div>
 
   <div class="content">
@@ -22,42 +22,38 @@
       <span>
         <strong>
           <span class="info-icon pi pi-desktop"></span>
-          Nome do jogo:
+          {{'game-description.game-name-label' | translate}}
         </strong>
         {{ gameInfo?.name }}
       </span>
       <span>
         <strong>
           <span class="info-icon pi" [ngClass]="ngIconGamemode"></span>
-          Modo de jogo:
+          {{'game-description.game-mode-label' | translate}}
         </strong>
         {{ gameInfo?.gameMode }}
       </span>
       <span>
         <strong>
           <span class="info-icon pi pi-address-book"></span>
-          Contagem de cartas:
+          {{'game-description.card-count-label' | translate}}
         </strong>
         {{ gameInfo?.countCards }}
       </span>
       <span>
         <strong>
           <span class="info-icon pi pi-user-minus"></span>
-          Jogadores mínimos:
+          {{'game-description.min-players-label' | translate}}
         </strong>
         {{ gameInfo?.countPlayersMin }}
       </span>
       <span>
         <strong>
           <span class="info-icon pi pi-user-plus"></span>
-          Jogadores máximos:
+          {{'game-description.max-players-label' | translate}}
         </strong>
         {{ gameInfo?.countPlayersMax }}
       </span>
     </div>
-
-    <p>
-      {{ gameInfo?.description }}
-    </p>
   </div>
 </div>
