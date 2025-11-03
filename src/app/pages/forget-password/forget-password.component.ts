@@ -45,10 +45,10 @@ export class ForgetPasswordComponent extends FormManager implements OnDestroy {
 
     if (this.form.valid) {
       this.resetRequested = true;
-      console.log('Solicitação de redefinição enviada');
+      
       this.forgotPassword();
     } else {
-      console.log('Formulário inválido');
+      
     }
   }
 

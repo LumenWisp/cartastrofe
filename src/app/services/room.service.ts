@@ -284,7 +284,7 @@ export class RoomService {
     );
 
     try {
-      console.log(`Retirando jogador com ID ${playerId} da sala`);
+      
       const playerRef = doc(refCollection, playerId);
       await deleteDoc(playerRef);
     } catch (error) {

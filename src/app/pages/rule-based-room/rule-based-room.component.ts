@@ -186,12 +186,12 @@ export class RuleBasedRoomComponent implements OnInit{
 
   private async checkRouteParamsRoom() {
     const roomLink = this.route.snapshot.params['roomLink'];
-    console.log('roomLink: ', roomLink);
+    
     if (roomLink) {
       //verificando se o usuário está logado
       const user = await this.userService.currentUser();
       if (!user) {
-        console.log('Usuário não está logado');
+        
         this.goToLoginPage(roomLink);
         return;
       }
@@ -294,9 +294,9 @@ export class RuleBasedRoomComponent implements OnInit{
             this.loadOnPhaseEndTriggers();
             this.loadOnMoveCardFromToCode();
 
-            //console.log("LISTA onPhaseStart:", this.onPhaseStartCodeList);
-            //console.log("LISTA onPhaseEnd:", this.onPhaseEndCodeList);
-            //console.log("LISTA onMove:", this.onMoveCardFromToCodeList);
+            //
+            //
+            //
           }
 
           if (this.game.fieldItems && this.game.fieldItems.length > 0) {
@@ -324,7 +324,7 @@ export class RuleBasedRoomComponent implements OnInit{
       this.room.id
     );
     this.currentPlayer = currentPlayer;
-    console.log('Jogador: ', this.currentPlayer);
+    
   }
 
   getTopCard(ruledPileId: string, position: {x: number, y:number}, isDragging: string) {
@@ -449,7 +449,7 @@ export class RuleBasedRoomComponent implements OnInit{
       this.toastService.showSuccessToast('', 'Fim do turno')
       this.roomService.updateRoom(this.room.id, {state: {...this.room.state!, currentphase: this.phases[this.currentPhaseNumber], currentPlayerToPlay:nextPlayerId}});
     }
-    console.log("Fase Atual: ", this.phases[this.currentPhaseNumber]);
+    
   }
 
   endGame(){
@@ -501,8 +501,8 @@ export class RuleBasedRoomComponent implements OnInit{
 
   runOnPhaseStartTriggers(){
 
-    console.log("LLL", this.onPhaseStartCodeList);
-    console.log("LLL", this.room.state);
+    
+    
 
     if(this.currentPhaseNumber == -1){
       const phaseName = this.room.state?.currentphase;
@@ -588,7 +588,7 @@ export class RuleBasedRoomComponent implements OnInit{
           }
         }
       })
-      console.log('ADOLETA', this.onMoveCardFromToCodeList);
+      
     }
   }
 
@@ -635,15 +635,15 @@ export class RuleBasedRoomComponent implements OnInit{
       .subscribe(async (room) => {
 
         if(this.room.state?.isGameOcurring != room.state?.isGameOcurring){
-          //console.log('NOVA SALA: ', room)
+          //
           if(room.state?.isGameOcurring != undefined && room.state?.isGameOcurring === false){
             //room.state['isGameOcurring'] = false;
-            //console.log("SKIBIDI 1")
+            //
             this.toastService.showSuccessToast('', 'Fim de jogo');
           }
           else if(room.state?.isGameOcurring != undefined){
             //room.state['isGameOcurring'] = true;
-            //console.log("SKIBIDI 2")
+            //
             this.toastService.showSuccessToast('Divirta-se🎈🎇✨', 'Jogo Iniciado');
           }
         }
@@ -743,7 +743,7 @@ export class RuleBasedRoomComponent implements OnInit{
     fakeElement?.classList.remove("remove-pointer-events");
     draggedElement?.classList.remove("remove-pointer-events");
 
-    //console.log(targetElement);
+    //
 
     const draggedCard = this.freeModeService.getCardById(draggedCardId!);
     
