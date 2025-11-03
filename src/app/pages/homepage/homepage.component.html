@@ -1,89 +1,174 @@
 <div data-scroll-container>
-    <header>
-        <div class="group-logo">
-            <img src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo" class="logo" height="48" />
-            <span>Cartástrofe</span>
-        </div>
-        <div class="menu-group">
-            <nav class="desktop-nav">
-                <a routerLink="/login">{{ 'homepage.login' | translate }}</a>
-                <a routerLink="/register">{{ 'homepage.register' | translate}}</a>
-            </nav>
-            <button id="lang-toggle" class="desktop-lang" (click)="changeLanguage()">{{ currentLanguage }}</button>
-        </div>
-        <button id="hamburger-btn" aria-label="Open menu" (click)="openSidebar()">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <rect y="7" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
-            <rect y="14.5" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
-            <rect y="22" width="32" height="3" rx="1.5" fill="var(--secondary)"/>
-        </svg>
+  <header>
+    <div class="group-logo">
+      <img
+        src="images/extraofficiallogo.PNG"
+        alt="Cartastrofe Logo"
+        class="logo"
+        height="48"
+      />
+      <span>Cartástrofe</span>
+    </div>
+    <div class="menu-group">
+      <nav class="desktop-nav">
+        <a routerLink="/login">{{ "homepage.login" | translate }}</a>
+        <a routerLink="/register">{{ "homepage.register" | translate }}</a>
+      </nav>
+      <button id="lang-toggle" class="desktop-lang" (click)="changeLanguage()">
+        {{ currentLanguage }}
+      </button>
+    </div>
+    <button id="hamburger-btn" aria-label="Open menu" (click)="openSidebar()">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect y="7" width="32" height="3" rx="1.5" fill="var(--secondary)" />
+        <rect y="14.5" width="32" height="3" rx="1.5" fill="var(--secondary)" />
+        <rect y="22" width="32" height="3" rx="1.5" fill="var(--secondary)" />
+      </svg>
+    </button>
+  </header>
+  <aside
+    #sidebar
+    id="sidebar"
+    [class.open]="isSidebarOpen"
+    (click)="onSidebarBackdropClick($event, sidebar)"
+  >
+    <div class="sidebar-content">
+      <button
+        id="close-sidebar"
+        aria-label="Close menu"
+        (click)="closeSidebar()"
+      >
+        &times;
+      </button>
+      <nav class="sidebar-nav">
+        <a routerLink="/login">{{ "homepage.login" | translate }}</a>
+        <a routerLink="/register">{{ "homepage.register" | translate }}</a>
+      </nav>
+      <button id="sidebar-lang-toggle" (click)="changeLanguage()">
+        {{ currentLanguage }}
+      </button>
+    </div>
+  </aside>
+  <section class="hero">
+    <div class="hero-flex">
+      <div class="hero-text">
+        <h1 id="hero-title">{{ "homepage.hero-title" | translate }}</h1>
+        <p id="hero-desc">{{ "homepage.hero-desc" | translate }}</p>
+        <button routerLink="/login" class="cta-btn" id="cta-btn">
+          {{ "homepage.hero-button" | translate }}
         </button>
-    </header>
-    <aside #sidebar id="sidebar" [class.open]="isSidebarOpen" (click)="onSidebarBackdropClick($event, sidebar)">
-        <div class="sidebar-content">
-        <button id="close-sidebar" aria-label="Close menu" (click)="closeSidebar()">&times;</button>
-        <nav class="sidebar-nav">
-            <a routerLink="/login">{{ 'homepage.login' | translate}}</a>
-            <a routerLink="/register">{{ 'homepage.register' | translate}}</a>
-        </nav>
-        <button id="sidebar-lang-toggle" (click)="changeLanguage()">{{ currentLanguage }}</button>
+      </div>
+      <!-- 3D Rotating Card -->
+      <app-card-3d
+        [rotate]="true"
+        [flip]="true"
+        [glow]="true"
+        [backColor]="'#f4d35e'"
+        [frontColor]="'#ff6f61'"
+        [backTextColor]="'#2d3142'"
+        [frontTextColor]="'#ffffff'"
+      >
+        <div cardFront>
+          <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo" />
+          <h2>{{ "homepage.card.card-desc-1" | translate }}</h2>
+          <h2>{{ "homepage.card.card-desc-2" | translate }}</h2>
+          <h2>{{ "homepage.card.card-desc-3" | translate }}</h2>
         </div>
-    </aside>
-    <section class="hero">
-        <div class="hero-flex">
-            <div class="hero-text">
-                
-                <h1 id="hero-title">{{ 'homepage.hero-title' | translate }}</h1>
-                <p id="hero-desc">{{ 'homepage.hero-desc' | translate }}</p>
-                <button routerLink="/login" class="cta-btn" id="cta-btn">{{ 'homepage.hero-button' | translate }}</button>
-            </div>
-            <!-- 3D Rotating Card -->
-            <app-card-3d 
-                [rotate]="true"
-                [flip]="true"
-                [glow]="true"
-                [backColor]="'#f4d35e'"
-                [frontColor]="'#ff6f61'"
-                [backTextColor]="'#2d3142'"
-                [frontTextColor]="'#ffffff'"
-            >
-                <div cardFront>
-                    <img src="assets/cartastrofeLogo.svg" alt="Cartastrofe Logo">
-                    <h2>{{ 'homepage.card.card-desc-1' | translate}}</h2>
-                    <h2>{{ 'homepage.card.card-desc-2' | translate}}</h2>
-                    <h2>{{ 'homepage.card.card-desc-3' | translate}}</h2>
-                </div>
-                <div cardBack>
-                    <img class="back-logo" src="images/extraofficiallogo.PNG" alt="Cartastrofe Logo">
-                    <h2>{{ 'homepage.card.card-back-title' | translate }}</h2>                            
-                </div>
-            </app-card-3d>
+        <div cardBack>
+          <img
+            class="back-logo"
+            src="images/extraofficiallogo.PNG"
+            alt="Cartastrofe Logo"
+          />
+          <h2>{{ "homepage.card.card-back-title" | translate }}</h2>
         </div>
-    </section>
-    <section class="features">
-        <div class="feature-card">
-            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm1 17.93V20a1 1 0 0 1-2 0v-.07A8.006 8.006 0 0 1 4.07 13H4a1 1 0 0 1 0-2h.07A8.006 8.006 0 0 1 11 4.07V4a1 1 0 0 1 2 0v.07A8.006 8.006 0 0 1 19.93 11H20a1 1 0 0 1 0 2h-.07A8.006 8.006 0 0 1 13 19.93z"/></svg>
-            <h3>{{ 'homepage.feature-cards.card-1.title' | translate }}</h3>
-            <p>{{ 'homepage.feature-cards.card-1.desc' | translate }}</p>
-        </div>
-        <div class="feature-card">
-            <svg viewBox="0 0 24 24">
-                <rect x="3" y="3" width="7" height="7" rx="2" fill="var(--accent)"/>
-                <rect x="14" y="3" width="7" height="7" rx="2" fill="var(--primary)"/>
-                <rect x="3" y="14" width="7" height="7" rx="2" fill="var(--primary)"/>
-                <rect x="14" y="14" width="7" height="7" rx="2" fill="var(--accent)"/>
-                <path d="M10 7h4M7 10v4M17 10v4M10 17h4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <h3>{{ 'homepage.feature-cards.card-2.title' | translate }}</h3>
-            <p>{{ 'homepage.feature-cards.card-2.desc' | translate }}</p>
-        </div>
-        <div class="feature-card">
-            <svg viewBox="0 0 24 24"><path d="M12 2l4 4-4 4-4-4zm0 16l4-4-4-4-4 4zm8-8l-4 4-4-4 4-4zm-16 0l4 4 4-4-4-4z"/></svg>
-            <h3>{{ 'homepage.feature-cards.card-3.title' | translate }}</h3>
-            <p>{{ 'homepage.feature-cards.card-3.desc' | translate }}</p>
-        </div>
-    </section>
-    <footer>
-        &copy; {{ 'homepage.footer' | translate }}
-    </footer>
+      </app-card-3d>
+    </div>
+  </section>
+  <section class="features">
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm1 17.93V20a1 1 0 0 1-2 0v-.07A8.006 8.006 0 0 1 4.07 13H4a1 1 0 0 1 0-2h.07A8.006 8.006 0 0 1 11 4.07V4a1 1 0 0 1 2 0v.07A8.006 8.006 0 0 1 19.93 11H20a1 1 0 0 1 0 2h-.07A8.006 8.006 0 0 1 13 19.93z"
+        />
+      </svg>
+      <h3>{{ "homepage.feature-cards.card-1.title" | translate }}</h3>
+      <p>{{ "homepage.feature-cards.card-1.desc" | translate }}</p>
+    </div>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="2" fill="var(--accent)" />
+        <rect x="14" y="3" width="7" height="7" rx="2" fill="var(--primary)" />
+        <rect x="3" y="14" width="7" height="7" rx="2" fill="var(--primary)" />
+        <rect x="14" y="14" width="7" height="7" rx="2" fill="var(--accent)" />
+        <path
+          d="M10 7h4M7 10v4M17 10v4M10 17h4"
+          stroke="#fff"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+      <h3>{{ "homepage.feature-cards.card-2.title" | translate }}</h3>
+      <p>{{ "homepage.feature-cards.card-2.desc" | translate }}</p>
+    </div>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 2l4 4-4 4-4-4zm0 16l4-4-4-4-4 4zm8-8l-4 4-4-4 4-4zm-16 0l4 4 4-4-4-4z"
+        />
+      </svg>
+      <h3>{{ "homepage.feature-cards.card-3.title" | translate }}</h3>
+      <p>{{ "homepage.feature-cards.card-3.desc" | translate }}</p>
+    </div>
+  </section>
+
+  <section class="team">
+    <h2>Equipe desenvolvedora</h2>
+    <ul class="team-list">
+      <li class="team-member">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQGboEsOU9F0iA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1713823793052?e=1763596800&v=beta&t=eR-wIweqMHGCFRiVPsBd7sYFyCeVe0Al_3nLbSpD4HU" alt="João Vitor Pereira Soares">
+
+        <strong>João Vitor Pereira Soares</strong>
+
+        <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-pereira-soares-738662305/" target="_blank">LinkedIn</a>
+      </li>
+      <li class="team-member">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQEeBZopW_qHEg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1713709288852?e=1763596800&v=beta&t=ZKStWwORtzn9YoUO7EDyvetT_NLaAJAo4Dt38E8OmSQ" alt="Joel Kagohara Sasaki">
+
+        <strong>Joel Kagohara Sasaki</strong>
+
+        <a href="http://linkedin.com/in/joel-sasaki-597297305/" target="_blank">LinkedIn</a>
+      </li>
+      <li class="team-member">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQHh0fEBbExT2A/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1710013980724?e=1763596800&v=beta&t=oFTdxVinSFiRKsUaoTeiidNt9VrK80QxAq-OSrIKPRQ" alt="Julio Antunes Estrela">
+
+        <strong>Júlio Antunes Estrela</strong>
+
+        <a href="https://www.linkedin.com/in/julioestrela/" target="_blank">LinkedIn</a>
+      </li>
+      <li class="team-member">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQFaz5LSKcpQmA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721085914971?e=1763596800&v=beta&t=_Qz7in55uDJ8J_r4FBr53pDzQUqXu9c5Cqaqs5adkkU" alt="Leandro Kenzo Takara">
+
+        <strong>Leandro Kenzo Takara</strong>
+
+        <a href="https://www.linkedin.com/in/leandro-kenzo-takara/" target="_blank">LinkedIn</a>
+      </li>
+      <li class="team-member">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQGvYkFsarNFiA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1730329434659?e=2147483647&v=beta&t=mu573X00CN68X4x6JXpHja2flDKyLRk8uNQ4AAk9PAk" alt="Leonardo Woods Carvalho Pepe">
+
+        <strong>Leonardo Woods Carvalho Pepe</strong>
+
+        <a href="https://www.linkedin.com/in/leonardo-woods-carvalho-pepe-2b08a32b0/" target="_blank">LinkedIn</a>
+      </li>
+      <li class="team-member">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQFFVDp8M6KKvQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1713827728501?e=1763596800&v=beta&t=qK4gDYEWuk0oxXtEBe-iBBUIyfqw4yVeiA0tH5PNEBA" alt="Vinícius Miura do Espírito Santo">
+
+        <strong>Vinícius Miura do Espírito Santo</strong>
+
+        <a href="https://www.linkedin.com/in/viniciusmiura/" target="_blank">LinkedIn</a>
+      </li>
+    </ul>
+  </section>
+
+  <footer>&copy; {{ "homepage.footer" | translate }}</footer>
 </div>
