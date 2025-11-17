@@ -1,4 +1,22 @@
 @if (game) {
-  <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+  <div class="buttons">
+    <p-button [routerLink]="['/my-games/game-description', game.id]" label="Voltar" />
+
+    <p-button (click)="showDialog()" label="Tutorial" />
+  </div>
 }
 <app-blockly-editor [game]="game"></app-blockly-editor>
+
+<p-dialog header="Tutorial" [modal]="true" [(visible)]="visible" [style]="{ width: '70vw' }">
+  <div class="panel">
+    <p-panelmenu [model]="items" />
+
+    <div style="width: 60%;">
+      <h2>{{ textTitle }}</h2>
+
+      <p>
+        {{ text }}
+      </p>
+    </div>
+  </div>
+</p-dialog>

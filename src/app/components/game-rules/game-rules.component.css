@@ -1,0 +1,9 @@
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.panel {
+  display: flex;
+  gap: 20px;
+}

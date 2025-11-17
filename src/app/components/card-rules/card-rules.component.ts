@@ -23,6 +23,8 @@ import { CardGameLayout, CardLayout } from '../../types/card-layout';
 import { CardGameLayoutComponent } from '../card-game-layout/card-game-layout.component';
 import { Card3dComponent } from "../card-3d/card-3d.component";
 import { CardService } from '../../services/card.service';
+import { DialogModule } from 'primeng/dialog';
+import { PanelMenuModule } from 'primeng/panelmenu';
 
 type CardListItem = { id: string, layoutId: string, name: string, card: CardGameLayout}
 
@@ -34,6 +36,8 @@ type CardListItem = { id: string, layoutId: string, name: string, card: CardGame
     DrawerModule,
     CardGameLayoutComponent,
     Card3dComponent,
+    DialogModule,
+    PanelMenuModule,
   ],
   templateUrl: './card-rules.component.html',
   styleUrl: './card-rules.component.css',
@@ -46,6 +50,60 @@ export class CardRulesComponent {
   cards: CardListItem[] = [];
   cardSelected: CardListItem | null = null;
   cardSelectedWorkspaces: any;
+
+  visibleTutorial = false;
+  text = 'Escolha um tópico no menu à esquerda para ver a explicação.';
+  textTitle = 'Tópico'
+
+  items = [
+    {
+      label: 'Triggers',
+      items: [
+        {
+          label: 'On Move Card From To',
+          command: () => {
+            this.textTitle = 'Ao Mover Carta De Para';
+            this.text = 'Esse gatilho será ativado quando a CARTA especificada for movida para a PILHA especificada (seja por eventos de outros gatilhos, ou por movimentações manuais).';
+          }
+        },
+        {
+          label: 'On Phase Start',
+          command: () => {
+            this.textTitle = 'Início da Fase';
+            this.text = 'Esse gatilho será ativado no início da FASE especificada.';
+          }
+        },
+        {
+          label: 'On Phase End',
+          command: () => {
+            this.textTitle = 'Fim da Fase';
+            this.text = 'Esse gatilho executará seu código no final da FASE especificada.';
+          }
+        },
+      ]
+    },
+    {
+      label: 'Variables',
+      command: () => {
+        this.textTitle = 'Variáveis';
+        this.text = 'As variáveis permitem o acesso dos atributos de jogo e das cartas no topo de pilhas. Além disso, é possível acessar os atributos das cartas no momento em que são jogadas.';
+      }
+    },
+    {
+      label: 'Actions',
+      command: () => {
+        this.textTitle = 'Ações';
+        this.text = 'As ações permitem alterações diretas do jogo. Esses blocos devem ser usados após gatilhos pois, dessa forma, os gatilhos são responsáveis por definir quando as ações serão executadas.';
+      }
+    },
+    {
+      label: 'Control',
+      command: () => {
+        this.textTitle = 'Controle';
+        this.text = 'Os blocos de controle permitem a comparação de valores de atributos, além de possibilitar verificações com o IF e loops com o FOR.';
+      }
+    }
+  ];
 
   private workspace!: Blockly.WorkspaceSvg;
   selectedCategory: string = '';
@@ -101,7 +159,7 @@ export class CardRulesComponent {
             this.selectedCategory.charAt(0).toLowerCase() +
             this.selectedCategory.substring(1);
           this.loadWorkSpaceState();
-          
+
         }
       }
     });
@@ -158,15 +216,15 @@ export class CardRulesComponent {
    */
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
-    
+
     const game = await this.gameInfoService.getGameInfoById(gameId);
     if (game) this.game = game;
-    
+
   }
 
   async getCardSelectedWorkSpace(): Promise<void>{
     this.cardSelectedWorkspaces = await this.cardService.getCardWorkSpaces(this.cardSelected?.id!);
-    
+
   }
 
   loadWorkSpaceState(): void {
@@ -178,7 +236,7 @@ export class CardRulesComponent {
     }
 
     if(state) Blockly.serialization.workspaces.load(state, this.workspace);
-    
+
   }
 
   async saveStringCode(): Promise<void> {
@@ -188,26 +246,26 @@ export class CardRulesComponent {
       const key: string = this.selectedCategory + 'Code';
 
       if(!this.selectedCategory.startsWith('onPhase')){
-        
+
         await this.cardService.updateCardRules(this.cardSelected.id, {
           [key]: code,
         });
       }
       else{
         const codes = code.split('\n\n');
-        
+
         await this.cardService.updateCardRules(this.cardSelected.id, {
           [key]: codes,
         });
       }
 
-      
+
     }
   }
 
   async saveWorkSpaceState(): Promise<void> {
     const state = Blockly.serialization.workspaces.save(this.workspace);
-    
+
 
     if (this.game && this.cardSelected) {
       await this.cardService.updateCardRules(this.cardSelected.id, {
@@ -216,7 +274,13 @@ export class CardRulesComponent {
 
       this.cardSelectedWorkspaces[this.selectedCategory] = state;
 
-      
+
     }
+  }
+
+  showDialog() {
+    this.visibleTutorial = true;
+    this.text = 'Escolha um tópico no menu à esquerda para ver a explicação.';
+    this.textTitle = 'Tópico'
   }
 }
