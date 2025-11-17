@@ -59,13 +59,17 @@
   }
 </div>
 
-<p-dialog header="Tutorial" [modal]="true" [(visible)]="visibleTutorial">
+<p-dialog header="Tutorial" [modal]="true" [(visible)]="visibleTutorial" [style]="{ width: '70vw' }">
   <div class="panel">
     <p-panelmenu [model]="items" />
 
-    <p>
-      {{ text }}
-    </p>
+    <div style="width: 60%;">
+      <h2>{{ textTitle }}</h2>
+
+      <p>
+        {{ text }}
+      </p>
+    </div>
   </div>
 </p-dialog>
 

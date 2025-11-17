@@ -17,6 +17,7 @@ export class GameRulesComponent implements OnInit {
   game!: GameInfoModel;
   visible = false;
   text = 'Escolha um tópico no menu à esquerda para ver a explicação.';
+  textTitle = 'Tópico'
 
   items = [
     {
@@ -25,31 +26,36 @@ export class GameRulesComponent implements OnInit {
         {
           label: 'On Game Start',
           command: () => {
-            this.text = '[Esse gatilho é ativado no início do jogo.]';
+            this.textTitle = 'Início do Jogo';
+            this.text = 'Esse gatilho é ativado no início do jogo.';
           }
         },
         {
           label: 'Win Condition',
           command: () => {
-            this.text = '[Esse gatilho é ativado quando uma condição com IF for verdadeira, encerrando o jogo.]';
+            this.textTitle = 'Condição de Vitória';
+            this.text = 'Esse gatilho é ativado quando uma condição com IF for verdadeira, encerrando o jogo.';
           }
         },
         {
           label: 'On Move Card From To',
           command: () => {
-            this.text = '[Esse gatilho será ativado quando a CARTA especificada for movida para a PILHA especificada (seja por eventos de outros gatilhos, ou por movimentações manuais).]';
+            this.textTitle = 'Ao Mover Carta De Para';
+            this.text = 'Esse gatilho será ativado quando a CARTA especificada for movida para a PILHA especificada (seja por eventos de outros gatilhos, ou por movimentações manuais).';
           }
         },
         {
           label: 'On Phase Start',
           command: () => {
-            this.text = '[Esse gatilho será ativado no início da FASE especificada.]';
+            this.textTitle = 'Início da Fase';
+            this.text = 'Esse gatilho será ativado no início da FASE especificada.';
           }
         },
         {
           label: 'On Phase End',
           command: () => {
-            this.text = '[Esse gatilho executará seu código no final da FASE especificada.]';
+            this.textTitle = 'Fim da Fase';
+            this.text = 'Esse gatilho executará seu código no final da FASE especificada.';
           }
         },
       ]
@@ -57,19 +63,22 @@ export class GameRulesComponent implements OnInit {
     {
       label: 'Variables',
       command: () => {
-        this.text = '[As variáveis permitem o acesso dos atributos de jogo e das cartas no topo de pilhas. Além disso, é possível acessar os atributos das cartas no momento em que são jogadas.]';
+        this.textTitle = 'Variáveis';
+        this.text = 'As variáveis permitem o acesso dos atributos de jogo e das cartas no topo de pilhas. Além disso, é possível acessar os atributos das cartas no momento em que são jogadas.';
       }
     },
     {
       label: 'Actions',
       command: () => {
-        this.text = '[As ações permitem alterações diretas do jogo. Esses blocos devem ser usados após gatilhos pois, dessa forma, os gatilhos são responsáveis por definir quando as ações serão executadas.]';
+        this.textTitle = 'Ações';
+        this.text = 'As ações permitem alterações diretas do jogo. Esses blocos devem ser usados após gatilhos pois, dessa forma, os gatilhos são responsáveis por definir quando as ações serão executadas.';
       }
     },
     {
       label: 'Control',
       command: () => {
-        this.text = '[Os blocos de controle permitem a comparação de valores de atributos, além de possibilitar verificações com o IF e loops com o FOR.]';
+        this.textTitle = 'Controle';
+        this.text = 'Os blocos de controle permitem a comparação de valores de atributos, além de possibilitar verificações com o IF e loops com o FOR.';
       }
     }
   ];
@@ -95,5 +104,6 @@ export class GameRulesComponent implements OnInit {
   showDialog() {
     this.visible = true;
     this.text = 'Escolha um tópico no menu à esquerda para ver a explicação.';
+    this.textTitle = 'Tópico'
   }
 }
