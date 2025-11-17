@@ -81,19 +81,19 @@ export class CardRulesComponent {
     {
       label: 'Variables',
       command: () => {
-        this.text = '[texto explicativo sobre variável]';
+        this.text = '[As variáveis permitem o acesso dos atributos de jogo e das cartas no topo de pilhas. Além disso, é possível acessar os atributos das cartas no momento em que são jogadas.]';
       }
     },
     {
       label: 'Actions',
       command: () => {
-        this.text = '[texto explicativo sobre a ação Move Card]';
+        this.text = '[As ações permitem alterações diretas do jogo. Esses blocos devem ser usados após gatilhos pois, dessa forma, os gatilhos são responsáveis por definir quando as ações serão executadas.]';
       }
     },
     {
       label: 'Control',
       command: () => {
-        this.text = '[texto explicativo sobre a estrutura If]';
+        this.text = '[Os blocos de controle permitem a comparação de valores de atributos, além de possibilitar verificações com o IF e loops com o FOR.]';
       }
     }
   ];
