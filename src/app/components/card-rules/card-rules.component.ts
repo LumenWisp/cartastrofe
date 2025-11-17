@@ -23,6 +23,8 @@ import { CardGameLayout, CardLayout } from '../../types/card-layout';
 import { CardGameLayoutComponent } from '../card-game-layout/card-game-layout.component';
 import { Card3dComponent } from "../card-3d/card-3d.component";
 import { CardService } from '../../services/card.service';
+import { DialogModule } from 'primeng/dialog';
+import { PanelMenuModule } from 'primeng/panelmenu';
 
 type CardListItem = { id: string, layoutId: string, name: string, card: CardGameLayout}
 
@@ -34,6 +36,8 @@ type CardListItem = { id: string, layoutId: string, name: string, card: CardGame
     DrawerModule,
     CardGameLayoutComponent,
     Card3dComponent,
+    DialogModule,
+    PanelMenuModule,
   ],
   templateUrl: './card-rules.component.html',
   styleUrl: './card-rules.component.css',
@@ -46,6 +50,53 @@ export class CardRulesComponent {
   cards: CardListItem[] = [];
   cardSelected: CardListItem | null = null;
   cardSelectedWorkspaces: any;
+
+  visibleTutorial = false;
+  text = 'Escolha um tópico no menu à esquerda para ver a explicação.';
+
+  items = [
+    {
+      label: 'Triggers',
+      items: [
+        {
+          label: 'On Move Card From To',
+          command: () => {
+            this.text = '[texto explicativo sobre o gatilho On Move Card From To]';
+          }
+        },
+        {
+          label: 'On Phase Start',
+          command: () => {
+            this.text = '[texto explicativo sobre o gatilho On Phase Start]';
+          }
+        },
+        {
+          label: 'On Phase End',
+          command: () => {
+            this.text = '[texto explicativo sobre o gatilho On Phase End]';
+          }
+        },
+      ]
+    },
+    {
+      label: 'Variables',
+      command: () => {
+        this.text = '[texto explicativo sobre variável]';
+      }
+    },
+    {
+      label: 'Actions',
+      command: () => {
+        this.text = '[texto explicativo sobre a ação Move Card]';
+      }
+    },
+    {
+      label: 'Control',
+      command: () => {
+        this.text = '[texto explicativo sobre a estrutura If]';
+      }
+    }
+  ];
 
   private workspace!: Blockly.WorkspaceSvg;
   selectedCategory: string = '';
@@ -101,7 +152,7 @@ export class CardRulesComponent {
             this.selectedCategory.charAt(0).toLowerCase() +
             this.selectedCategory.substring(1);
           this.loadWorkSpaceState();
-          
+
         }
       }
     });
@@ -158,15 +209,15 @@ export class CardRulesComponent {
    */
   private async checkRouteParams() {
     const gameId = this.route.snapshot.params['gameId'];
-    
+
     const game = await this.gameInfoService.getGameInfoById(gameId);
     if (game) this.game = game;
-    
+
   }
 
   async getCardSelectedWorkSpace(): Promise<void>{
     this.cardSelectedWorkspaces = await this.cardService.getCardWorkSpaces(this.cardSelected?.id!);
-    
+
   }
 
   loadWorkSpaceState(): void {
@@ -178,7 +229,7 @@ export class CardRulesComponent {
     }
 
     if(state) Blockly.serialization.workspaces.load(state, this.workspace);
-    
+
   }
 
   async saveStringCode(): Promise<void> {
@@ -188,26 +239,26 @@ export class CardRulesComponent {
       const key: string = this.selectedCategory + 'Code';
 
       if(!this.selectedCategory.startsWith('onPhase')){
-        
+
         await this.cardService.updateCardRules(this.cardSelected.id, {
           [key]: code,
         });
       }
       else{
         const codes = code.split('\n\n');
-        
+
         await this.cardService.updateCardRules(this.cardSelected.id, {
           [key]: codes,
         });
       }
 
-      
+
     }
   }
 
   async saveWorkSpaceState(): Promise<void> {
     const state = Blockly.serialization.workspaces.save(this.workspace);
-    
+
 
     if (this.game && this.cardSelected) {
       await this.cardService.updateCardRules(this.cardSelected.id, {
@@ -216,7 +267,12 @@ export class CardRulesComponent {
 
       this.cardSelectedWorkspaces[this.selectedCategory] = state;
 
-      
+
     }
+  }
+
+  showDialog() {
+    this.visibleTutorial = true;
+    this.text = 'Escolha um tópico no menu à esquerda para ver a explicação.';
   }
 }
