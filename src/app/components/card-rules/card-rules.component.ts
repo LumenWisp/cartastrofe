@@ -61,19 +61,19 @@ export class CardRulesComponent {
         {
           label: 'On Move Card From To',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Move Card From To]';
+            this.text = '[Esse gatilho será ativado quando a CARTA especificada for movida para a PILHA especificada (seja por eventos de outros gatilhos, ou por movimentações manuais).]';
           }
         },
         {
           label: 'On Phase Start',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Phase Start]';
+            this.text = '[Esse gatilho será ativado no início da FASE especificada.]';
           }
         },
         {
           label: 'On Phase End',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Phase End]';
+            this.text = '[Esse gatilho executará seu código no final da FASE especificada.]';
           }
         },
       ]

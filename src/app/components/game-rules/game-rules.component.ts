@@ -25,31 +25,31 @@ export class GameRulesComponent implements OnInit {
         {
           label: 'On Game Start',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Game Start]';
+            this.text = '[Esse gatilho é ativado no início do jogo.]';
           }
         },
         {
           label: 'Win Condition',
           command: () => {
-            this.text = '[texto explicativo sobre a Win Condition]';
+            this.text = '[Esse gatilho é ativado quando uma condição com IF for verdadeira, encerrando o jogo.]';
           }
         },
         {
           label: 'On Move Card From To',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Move Card From To]';
+            this.text = '[Esse gatilho será ativado quando a CARTA especificada for movida para a PILHA especificada (seja por eventos de outros gatilhos, ou por movimentações manuais).]';
           }
         },
         {
           label: 'On Phase Start',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Phase Start]';
+            this.text = '[Esse gatilho será ativado no início da FASE especificada.]';
           }
         },
         {
           label: 'On Phase End',
           command: () => {
-            this.text = '[texto explicativo sobre o gatilho On Phase End]';
+            this.text = '[Esse gatilho executará seu código no final da FASE especificada.]';
           }
         },
       ]
@@ -57,19 +57,19 @@ export class GameRulesComponent implements OnInit {
     {
       label: 'Variables',
       command: () => {
-        this.text = '[texto explicativo sobre variável]';
+        this.text = '[As variáveis permitem o acesso dos atributos de jogo e das cartas no topo de pilhas. Além disso, é possível acessar os atributos das cartas no momento em que são jogadas.]';
       }
     },
     {
       label: 'Actions',
       command: () => {
-        this.text = '[texto explicativo sobre a ação Move Card]';
+        this.text = '[As ações permitem alterações diretas do jogo. Esses blocos devem ser usados após gatilhos pois, dessa forma, os gatilhos são responsáveis por definir quando as ações serão executadas.]';
       }
     },
     {
       label: 'Control',
       command: () => {
-        this.text = '[texto explicativo sobre a estrutura If]';
+        this.text = '[Os blocos de controle permitem a comparação de valores de atributos, além de possibilitar verificações com o IF e loops com o FOR.]';
       }
     }
   ];
